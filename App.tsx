@@ -1,6 +1,7 @@
 import { ActivityIndicator, Button, StyleSheet, Text, TouchableOpacity, View, Linking } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 export default function App() {
 	const [hasPermission, setHasPermission] = useState<string | boolean>('not_requested')
@@ -22,16 +23,27 @@ export default function App() {
 		setScanned(true)
 		setScanInProgress(true)
 
-		await new Promise<void>((resolve) =>
-			setTimeout(() => {
-				resolve()
-			}, 2000)
-		)
+		try {
+			setLink(data)
+			const res = await axios.post(
+				'http://192.168.10.151:8000/api/url',
+				{
+					url: data,
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json',
+					},
+				}
+			)
+			alert(`Response from BE: ${JSON.stringify(res.data)}`)
+		} catch (error) {
+			console.error(error)
+			alert(`Error: ${error}`)
+		}
 
 		setScanInProgress(false)
-
-		let trustRating = Math.floor(Math.random() * 10)
-		trustRating > 5 ? setLink(data) : alert(`Suspicious link: ${data} Blocked - Trust Rating ${trustRating}`)
 	}
 
 	const LoadingIndicator = (
