@@ -1,9 +1,14 @@
-import { ActivityIndicator, Button, StyleSheet, Text, TouchableOpacity, View, Linking } from 'react-native'
+import {  StyleSheet, Text, , View } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import * as Location from 'expo-location'
 import { LocationObject } from 'expo-location'
+import QrCodeScanner from './components/QrCodeScanner'
+import UrlDisplay from './components/UrlDisplay'
+import LoadingIndicator from './components/LoadingIndicator'
+import ScanAgainButton from './components/ScanAgainButton'
+
 export default function App() {
 	const [hasPermission, setHasPermission] = useState<string | boolean>('not_requested')
 	const [scanned, setScanned] = useState<boolean>(false)
@@ -66,43 +71,20 @@ export default function App() {
 		setScanInProgress(false)
 	}
 
-	const LoadingIndicator = (
-		<>
-			<ActivityIndicator
-				size='large'
-				color='#0000ff'
-			/>
-			<Text style={styles.text}>Running Security Checks...</Text>
-		</>
-	)
-
 	return (
 		<View style={styles.container}>
 			{scanInProgress ? (
-				LoadingIndicator
+				<LoadingIndicator />
 			) : (
 				<>
-					<View style={styles.barcodeScanner}>
-						<BarCodeScanner
-							onBarCodeScanned={scanned ? undefined : onScan}
-							style={StyleSheet.absoluteFillObject}
-						/>
-					</View>
+					<QrCodeScanner
+						scanned={scanned}
+						onScan={onScan}
+					/>
 					{scanned && (
 						<>
-							<Text
-								style={{ color: link.startsWith('http') ? 'green' : 'red' }}
-								onPress={() => link.startsWith('http') && Linking.openURL(link)}>
-								{link}
-							</Text>
-
-							<TouchableOpacity
-								onPress={() => {
-									setScanned(false)
-									setLink('')
-								}}>
-								<Text style={{ fontSize: 24 }}>Scan Again?</Text>
-							</TouchableOpacity>
+							<UrlDisplay link={link} />
+							<ScanAgainButton setScanned={setScanned} setLink={setLink} />
 						</>
 					)}
 				</>
@@ -117,20 +99,5 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		alignItems: 'center',
 		justifyContent: 'center',
-	},
-	barcodeScanner: {
-		alignItems: 'center',
-		justifyContent: 'center',
-		height: 300,
-		width: 300,
-		overflow: 'hidden',
-		borderRadius: 30,
-		backgroundColor: 'green',
-	},
-	text: {
-		marginTop: 10, // You can adjust the space between the spinner and the text
-		fontSize: 16,
-		color: '#000', // Or any color you prefer
-		// Add more styling as needed
 	},
 })
