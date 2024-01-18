@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity, Text } from 'react-native'
-import { ScanAgainButtonProps } from '../types'
+import { ScanAgainButtonProps } from '../../../../types'
 
 const ScanAgainButton: React.FC<ScanAgainButtonProps> = ({ setScanned, setLink }) => {
 	const resetScannedAndLinkState = () => {

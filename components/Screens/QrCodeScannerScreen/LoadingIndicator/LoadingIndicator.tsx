@@ -7,6 +7,7 @@ const LoadingIndicator = () => {
 			<ActivityIndicator
 				size='large'
 				color='#0000ff'
+				testID='activity-indicator'
 			/>
 			<Text style={styles.text}>Running Security Checks...</Text>
 		</>

@@ -1,13 +1,13 @@
-import {  StyleSheet, Text, , View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import * as Location from 'expo-location'
 import { LocationObject } from 'expo-location'
-import QrCodeScanner from './components/QrCodeScanner'
-import UrlDisplay from './components/UrlDisplay'
-import LoadingIndicator from './components/LoadingIndicator'
-import ScanAgainButton from './components/ScanAgainButton'
+import QrCodeScanner from './components/Screens/QrCodeScannerScreen/QrCodeScanner'
+import UrlDisplay from './components/Screens/QrCodeScannerScreen/UrlDisplay'
+import LoadingIndicator from './components/Screens/QrCodeScannerScreen/LoadingIndicator'
+import ScanAgainButton from './components/Screens/QrCodeScannerScreen/ScanAgainButton'
 
 export default function App() {
 	const [hasPermission, setHasPermission] = useState<string | boolean>('not_requested')
@@ -24,7 +24,7 @@ export default function App() {
 			setHasPermission(status === 'granted')
 		})()
 		;(async () => {
-			let { status } = await Location.requestForegroundPermissionsAsync()
+			const { status } = await Location.requestForegroundPermissionsAsync()
 			if (status !== 'granted') {
 				setErrorMsg('Permission to location denied')
 				return
@@ -84,7 +84,10 @@ export default function App() {
 					{scanned && (
 						<>
 							<UrlDisplay link={link} />
-							<ScanAgainButton setScanned={setScanned} setLink={setLink} />
+							<ScanAgainButton
+								setScanned={setScanned}
+								setLink={setLink}
+							/>
 						</>
 					)}
 				</>
