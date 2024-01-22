@@ -9,6 +9,7 @@ import QrCodeScanner from './components/Screens/QrCodeScannerScreen/QrCodeScanne
 import UrlDisplay from './components/Screens/QrCodeScannerScreen/UrlDisplay'
 import LoadingIndicator from './components/Screens/QrCodeScannerScreen/LoadingIndicator'
 import ScanAgainButton from './components/Screens/QrCodeScannerScreen/ScanAgainButton'
+import AfterScanModalDisplay from './components/Screens/QrCodeScannerScreen/AfterScanModalDisplay'
 
 const LOCATION_TASK_NAME = 'background-location-task'
 const requestPermissions = async () => {
@@ -54,10 +55,12 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
 export default function App() {
 	const [hasPermission, setHasPermission] = useState<string | boolean>('not_requested')
 	const [scanned, setScanned] = useState<boolean>(false)
-	const [link, setLink] = useState<string>('')
+	const [url, setUrl] = useState<string>('')
 	const [scanInProgress, setScanInProgress] = useState<boolean>(false)
 	const [location, setLocation] = useState<LocationObject>()
 	const [errorMsg, setErrorMsg] = useState<boolean | string>(false)
+	const [showModal, setShowModal] = useState<boolean>(false)
+	const [trustScore, setTrustScore] = useState<string | null>('hello')
 
 	// Get User Permissions On App Launch
 	useEffect(() => {
@@ -99,7 +102,7 @@ export default function App() {
 		setLocation(location)
 		let { latitude, longitude, altitude } = location.coords
 		try {
-			setLink(data)
+			setUrl(data)
 			const res = await axios.post(
 				'http://192.168.10.151:8000/api/receiveUrlData',
 				{
@@ -118,7 +121,9 @@ export default function App() {
 				}
 			)
 
-			alert(`Response from BE: ${JSON.stringify(res.data)}`)
+			setTrustScore(JSON.stringify(res.data.trust_score))
+			console.info(JSON.stringify(res.data.trust_score))
+			setShowModal(true)
 		} catch (error) {
 			console.error(error)
 			alert(`Error: ${error}`)
@@ -137,13 +142,16 @@ export default function App() {
 						scanned={scanned}
 						onScan={onScan}
 					/>
-					<PermissionsButton />
+					{/* <PermissionsButton /> */}
 					{scanned && (
 						<>
-							<UrlDisplay link={link} />
-							<ScanAgainButton
+							<AfterScanModalDisplay
+								showModal={showModal}
+								setShowModal={setShowModal}
+								trust_score={trustScore}
+								url={url}
 								setScanned={setScanned}
-								setLink={setLink}
+								setUrl={setUrl}
 							/>
 						</>
 					)}
