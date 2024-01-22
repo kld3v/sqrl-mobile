@@ -10,7 +10,11 @@
 			[
 				"expo-location",
 				{
-					"locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+					"locationAlwaysAndWhenInUsePermission": "Allow Qrla to use your location.",
+					"locationAlwaysPermission": "Allow Qrla to use your location",
+					"locationWhenInUsePermission": "Allow Qrla to use your location",
+					"isIosBackgroundLocationEnabled": true,
+					"isAndroidBackgroundLocationEnabled": true
 				}
 			]
 		],
@@ -24,7 +28,10 @@
 			"supportsTablet": true,
 			"infoPlist": {
 				"NSCameraUsageDescription": "This app uses the camera to scan qr codes",
-				"UIBackgroundModes": ["location"]
+				"NSLocationAlwaysAndWhenInUseUsageDescription": "Allow Qrla to use your location",
+				"NSLocationAlwaysUsageDescription": "Allow Qrla to use your location",
+				"NSLocationWhenInUseUsageDescription": "Allow Qrla to use your location",
+				"UIBackgroundModes": ["location", "fetch", "remote-notification"]
 			}
 		},
 		"android": {
