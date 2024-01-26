@@ -6,9 +6,7 @@ import * as Location from 'expo-location'
 import * as TaskManager from 'expo-task-manager'
 import { LocationObject } from 'expo-location'
 import QrCodeScanner from './components/Screens/QrCodeScannerScreen/QrCodeScanner'
-import UrlDisplay from './components/Screens/QrCodeScannerScreen/UrlDisplay'
 import LoadingIndicator from './components/Screens/QrCodeScannerScreen/LoadingIndicator'
-import ScanAgainButton from './components/Screens/QrCodeScannerScreen/ScanAgainButton'
 import AfterScanModalDisplay from './components/Screens/QrCodeScannerScreen/AfterScanModalDisplay'
 
 const LOCATION_TASK_NAME = 'background-location-task'
@@ -120,7 +118,6 @@ export default function App() {
 					},
 				}
 			)
-
 			setTrustScore(JSON.stringify(res.data.trust_score))
 			console.info(JSON.stringify(res.data.trust_score))
 			setShowModal(true)
@@ -128,7 +125,6 @@ export default function App() {
 			console.error(error)
 			alert(`Error: ${error}`)
 		}
-
 		setScanInProgress(false)
 	}
 

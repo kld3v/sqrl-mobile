@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { AfterScanModalDisplayProps } from '../../../../types/afterScanModalDisplay'
 import { Modal, View, Text, Pressable, Linking, StyleSheet } from 'react-native'
+import PingSound from '../../../Audio/QrCodeScan/PingSound'
 
 const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal, setShowModal, trust_score, url, setScanned, setUrl }) => {
 	const openLink = () => {
@@ -14,6 +15,7 @@ const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal
 			setUrl('')
 		}
 	}
+
 	return (
 		<View style={styles.centeredView}>
 			<Modal
@@ -37,6 +39,7 @@ const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal
 						</Pressable>
 					</View>
 				</View>
+				<PingSound />
 			</Modal>
 		</View>
 	)
