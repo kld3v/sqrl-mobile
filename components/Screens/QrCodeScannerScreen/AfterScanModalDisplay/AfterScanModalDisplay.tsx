@@ -1,7 +1,6 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AfterScanModalDisplayProps } from '../../../../types/afterScanModalDisplay'
-import { Modal, View, Text, Pressable, Linking, StyleSheet } from 'react-native'
-import PingSound from '../../../Audio/QrCodeScan/PingSound'
+import { Modal, View, Text, Pressable, Linking, StyleSheet, Button } from 'react-native'
 
 const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal, setShowModal, trust_score, url, setScanned, setUrl }) => {
 	const openLink = () => {
@@ -15,6 +14,30 @@ const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal
 			setUrl('')
 		}
 	}
+
+	const [sound, setSound] = useState()
+
+	async function playSound() {
+		try {
+			console.log('Loading Sound')
+			const { sound } = await Audio.Sound.createAsync(require('./ping.mp3'))
+			setSound(sound)
+
+			console.log('Playing Sound')
+			await sound.playAsync()
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	useEffect(() => {
+		return sound
+			? () => {
+					console.log('Unloading Sound')
+					sound.unloadAsync()
+			  }
+			: undefined
+	}, [sound])
 
 	return (
 		<View style={styles.centeredView}>
@@ -37,9 +60,13 @@ const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal
 							onPress={resetScanAndLinkStateAndCloseModal()}>
 							<Text style={styles.textStyle}>Hide</Text>
 						</Pressable>
+
+						<Button
+							title='Play Sound'
+							onPress={playSound}
+						/>
 					</View>
 				</View>
-				<PingSound />
 			</Modal>
 		</View>
 	)
