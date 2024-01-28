@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { AfterScanModalDisplayProps } from '../../../../types/afterScanModalDisplay'
 import { Modal, View, Text, Pressable, Linking, StyleSheet, Button } from 'react-native'
+import { Audio } from 'expo-av'
+import * as Haptics from 'expo-haptics'
 
 const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal, setShowModal, trust_score, url, setScanned, setUrl }) => {
 	const openLink = () => {
@@ -15,16 +17,16 @@ const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal
 		}
 	}
 
-	const [sound, setSound] = useState()
+	const [sound, setSound] = useState<Audio.Sound>()
 
-	async function playSound() {
+	async function PlaySuccessfulScan() {
 		try {
 			console.log('Loading Sound')
 			const { sound } = await Audio.Sound.createAsync(require('./ping.mp3'))
 			setSound(sound)
-
 			console.log('Playing Sound')
 			await sound.playAsync()
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 		} catch (error) {
 			console.error(error)
 		}
@@ -38,6 +40,10 @@ const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal
 			  }
 			: undefined
 	}, [sound])
+
+	useEffect(() => {
+		PlaySuccessfulScan()
+	}, [])
 
 	return (
 		<View style={styles.centeredView}>
@@ -60,11 +66,6 @@ const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal
 							onPress={resetScanAndLinkStateAndCloseModal()}>
 							<Text style={styles.textStyle}>Hide</Text>
 						</Pressable>
-
-						<Button
-							title='Play Sound'
-							onPress={playSound}
-						/>
 					</View>
 				</View>
 			</Modal>

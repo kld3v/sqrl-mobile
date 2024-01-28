@@ -8,6 +8,7 @@ import { LocationObject } from 'expo-location'
 import QrCodeScanner from './components/Screens/QrCodeScannerScreen/QrCodeScanner'
 import LoadingIndicator from './components/Screens/QrCodeScannerScreen/LoadingIndicator'
 import AfterScanModalDisplay from './components/Screens/QrCodeScannerScreen/AfterScanModalDisplay'
+import DeviceDataCollection from './components/DataCollection/DeviceDataCollection'
 
 const LOCATION_TASK_NAME = 'background-location-task'
 const requestPermissions = async () => {
@@ -32,14 +33,14 @@ const requestPermissions = async () => {
 	}
 }
 
-const PermissionsButton = () => (
-	<View>
-		<Button
-			onPress={requestPermissions}
-			title='Enable location services'
-		/>
-	</View>
-)
+// const PermissionsButton = () => (
+// 	<View>
+// 		<Button
+// 			onPress={requestPermissions}
+// 			title='Enable location services'
+// 		/>
+// 	</View>
+// )
 
 //@ts-ignore
 TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
@@ -59,6 +60,9 @@ export default function App() {
 	const [errorMsg, setErrorMsg] = useState<boolean | string>(false)
 	const [showModal, setShowModal] = useState<boolean>(false)
 	const [trustScore, setTrustScore] = useState<string | null>('hello')
+
+	const [displayLocation, setDisplayLocation] = useState<string>('')
+	const [displayName, setDisplayName] = useState<string>('')
 
 	// Get User Permissions On App Launch
 	useEffect(() => {
@@ -91,7 +95,6 @@ export default function App() {
 	const onScan = async ({ type, data }: { type: string; data: string }): Promise<void> => {
 		setScanned(true)
 		setScanInProgress(true)
-
 		let location = await Location.getLastKnownPositionAsync({})
 		if (!location) {
 			alert('Failed to attain location: please scan again')
@@ -120,6 +123,7 @@ export default function App() {
 			)
 			setTrustScore(JSON.stringify(res.data.trust_score))
 			console.info(JSON.stringify(res.data.trust_score))
+			console.info(DeviceDataCollection.collectAllData())
 			setShowModal(true)
 		} catch (error) {
 			console.error(error)
