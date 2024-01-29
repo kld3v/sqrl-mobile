@@ -9,6 +9,8 @@ import QrCodeScanner from './components/Screens/QrCodeScannerScreen/QrCodeScanne
 import LoadingIndicator from './components/Screens/QrCodeScannerScreen/LoadingIndicator'
 import AfterScanModalDisplay from './components/Screens/QrCodeScannerScreen/AfterScanModalDisplay'
 import DeviceDataCollection from './components/DataCollection/DeviceDataCollection'
+import SettingsButton from './components/Navigation/SettingsButton/SettingsButton'
+import InfoBoxWidget from './components/Screens/QrCodeScannerScreen/InfoBoxWidget/InfoBoxWidget'
 
 const LOCATION_TASK_NAME = 'background-location-task'
 const requestPermissions = async () => {
@@ -79,7 +81,7 @@ export default function App() {
 
 				// However this is going to require some testing to ensure getLastKnownPositionAsync() returns this location rather than an incorrect location.
 				const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync()
-				let location = await Location.getCurrentPositionAsync({})
+				let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.BestForNavigation })
 				setLocation(location)
 				console.info(location)
 			} catch (error) {
@@ -140,29 +142,27 @@ export default function App() {
 
 	return (
 		<View style={styles.container}>
-			{scanInProgress ? (
-				<LoadingIndicator />
-			) : (
-				<>
-					<QrCodeScanner
-						scanned={scanned}
-						onScan={onScan}
-					/>
-					{/* <PermissionsButton /> */}
-					{scanned && (
-						<>
-							<AfterScanModalDisplay
-								showModal={showModal}
-								setShowModal={setShowModal}
-								trust_score={trustScore}
-								url={url}
-								setScanned={setScanned}
-								setUrl={setUrl}
-							/>
-						</>
-					)}
-				</>
-			)}
+			<>
+				<QrCodeScanner
+					scanned={scanned}
+					onScan={onScan}
+				/>
+				{/* <PermissionsButton /> */}
+				{scanned && (
+					<>
+						<AfterScanModalDisplay
+							showModal={showModal}
+							setShowModal={setShowModal}
+							trust_score={trustScore}
+							url={url}
+							setScanned={setScanned}
+							setUrl={setUrl}
+						/>
+					</>
+				)}
+			</>
+			<InfoBoxWidget />
+			<SettingsButton />
 		</View>
 	)
 }
