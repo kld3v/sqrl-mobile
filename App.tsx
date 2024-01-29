@@ -11,6 +11,7 @@ import AfterScanModalDisplay from './components/Screens/QrCodeScannerScreen/Afte
 import DeviceDataCollection from './components/DataCollection/DeviceDataCollection'
 import SettingsButton from './components/Navigation/SettingsButton/SettingsButton'
 import InfoBoxWidget from './components/Screens/QrCodeScannerScreen/InfoBoxWidget/InfoBoxWidget'
+import { ScanStateOptions } from './types'
 
 const LOCATION_TASK_NAME = 'background-location-task'
 const requestPermissions = async () => {
@@ -55,15 +56,11 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
 
 export default function App() {
 	const [hasPermission, setHasPermission] = useState<string | boolean>('not_requested')
-	const [scanned, setScanned] = useState<boolean>(false)
+	const [scanState, setScanState] = useState<ScanStateOptions>('notScanned')
 	const [url, setUrl] = useState<string>('')
-	const [scanInProgress, setScanInProgress] = useState<boolean>(false)
 	const [location, setLocation] = useState<LocationObject>()
 	const [errorMsg, setErrorMsg] = useState<boolean | string>(false)
-	const [showModal, setShowModal] = useState<boolean>(false)
-	const [trustScore, setTrustScore] = useState<string | null>('hello')
-
-	const [displayLocation, setDisplayLocation] = useState<string>('')
+	const [trustScore, setTrustScore] = useState<number | null>(null)
 	const [displayName, setDisplayName] = useState<string>('')
 
 	// Get User Permissions On App Launch
@@ -94,9 +91,28 @@ export default function App() {
 	!hasPermission && <Text>Access to camera denied</Text>
 	errorMsg && <Text>`Permission Denied: ${errorMsg}`</Text>
 
+	const sendUrlAndLocationData = async (data: string, latitude: number, longitude: number, altitude: number | null) => {
+		return await axios.post(
+			'http://192.168.10.151:8000/api/receiveUrlData',
+			{
+				url: data,
+				location: {
+					latitude,
+					longitude,
+					altitude,
+				},
+			},
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+			}
+		)
+	}
+
 	const onScan = async ({ type, data }: { type: string; data: string }): Promise<void> => {
-		setScanned(true)
-		setScanInProgress(true)
+		setScanState('scanning')
 		let location = await Location.getLastKnownPositionAsync({})
 		if (!location) {
 			alert('Failed to attain location: please scan again')
@@ -105,63 +121,40 @@ export default function App() {
 		setLocation(location)
 		let { latitude, longitude, altitude } = location.coords
 		try {
+			const res = await sendUrlAndLocationData(data, latitude, longitude, altitude)
+			let trustScore = Number(JSON.stringify(res.data.trust_score))
 			setUrl(data)
-			const res = await axios.post(
-				'http://192.168.10.151:8000/api/receiveUrlData',
-				{
-					url: data,
-					location: {
-						latitude,
-						longitude,
-						altitude,
-					},
-				},
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json',
-					},
-				}
-			)
-			setTrustScore(JSON.stringify(res.data.trust_score))
-			console.info(JSON.stringify(res.data.trust_score))
-
+			setTrustScore(trustScore)
 			try {
 				let data = await DeviceDataCollection.collectAllData()
 				console.info(data)
 			} catch (error) {
 				console.error(error)
 			}
-			setShowModal(true)
 		} catch (error) {
 			console.error(error)
-			alert(`Error: ${error}`)
 		}
-		setScanInProgress(false)
+		setScanState('scanned')
+		setDisplayName('Nandos')
 	}
 
 	return (
 		<View style={styles.container}>
-			<>
-				<QrCodeScanner
-					scanned={scanned}
-					onScan={onScan}
+			<QrCodeScanner
+				scanned={scanState === 'scanned' || scanState === 'scanning'}
+				onScan={onScan}
+			/>
+			{scanState !== 'notScanned' && (
+				<InfoBoxWidget
+					trustScore={trustScore}
+					destination={displayName}
+					url={url}
+					scanState={scanState}
+					safe={true}
+					setScanState={setScanState}
 				/>
-				{/* <PermissionsButton /> */}
-				{scanned && (
-					<>
-						<AfterScanModalDisplay
-							showModal={showModal}
-							setShowModal={setShowModal}
-							trust_score={trustScore}
-							url={url}
-							setScanned={setScanned}
-							setUrl={setUrl}
-						/>
-					</>
-				)}
-			</>
-			<InfoBoxWidget />
+			)}
+
 			<SettingsButton />
 		</View>
 	)
