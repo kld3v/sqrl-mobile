@@ -123,7 +123,13 @@ export default function App() {
 			)
 			setTrustScore(JSON.stringify(res.data.trust_score))
 			console.info(JSON.stringify(res.data.trust_score))
-			console.info(DeviceDataCollection.collectAllData())
+
+			try {
+				let data = await DeviceDataCollection.collectAllData()
+				console.info(data)
+			} catch (error) {
+				console.error(error)
+			}
 			setShowModal(true)
 		} catch (error) {
 			console.error(error)

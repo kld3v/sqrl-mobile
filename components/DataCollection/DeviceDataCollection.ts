@@ -20,10 +20,10 @@ export default class DeviceDataCollection {
 		const productName = Device.productName
 		const isDevice = Device.isDevice
 		const deviceType = Device.deviceType
-		const platformFeatures = Device.getPlatformFeaturesAsync()
-		const upTime = Device.getUptimeAsync()
-		const isRooted = Device.isRootedExperimentalAsync()
-		const isSideLoadingEnabled = Device.isSideLoadingEnabledAsync()
+		const platformFeatures = await Device.getPlatformFeaturesAsync()
+		const upTime = await Device.getUptimeAsync()
+		const isRooted = await Device.isRootedExperimentalAsync()
+		const isSideLoadingEnabled = Device.designName === 'kminilte' ? await Device.isSideLoadingEnabledAsync() : null
 
 		const device = {
 			deviceName,
