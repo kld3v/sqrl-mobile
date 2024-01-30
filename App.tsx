@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
@@ -6,9 +6,7 @@ import * as Location from 'expo-location'
 import * as TaskManager from 'expo-task-manager'
 import { LocationObject } from 'expo-location'
 import QrCodeScanner from './components/Screens/QrCodeScannerScreen/QrCodeScanner'
-import LoadingIndicator from './components/Screens/QrCodeScannerScreen/LoadingIndicator'
-import AfterScanModalDisplay from './components/Screens/QrCodeScannerScreen/AfterScanModalDisplay'
-import DeviceDataCollection from './components/DataCollection/DeviceDataCollection'
+import DeviceDataCollection from './services/DataCollection/DeviceDataCollection'
 import SettingsButton from './components/Navigation/SettingsButton/SettingsButton'
 import InfoBoxWidget from './components/Screens/QrCodeScannerScreen/InfoBoxWidget/InfoBoxWidget'
 import { ScanStateOptions } from './types'
@@ -35,15 +33,6 @@ const requestPermissions = async () => {
 		console.error(`Error requesting permissions: ${error}`)
 	}
 }
-
-// const PermissionsButton = () => (
-// 	<View>
-// 		<Button
-// 			onPress={requestPermissions}
-// 			title='Enable location services'
-// 		/>
-// 	</View>
-// )
 
 //@ts-ignore
 TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
