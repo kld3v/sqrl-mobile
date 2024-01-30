@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { Linking, Pressable, StyleSheet, Text, View, Image } from 'react-native'
 import { InfoBoxWidgetProps } from '../../../../types'
-import { Feather, AntDesign } from '@expo/vector-icons'
+import { Feather } from '@expo/vector-icons'
+import SafeScannedPing from '../../../Audio/SafeScannedPing'
+import SafeScannedHaptic from '../../../Haptics/SafeScannedHaptic'
 
 const InfoBoxWidget: React.FC<InfoBoxWidgetProps> = ({ trustScore, destination, url, scanState = 'notScanned', safe, setScanState, errorMessage, setErrorMessage }) => {
 	const iconSize = 64
@@ -51,6 +53,8 @@ const InfoBoxWidget: React.FC<InfoBoxWidgetProps> = ({ trustScore, destination, 
 				<Pressable onPress={scanAgain(errorMessage)}>
 					<Text>Scan Again</Text>
 				</Pressable>
+				<SafeScannedPing />
+				<SafeScannedHaptic />
 			</View>
 			{safe ? (
 				<Feather
