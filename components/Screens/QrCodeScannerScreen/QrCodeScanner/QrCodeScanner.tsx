@@ -3,7 +3,10 @@ import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import { QrCodeScannerProps } from '../../../../types/index'
 
-const QrCodeScanner: React.FC<QrCodeScannerProps> = ({ scanned, onScan }) => {
+const QrCodeScanner: React.FC<QrCodeScannerProps> = ({ scanned, onScan, scanState, safe }) => {
+	const Corner = ({ position, scanning }: { position: 'TopLeft' | 'TopRight' | 'BottomLeft' | 'BottomRight'; scanning: boolean; safe: boolean }) => (
+		<View style={[styles[`corner${position}`], scanning && styles.scanningCorner, scanState === 'scanned' ? (safe ? styles.scannedSafe : styles.scannedUnsafe) : null]} />
+	)
 	return (
 		<View style={StyleSheet.absoluteFillObject}>
 			<BarCodeScanner
@@ -12,10 +15,26 @@ const QrCodeScanner: React.FC<QrCodeScannerProps> = ({ scanned, onScan }) => {
 				testID='barcode-scanner'
 			/>
 			<View style={styles.reticule}>
-				<View style={styles.cornerTopLeft} />
-				<View style={styles.cornerTopRight} />
-				<View style={styles.cornerBottomLeft} />
-				<View style={styles.cornerBottomRight} />
+				<Corner
+					position='TopLeft'
+					scanning={scanState === 'scanning'}
+					safe={safe}
+				/>
+				<Corner
+					position='TopRight'
+					scanning={scanState === 'scanning'}
+					safe={safe}
+				/>
+				<Corner
+					position='BottomLeft'
+					scanning={scanState === 'scanning'}
+					safe={safe}
+				/>
+				<Corner
+					position='BottomRight'
+					scanning={scanState === 'scanning'}
+					safe={safe}
+				/>
 			</View>
 		</View>
 	)
@@ -35,8 +54,8 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		top: 0,
 		left: 0,
-		width: 50,
-		height: 50,
+		width: 32,
+		height: 32,
 		borderTopWidth: 8,
 		borderLeftWidth: 8,
 		borderColor: 'white',
@@ -46,8 +65,8 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		top: 0,
 		right: 0,
-		width: 50,
-		height: 50,
+		width: 32,
+		height: 32,
 		borderTopWidth: 8,
 		borderRightWidth: 8,
 		borderColor: 'white',
@@ -57,8 +76,8 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		bottom: 0,
 		left: 0,
-		width: 50,
-		height: 50,
+		width: 32,
+		height: 32,
 		borderBottomWidth: 8,
 		borderLeftWidth: 8,
 		borderColor: 'white',
@@ -68,12 +87,21 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		bottom: 0,
 		right: 0,
-		width: 50,
-		height: 50,
+		width: 32,
+		height: 32,
 		borderBottomWidth: 8,
 		borderRightWidth: 8,
 		borderColor: 'white',
 		borderBottomRightRadius: 10,
+	},
+	scanningCorner: {
+		borderColor: '#73c408',
+	},
+	scannedUnsafe: {
+		borderColor: '#eb4034',
+	},
+	scannedSafe: {
+		borderColor: '#a2f732',
 	},
 })
 

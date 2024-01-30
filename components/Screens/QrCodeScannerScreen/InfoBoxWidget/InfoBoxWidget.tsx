@@ -3,7 +3,7 @@ import { Linking, Pressable, StyleSheet, Text, View, Image } from 'react-native'
 import { InfoBoxWidgetProps } from '../../../../types'
 import { Feather, AntDesign } from '@expo/vector-icons'
 
-const InfoBoxWidget: React.FC<InfoBoxWidgetProps> = ({ trustScore, destination, url, scanState = 'notScanned', safe, setScanState }) => {
+const InfoBoxWidget: React.FC<InfoBoxWidgetProps> = ({ trustScore, destination, url, scanState = 'notScanned', safe, setScanState, errorMessage, setErrorMessage }) => {
 	const iconSize = 64
 	const [leaving, setLeaving] = useState(false)
 
@@ -12,43 +12,81 @@ const InfoBoxWidget: React.FC<InfoBoxWidgetProps> = ({ trustScore, destination, 
 		setTimeout(() => Linking.openURL(url), 2000)
 	}
 
-	return leaving ? (
-		<View style={styles.infoBox}>
-			<View style={styles.textAndButton}>
-				<Text style={styles.infoText}>See Ya next time! </Text>
+	const scanAgain =
+		(errorMessage: string | null): (() => void) =>
+		(): void => {
+			setScanState('notScanned')
+			errorMessage && setErrorMessage(null)
+		}
+
+	if (leaving)
+		return (
+			<View style={styles.infoBox}>
+				<View style={styles.textAndButton}>
+					<Text style={styles.infoText}>Leaving...</Text>
+				</View>
 			</View>
-		</View>
-	) : (
-		<View style={styles.infoBox}>
+		)
+
+	if (errorMessage)
+		return (
+			<View style={styles.infoBox}>
+				<View style={styles.textAndButton}>
+					<Pressable onPress={scanAgain(errorMessage)}>
+						<Text>{errorMessage}</Text>
+					</Pressable>
+				</View>
+			</View>
+		)
+
+	const scannedState = (
+		<>
 			<View style={styles.textAndButton}>
 				<Text style={styles.infoText}>{trustScore && `trust score: ${trustScore}`} </Text>
 				<Pressable onPress={() => setDelayedLeaving()}>
-					<Text>Go To {destination}</Text>
+					<Text>
+						{safe ? 'Go to' : 'Still proceed to'} {destination}
+					</Text>
 				</Pressable>
-				<Pressable onPress={() => setScanState('notScanned')}>
+				<Pressable onPress={scanAgain(errorMessage)}>
 					<Text>Scan Again</Text>
 				</Pressable>
 			</View>
-			{scanState === 'scanning' && (
-				<Image
-					source={require('./loading.gif')}
-					style={{ width: iconSize, height: iconSize }}
-				/>
-			)}
-			{scanState === 'scanned' && safe && (
+			{safe ? (
 				<Feather
 					name='check-circle'
 					size={iconSize}
-					color={'green'}
+					color={'#a2f732'}
 				/>
-			)}
-			{scanState === 'scanned' && !safe && (
+			) : (
 				<Feather
 					name='alert-circle'
 					size={iconSize}
-					color={'red'}
+					color={'#eb4034'}
 				/>
 			)}
+		</>
+	)
+
+	const scanningState = (
+		<>
+			<View style={styles.textAndButton}>
+				<Text style={styles.infoText}>Scanning...</Text>
+				<Pressable onPress={scanAgain(errorMessage)}>
+					<Text>Cancel</Text>
+				</Pressable>
+			</View>
+			<Image
+				source={require('./loading.gif')}
+				style={{ width: iconSize, height: iconSize }}
+			/>
+		</>
+	)
+
+	return (
+		<View style={styles.infoBox}>
+			{scanState === 'scanning' && scanningState}
+			{scanState === 'scanned' && scannedState}
 		</View>
 	)
 }

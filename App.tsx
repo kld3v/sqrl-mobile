@@ -32,7 +32,7 @@ const requestPermissions = async () => {
 			}
 		}
 	} catch (error) {
-		console.error('Permissions Error:', error)
+		console.error(`Error requesting permissions: ${error}`)
 	}
 }
 
@@ -59,9 +59,10 @@ export default function App() {
 	const [scanState, setScanState] = useState<ScanStateOptions>('notScanned')
 	const [url, setUrl] = useState<string>('')
 	const [location, setLocation] = useState<LocationObject>()
-	const [errorMsg, setErrorMsg] = useState<boolean | string>(false)
+	const [errorMsg, setErrorMsg] = useState<string | null>(null)
 	const [trustScore, setTrustScore] = useState<number | null>(null)
 	const [displayName, setDisplayName] = useState<string>('')
+	const [safe, setSafe] = useState<boolean>(false)
 
 	// Get User Permissions On App Launch
 	useEffect(() => {
@@ -93,7 +94,7 @@ export default function App() {
 
 	const sendUrlAndLocationData = async (data: string, latitude: number, longitude: number, altitude: number | null) => {
 		return await axios.post(
-			'http://192.168.10.151:8000/api/receiveUrlData',
+			'http://192.168.1.179:8000/api/receiveUrlData',
 			{
 				url: data,
 				location: {
@@ -113,29 +114,38 @@ export default function App() {
 
 	const onScan = async ({ type, data }: { type: string; data: string }): Promise<void> => {
 		setScanState('scanning')
+		setUrl(data)
+
 		let location = await Location.getLastKnownPositionAsync({})
 		if (!location) {
 			alert('Failed to attain location: please scan again')
 			return
 		}
+
 		setLocation(location)
 		let { latitude, longitude, altitude } = location.coords
 		try {
 			const res = await sendUrlAndLocationData(data, latitude, longitude, altitude)
+
 			let trustScore = Number(JSON.stringify(res.data.trust_score))
-			setUrl(data)
+
 			setTrustScore(trustScore)
-			try {
-				let data = await DeviceDataCollection.collectAllData()
-				console.info(data)
-			} catch (error) {
-				console.error(error)
-			}
+			setSafe(trustScore > 50 ? true : false)
+
+			setDisplayName('Nandos')
 		} catch (error) {
-			console.error(error)
+			console.error(`Error sending data: ${error}`)
+			setErrorMsg('Oops - Something went wrong :( Please try again')
 		}
+
+		try {
+			let deviceData = await DeviceDataCollection.collectAllData()
+			console.info(deviceData)
+		} catch (error) {
+			console.error(`Error collecting device data: ${error}`)
+		}
+
 		setScanState('scanned')
-		setDisplayName('Nandos')
 	}
 
 	return (
@@ -143,6 +153,8 @@ export default function App() {
 			<QrCodeScanner
 				scanned={scanState === 'scanned' || scanState === 'scanning'}
 				onScan={onScan}
+				scanState={scanState}
+				safe={safe}
 			/>
 			{scanState !== 'notScanned' && (
 				<InfoBoxWidget
@@ -150,8 +162,10 @@ export default function App() {
 					destination={displayName}
 					url={url}
 					scanState={scanState}
-					safe={true}
+					safe={safe}
 					setScanState={setScanState}
+					errorMessage={errorMsg}
+					setErrorMessage={setErrorMsg}
 				/>
 			)}
 
