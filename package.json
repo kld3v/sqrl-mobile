@@ -63,7 +63,8 @@
     "expo-camera": "~13.4.4",
     "expo-location": "~16.1.0",
     "expo-haptics": "~12.4.0",
-    "expo-av": "~13.4.1"
+    "expo-av": "~13.4.1",
+    "expo-barcode-scanner": "~12.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
