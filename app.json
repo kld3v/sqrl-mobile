@@ -1,53 +1,77 @@
 {
-	"expo": {
-		"name": "sqrl",
-		"slug": "sqrl",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./assets/icon.png",
-		"userInterfaceStyle": "light",
-		"plugins": [
-			[
-				"expo-location",
-				{
-					"locationAlwaysAndWhenInUsePermission": "Allow Qrla to use your location.",
-					"locationAlwaysPermission": "Allow Qrla to use your location",
-					"locationWhenInUsePermission": "Allow Qrla to use your location",
-					"isIosBackgroundLocationEnabled": true,
-					"isAndroidBackgroundLocationEnabled": true
-				}
-			]
-		],
-		"splash": {
-			"image": "./assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true,
-			"infoPlist": {
-				"NSCameraUsageDescription": "This app uses the camera to scan qr codes",
-				"NSLocationAlwaysAndWhenInUseUsageDescription": "Allow Qrla to use your location",
-				"NSLocationAlwaysUsageDescription": "Allow Qrla to use your location",
-				"NSLocationWhenInUseUsageDescription": "Allow Qrla to use your location",
-				"UIBackgroundModes": ["location", "fetch", "remote-notification"]
-			}
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			},
-			"permissions": ["CAMERA"]
-		},
-		"web": {
-			"favicon": "./assets/favicon.png"
-		},
-		"extra": {
-			"eas": {
-				"projectId": "6c702789-a25d-401f-a93d-dbf3b2e4302b"
-			}
-		}
-	}
+  "name": "qrlaApp",
+  "displayName": "qrlaApp",
+  "expo": {
+    "name": "qrlaApp",
+    "slug": "qrlaApp",
+    "scheme": "qrlaapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/app-icon-all.png",
+    "splash": {
+      "image": "./assets/images/splash-logo-all.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#191015"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "jsEngine": "hermes",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "icon": "./assets/images/app-icon-android-legacy.png",
+      "package": "com.qrlaapp",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
+        "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
+      },
+      "splash": {
+        "image": "./assets/images/splash-logo-android-universal.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      }
+    },
+    "ios": {
+      "icon": "./assets/images/app-icon-ios.png",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.qrlaapp",
+      "splash": {
+        "image": "./assets/images/splash-logo-ios-mobile.png",
+        "tabletImage": "./assets/images/splash-logo-ios-tablet.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/app-icon-web-favicon.png",
+      "splash": {
+        "image": "./assets/images/splash-logo-web.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      },
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "newArchEnabled": false
+          },
+          "android": {
+            "newArchEnabled": false
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "tsconfigPaths": true
+    }
+  },
+  "ignite": {
+    "version": "9.4.2"
+  }
 }
