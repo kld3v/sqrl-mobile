@@ -51,7 +51,7 @@ export function DemoNavigator() {
           tabBarAccessibilityLabel: translate("demoNavigator.scannerTab"),
           tabBarLabel: translate("demoNavigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="view" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="view" color={focused ? colors.tint : colors.text} size={30} />
           ),
         }}
       />
@@ -62,7 +62,7 @@ export function DemoNavigator() {
         options={{
           tabBarLabel: translate("demoNavigator.mapTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="pin" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="pin" color={focused ? colors.tint : colors.text} size={30} />
           ),
         }}
       />
@@ -73,7 +73,7 @@ export function DemoNavigator() {
         options={{
           tabBarLabel: translate("demoNavigator.communityTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="community" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="community" color={focused ? colors.tint : colors.text} size={30} />
           ),
         }}
       />
@@ -84,7 +84,7 @@ export function DemoNavigator() {
         options={{
           tabBarLabel: translate("demoNavigator.debugTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="settings" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="settings" color={focused ? colors.tint : colors.text} size={30} />
           ),
         }}
       />

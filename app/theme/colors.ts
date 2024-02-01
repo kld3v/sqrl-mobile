@@ -2,36 +2,36 @@
 
 const palette = {
   neutral100: "#FFFFFF",
-  neutral200: "#F4F2F1",
-  neutral300: "#D7CEC9",
-  neutral400: "#B6ACA6",
-  neutral500: "#978F8A",
-  neutral600: "#564E4A",
-  neutral700: "#3C3836",
-  neutral800: "#191015",
-  neutral900: "#000000",
+  neutral200: "#041522",
+  neutral300: "#2C3E50",
+  neutral400: "#566573",
+  neutral500: "#7B8A99",
+  neutral600: "#99A3A4",
+  neutral700: "#A2AFB8",
+  neutral800: "#D6DBDF",
+  neutral900: "#E1E5E8",
 
-  primary100: "#F4E0D9",
-  primary200: "#E8C1B4",
-  primary300: "#DDA28E",
-  primary400: "#D28468",
-  primary500: "#C76542",
-  primary600: "#A54F31",
+  primary100: "#D7F2C2",
+  primary200: "#B4E89C",
+  primary300: "#92DD75",
+  primary400: "#71D255",
+  primary500: "#a2f732",
+  primary600: "#8BC34A",
 
-  secondary100: "#DCDDE9",
-  secondary200: "#BCC0D6",
-  secondary300: "#9196B9",
-  secondary400: "#626894",
-  secondary500: "#41476E",
+  secondary100: "#E7B2C3",
+  secondary200: "#D485A1",
+  secondary300: "#C1587E",
+  secondary400: "#AD2B5B",
+  secondary500: "#a61856",
 
-  accent100: "#FFEED4",
-  accent200: "#FFE1B2",
-  accent300: "#FDD495",
-  accent400: "#FBC878",
-  accent500: "#FFBB50",
+  accent100: "#FFEEF0",
+  accent200: "#FFD4E5",
+  accent300: "#FFB9DA",
+  accent400: "#FF9ECE",
+  accent500: "#FF83C2",
 
-  angry100: "#F2D6CD",
-  angry500: "#C03403",
+  angry100: "#F8D7DA",
+  angry500: "#D32F2F",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
@@ -51,7 +51,7 @@ export const colors = {
   /**
    * The default text color in many components.
    */
-  text: palette.neutral800,
+  text: palette.neutral100,
   /**
    * Secondary text information.
    */
