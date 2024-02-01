@@ -9,7 +9,7 @@ import { type ContentStyle } from "@shopify/flash-list"
 //   useSharedValue,
 //   withSpring,
 // } from "react-native-reanimated"
-import { Screen } from "../components"
+import { QrScanner, Screen } from "../components"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
 
@@ -43,11 +43,9 @@ export const ScanScreen: FC<DemoTabScreenProps<"Scan">> = observer(function Scan
   }
 
   return (
-    <Screen
-      preset="fixed"
-      safeAreaEdges={["top"]}
-      contentContainerStyle={$screenContentContainer}
-    ></Screen>
+    <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
+      <QrScanner />
+    </Screen>
   )
 })
 
