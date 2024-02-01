@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
@@ -6,10 +6,10 @@ import * as Location from 'expo-location'
 import * as TaskManager from 'expo-task-manager'
 import { LocationObject } from 'expo-location'
 import QrCodeScanner from './components/Screens/QrCodeScannerScreen/QrCodeScanner'
-import UrlDisplay from './components/Screens/QrCodeScannerScreen/UrlDisplay'
-import LoadingIndicator from './components/Screens/QrCodeScannerScreen/LoadingIndicator'
-import ScanAgainButton from './components/Screens/QrCodeScannerScreen/ScanAgainButton'
-import AfterScanModalDisplay from './components/Screens/QrCodeScannerScreen/AfterScanModalDisplay'
+import DeviceDataCollection from './services/DataCollection/DeviceDataCollection'
+import SettingsButton from './components/Navigation/SettingsButton/SettingsButton'
+import InfoBoxWidget from './components/Screens/QrCodeScannerScreen/InfoBoxWidget/InfoBoxWidget'
+import { ScanStateOptions } from './types'
 
 const LOCATION_TASK_NAME = 'background-location-task'
 const requestPermissions = async () => {
@@ -30,18 +30,9 @@ const requestPermissions = async () => {
 			}
 		}
 	} catch (error) {
-		console.error('Permissions Error:', error)
+		console.error(`Error requesting permissions: ${error}`)
 	}
 }
-
-const PermissionsButton = () => (
-	<View>
-		<Button
-			onPress={requestPermissions}
-			title='Enable location services'
-		/>
-	</View>
-)
 
 //@ts-ignore
 TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
@@ -54,13 +45,13 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
 
 export default function App() {
 	const [hasPermission, setHasPermission] = useState<string | boolean>('not_requested')
-	const [scanned, setScanned] = useState<boolean>(false)
+	const [scanState, setScanState] = useState<ScanStateOptions>('notScanned')
 	const [url, setUrl] = useState<string>('')
-	const [scanInProgress, setScanInProgress] = useState<boolean>(false)
 	const [location, setLocation] = useState<LocationObject>()
-	const [errorMsg, setErrorMsg] = useState<boolean | string>(false)
-	const [showModal, setShowModal] = useState<boolean>(false)
-	const [trustScore, setTrustScore] = useState<string | null>('hello')
+	const [errorMsg, setErrorMsg] = useState<string | null>(null)
+	const [trustScore, setTrustScore] = useState<number | null>(null)
+	const [displayName, setDisplayName] = useState<string>('')
+	const [safe, setSafe] = useState<boolean>(false)
 
 	// Get User Permissions On App Launch
 	useEffect(() => {
@@ -77,7 +68,7 @@ export default function App() {
 
 				// However this is going to require some testing to ensure getLastKnownPositionAsync() returns this location rather than an incorrect location.
 				const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync()
-				let location = await Location.getCurrentPositionAsync({})
+				let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.BestForNavigation })
 				setLocation(location)
 				console.info(location)
 			} catch (error) {
@@ -90,73 +81,84 @@ export default function App() {
 	!hasPermission && <Text>Access to camera denied</Text>
 	errorMsg && <Text>`Permission Denied: ${errorMsg}`</Text>
 
+	const sendUrlAndLocationData = async (data: string, latitude: number, longitude: number, altitude: number | null) => {
+		return await axios.post(
+			'http://192.168.1.179:8000/api/receiveUrlData',
+			{
+				url: data,
+				location: {
+					latitude,
+					longitude,
+					altitude,
+				},
+			},
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+			}
+		)
+	}
+
 	const onScan = async ({ type, data }: { type: string; data: string }): Promise<void> => {
-		setScanned(true)
-		setScanInProgress(true)
+		setScanState('scanning')
+		setUrl(data)
 
 		let location = await Location.getLastKnownPositionAsync({})
 		if (!location) {
 			alert('Failed to attain location: please scan again')
 			return
 		}
+
 		setLocation(location)
 		let { latitude, longitude, altitude } = location.coords
 		try {
-			setUrl(data)
-			const res = await axios.post(
-				'http://192.168.10.151:8000/api/receiveUrlData',
-				{
-					url: data,
-					location: {
-						latitude,
-						longitude,
-						altitude,
-					},
-				},
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json',
-					},
-				}
-			)
+			const res = await sendUrlAndLocationData(data, latitude, longitude, altitude)
 
-			setTrustScore(JSON.stringify(res.data.trust_score))
-			console.info(JSON.stringify(res.data.trust_score))
-			setShowModal(true)
+			let trustScore = Number(JSON.stringify(res.data.trust_score))
+
+			setTrustScore(trustScore)
+			setSafe(trustScore > 50 ? true : false)
+
+			setDisplayName('Nandos')
 		} catch (error) {
-			console.error(error)
-			alert(`Error: ${error}`)
+			console.error(`Error sending data: ${error}`)
+			setErrorMsg('Oops - Something went wrong :( Please try again')
 		}
 
-		setScanInProgress(false)
+		try {
+			let deviceData = await DeviceDataCollection.collectAllData()
+			console.info(deviceData)
+		} catch (error) {
+			console.error(`Error collecting device data: ${error}`)
+		}
+
+		setScanState('scanned')
 	}
 
 	return (
 		<View style={styles.container}>
-			{scanInProgress ? (
-				<LoadingIndicator />
-			) : (
-				<>
-					<QrCodeScanner
-						scanned={scanned}
-						onScan={onScan}
-					/>
-					{/* <PermissionsButton /> */}
-					{scanned && (
-						<>
-							<AfterScanModalDisplay
-								showModal={showModal}
-								setShowModal={setShowModal}
-								trust_score={trustScore}
-								url={url}
-								setScanned={setScanned}
-								setUrl={setUrl}
-							/>
-						</>
-					)}
-				</>
+			<QrCodeScanner
+				scanned={scanState === 'scanned' || scanState === 'scanning'}
+				onScan={onScan}
+				scanState={scanState}
+				safe={safe}
+			/>
+			{scanState !== 'notScanned' && (
+				<InfoBoxWidget
+					trustScore={trustScore}
+					destination={displayName}
+					url={url}
+					scanState={scanState}
+					safe={safe}
+					setScanState={setScanState}
+					errorMessage={errorMsg}
+					setErrorMessage={setErrorMsg}
+				/>
 			)}
+
+			<SettingsButton />
 		</View>
 	)
 }

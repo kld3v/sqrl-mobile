@@ -1,6 +1,6 @@
 import React from 'react'
 import { AfterScanModalDisplayProps } from '../../../../types/afterScanModalDisplay'
-import { Modal, View, Text, Pressable, Linking, StyleSheet } from 'react-native'
+import { Modal, View, Text, Pressable, Linking, StyleSheet, Button } from 'react-native'
 
 const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal, setShowModal, trust_score, url, setScanned, setUrl }) => {
 	const openLink = () => {
@@ -14,6 +14,7 @@ const AfterScanModalDisplay: React.FC<AfterScanModalDisplayProps> = ({ showModal
 			setUrl('')
 		}
 	}
+
 	return (
 		<View style={styles.centeredView}>
 			<Modal
