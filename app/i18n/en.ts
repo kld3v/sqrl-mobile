@@ -47,27 +47,12 @@ const en = {
     communityTab: "Community",
     debugTab: "Debug",
   },
-  demoCommunityScreen: {
-    title: "Connect with the community",
+  communityScreen: {
+    title: "Connect with the QR'la community",
     tagLine:
-      "Plug in to Infinite Red's community of React Native engineers and level up your app development with us!",
-    joinUsOnSlackTitle: "Join us on Slack",
-    joinUsOnSlack:
-      "Wish there was a place to connect with React Native engineers around the world? Join the conversation in the Infinite Red Community Slack! Our growing community is a safe space to ask questions, learn from others, and grow your network.",
-    joinSlackLink: "Join the Slack Community",
-    makeIgniteEvenBetterTitle: "Make Ignite even better",
-    makeIgniteEvenBetter:
-      "Have an idea to make Ignite even better? We're happy to hear that! We're always looking for others who want to help us build the best React Native tooling out there. Join us over on GitHub to join us in building the future of Ignite.",
-    contributeToIgniteLink: "Contribute to Ignite",
-    theLatestInReactNativeTitle: "The latest in React Native",
-    theLatestInReactNative: "We're here to keep you current on all React Native has to offer.",
-    reactNativeRadioLink: "React Native Radio",
-    reactNativeNewsletterLink: "React Native Newsletter",
-    reactNativeLiveLink: "React Native Live",
-    chainReactConferenceLink: "Chain React Conference",
-    hireUsTitle: "Hire Infinite Red for your next project",
-    hireUs:
-      "Whether it's running a full project or getting teams up to speed with our hands-on training, Infinite Red can help with just about any React Native project.",
+      "We're a group of Koalas looking to munch on some leaves and make the world a better place. Did you know every scan gets us leaf.",
+    hireUsTitle: "We're a bunch of Koala fans looking to make the world that little bit safer.",
+    hireUs: "We like leaves.",
     hireUsLink: "Send us a message",
   },
   demoShowroomScreen: {

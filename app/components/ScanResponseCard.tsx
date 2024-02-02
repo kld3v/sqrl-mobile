@@ -1,5 +1,14 @@
 import * as React from "react"
-import { Linking, StyleProp, TextStyle, View, ViewStyle, StyleSheet, Pressable } from "react-native"
+import {
+  Linking,
+  StyleProp,
+  TextStyle,
+  View,
+  ViewStyle,
+  StyleSheet,
+  Pressable,
+  Image,
+} from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
@@ -31,7 +40,16 @@ export interface ScanResponseCardProps {
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
   const iconSize = 64
-  const { style } = props
+  const {
+    style,
+    trustScore,
+    safe,
+    destination,
+    errorMessage,
+    scanState,
+    setScanState,
+    setErrorMessage,
+  } = props
   const $styles = [$container, style]
   const [leaving, setLeaving] = useState(false)
 
@@ -39,6 +57,12 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     setLeaving(true)
     setTimeout(() => Linking.openURL("https://qrla.io"), 2000)
   }
+  const scanAgain =
+    (errorMessage: string | null): (() => void) =>
+    (): void => {
+      setScanState("notScanned")
+      errorMessage && setErrorMessage(null)
+    }
 
   const scannedState = (
     <>
@@ -62,6 +86,17 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       )}
     </>
   )
+  const scanningState = (
+    <>
+      <View style={styles.textAndButton}>
+        <Text style={styles.infoText}>Scanning...</Text>
+        <Pressable onPress={scanAgain(errorMessage)}>
+          <Text>Cancel</Text>
+        </Pressable>
+      </View>
+      <Image source={require("./loading.gif")} style={{ width: iconSize, height: iconSize }} />
+    </>
+  )
 
   if (leaving)
     return (
@@ -74,8 +109,8 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
 
   return (
     <View style={$styles}>
-      <Text style={$text}>Hello</Text>
-      <Icon icon="ladybug" />
+      {scanState === "scanning" && scanningState}
+      {scanState === "scanned" && scannedState}
     </View>
   )
 })

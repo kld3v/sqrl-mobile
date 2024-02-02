@@ -8,10 +8,8 @@ import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
 import { ScanStateOptions } from "types"
 import { useEffect, useState } from "react"
 import { StatusBar } from "expo-status-bar"
-import { BarCodeScanner } from "expo-barcode-scanner"
 import * as Location from "expo-location"
 import { ApiResponse, create } from "apisauce"
-import { Card } from "./Card"
 import { ScanResponseCard } from "./ScanResponseCard"
 
 export interface QrScannerProps {
@@ -153,7 +151,17 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         <Corner position="BottomLeft" scanning={scanState === "scanning"} safe={safe} />
         <Corner position="BottomRight" scanning={scanState === "scanning"} safe={safe} />
       </View>
-      {/* <ScanResponseCard style={$card} /> */}
+      <ScanResponseCard
+        style={$card}
+        trustScore={trustScore}
+        destination={displayName}
+        url={url}
+        scanState={scanState}
+        safe={safe}
+        setScanState={setScanState}
+        errorMessage={errorMsg}
+        setErrorMessage={setErrorMsg}
+      />
     </View>
   )
 })
