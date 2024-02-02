@@ -5,7 +5,9 @@ import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
 
-import { Camera, CameraType } from "expo-camera"
+import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
+import { ScanStateOptions } from "types"
+import { useState } from "react"
 
 export interface QrScannerProps {
   /**
@@ -21,6 +23,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const { style } = props
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
+  const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
 
   if (!permission) {
     // Camera permissions are still loading
@@ -37,14 +40,17 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     )
   }
 
+  const onScan = (event: BarCodeScanningResult) => {
+    console.log(event)
+    setScanState("scanned")
+  }
+
   return (
     <View style={$styles}>
       <Camera
         style={$camera}
         type={CameraType.back}
-        onBarCodeScanned={(event) => {
-          console.log(event)
-        }}
+        onBarCodeScanned={scanState === "notScanned" ? onScan : undefined}
       />
     </View>
   )
