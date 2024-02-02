@@ -10,6 +10,7 @@ import { colors, spacing } from "../../theme"
 import { useSafeAreaInsetsStyle } from "../../utils/useSafeAreaInsetsStyle"
 import * as Demos from "./demos"
 import { DrawerIconButton } from "./DrawerIconButton"
+import { StatusBar } from "expo-status-bar"
 
 const logo = require("../../../assets/images/logo.png")
 
@@ -38,6 +39,8 @@ const WebListItem: FC<DemoListItem> = ({ item, sectionIndex }) => {
 
   return (
     <View>
+      <StatusBar style="light" />
+
       <Link to={`/showroom/${sectionSlug}`} style={$menuContainer}>
         <Text preset="bold">{item.name}</Text>
       </Link>

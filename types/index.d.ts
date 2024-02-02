@@ -1,1 +1,1 @@
-export * from "./InfoBoxWidget"
+export * from "./QrScanner"

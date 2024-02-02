@@ -30,6 +30,7 @@ import { customFontsToLoad } from "./theme"
 import Config from "./config"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { ViewStyle } from "react-native"
+import { StatusBar } from "expo-status-bar"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 

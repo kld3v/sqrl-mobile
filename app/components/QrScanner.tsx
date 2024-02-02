@@ -4,10 +4,11 @@ import { observer } from "mobx-react-lite"
 import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
-
+import { LocationObject } from "expo-location"
 import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
 import { ScanStateOptions } from "types"
 import { useState } from "react"
+import { StatusBar } from "expo-status-bar"
 
 export interface QrScannerProps {
   /**
@@ -24,6 +25,13 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
   const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
+  const [hasPermission, setHasPermission] = useState<string | boolean>("not_requested")
+  const [url, setUrl] = useState<string>("")
+  const [location, setLocation] = useState<LocationObject>()
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [trustScore, setTrustScore] = useState<number | null>(null)
+  const [displayName, setDisplayName] = useState<string>("")
+  const [safe, setSafe] = useState<boolean>(false)
 
   if (!permission) {
     // Camera permissions are still loading
@@ -47,6 +55,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   return (
     <View style={$styles}>
+      <StatusBar style="light" />
       <Camera
         style={$camera}
         type={CameraType.back}

@@ -20,6 +20,7 @@ import { useStores } from "../models"
 import { DemoNavigator, DemoTabParamList } from "./DemoNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
+import { StatusBar } from "expo-status-bar"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator

@@ -5,6 +5,7 @@ import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { spacing } from "../theme"
 import { openLinkInBrowser } from "../utils/openLinkInBrowser"
 import { isRTL } from "../i18n"
+import { StatusBar } from "expo-status-bar"
 
 const chainReactLogo = require("../../assets/images/demo/cr-logo.png")
 const reactNativeLiveLogo = require("../../assets/images/demo/rnl-logo.png")
@@ -16,6 +17,8 @@ export const CommunityScreen: FC<DemoTabScreenProps<"Community">> = function Com
 ) {
   return (
     <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top"]}>
+      <StatusBar style="light" />
+
       <Text preset="heading" tx="demoCommunityScreen.title" style={$title} />
       <Text tx="demoCommunityScreen.tagLine" style={$tagline} />
 
