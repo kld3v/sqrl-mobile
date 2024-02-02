@@ -57,6 +57,16 @@
     },
     "plugins": [
       [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Qrla to use your location.",
+          "locationAlwaysPermission": "Allow Qrla to use your location",
+          "locationWhenInUsePermission": "Allow Qrla to use your location",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ],
+      [
         "expo-camera",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
