@@ -108,6 +108,10 @@ export const iconRegistry = {
   view: require("../../assets/icons/view.png"),
   x: require("../../assets/icons/x.png"),
   qrCode: require("../../assets/icons/qr-code.png"),
+  // <a href="https://www.flaticon.com/free-icons/qr-code" title="qr code icons">Qr code icons created by Maniprasanth - Flaticon</a>
+  face: require("../../assets/icons/face.png"),
+  map: require("../../assets/icons/map.png"),
+  eucalyptus: require("../../assets/icons/eucalyptus.png"),
 }
 
 const $imageStyleBase: ImageStyle = {

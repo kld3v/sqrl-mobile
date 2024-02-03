@@ -2,7 +2,7 @@ import React, { FC } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import { ListItem, Screen, Text } from "../components"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
-import { spacing } from "../theme"
+import { colors, spacing } from "../theme"
 import { openLinkInBrowser } from "../utils/openLinkInBrowser"
 import { isRTL } from "../i18n"
 import { StatusBar } from "expo-status-bar"
@@ -17,11 +17,18 @@ export const CommunityScreen: FC<DemoTabScreenProps<"Community">> = function Com
       <Text preset="heading" tx="communityScreen.title" style={$title} />
       <Text tx="communityScreen.tagLine" style={$tagline} />
 
-      <Text preset="subheading" tx="communityScreen.hireUsTitle" style={$sectionTitle} />
+      <Text preset="subheading" tx="communityScreen.thisIsRoger" style={$sectionTitle} />
+      <Image
+        source={require("../../assets/images/vibe.gif")}
+        style={$roger}
+        accessibilityLabel="Roger"
+      />
+
       <Text tx="communityScreen.hireUs" style={$description} />
       <ListItem
-        tx="communityScreen.hireUsLink"
-        leftIcon="clap"
+        tx="communityScreen.interweb"
+        leftIcon="face"
+        leftIconColor={colors.icon}
         rightIcon={isRTL ? "caretLeft" : "caretRight"}
         onPress={() => openLinkInBrowser("https://qrla.io")}
       />
@@ -39,7 +46,7 @@ const $title: TextStyle = {
 }
 
 const $tagline: TextStyle = {
-  marginBottom: spacing.xxl,
+  marginBottom: spacing.xs,
 }
 
 const $description: TextStyle = {
@@ -47,5 +54,11 @@ const $description: TextStyle = {
 }
 
 const $sectionTitle: TextStyle = {
-  marginTop: spacing.xxl,
+  marginTop: spacing.sm,
+}
+
+const $roger: ImageStyle = {
+  width: 200,
+  height: 200,
+  marginBottom: spacing.lg,
 }

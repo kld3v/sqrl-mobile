@@ -81,4 +81,9 @@ export const colors = {
    *
    */
   errorBackground: palette.angry100,
+
+  /**
+   * The default color of the icons
+   */
+  icon: palette.primary500,
 }

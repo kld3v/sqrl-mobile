@@ -49,19 +49,17 @@ const en = {
   },
   communityScreen: {
     title: "A koala-ty community",
-    tagLine:
-      "We're a group of Koalas looking to munch on some leaves and make the world a better place. Did you know every scan gets us leaf.",
-    hireUsTitle: "We're a bunch of Koala fans looking to make the world that little bit safer.",
-    hireUs: "We like leaves.",
-    hireUsLink: "Send us a message",
+    tagLine: "We're a group of Koalas looking to find the best leaves.",
+    thisIsRoger: "This is Roger.",
+    hireUs: "He likes leaves.",
+    interweb: "get sneak peaks on our page on the interweb-net",
   },
   mapScreen: {
     title: "Map",
-    tagLine:
-      "We found these humans to make our app. They're pretty good at it. But they haven't made our map yet - do you think that's a cool idea?",
-    hireUsTitle: "btw we like leaves",
-    hireUs: "",
-    hireUsLink: "Click to see our headquarters",
+    tagLine: "We found these humans to make our app. But they haven't made our map yet...",
+    weLikeLeaves: "You'll get to see where the nearest and juiciest leaves are. Mmmmm.",
+
+    headquarters: "Click to see our secret headquarters",
   },
   demoDebugScreen: {
     howTo: "HOW TO",
