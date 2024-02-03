@@ -1,22 +1,13 @@
 import * as React from "react"
-import {
-  Linking,
-  StyleProp,
-  TextStyle,
-  View,
-  ViewStyle,
-  StyleSheet,
-  Pressable,
-  Image,
-} from "react-native"
+import { StyleProp, TextStyle, View, ViewStyle, StyleSheet, Pressable, Image } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
-import { Icon } from "./Icon"
 import { useState } from "react"
 import SafeScannedPing from "./Audio/SafeScannedPing"
-import SafeScannedHaptic from "./Haptics/SafeScannedHaptic"
 import { Feather } from "@expo/vector-icons"
+import { openLinkInBrowser } from "app/utils/openLinkInBrowser"
+import OnScanHaptic from "./Haptics/OnScanHaptic"
 
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
@@ -55,13 +46,13 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
 
   const setDelayedLeaving = (): void => {
     setLeaving(true)
-    setTimeout(() => Linking.openURL("https://qrla.io"), 2000)
+    setTimeout(() => openLinkInBrowser(destination!), 2000)
   }
   const scanAgain =
     (errorMessage: string | null): (() => void) =>
     (): void => {
-      setScanState("notScanned")
       errorMessage && setErrorMessage(null)
+      setScanState("notScanned")
     }
 
   const scannedState = (
@@ -77,11 +68,11 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
           <Text style={styles.infoText}>Scan Again</Text>
         </Pressable>
         <SafeScannedPing />
+        <OnScanHaptic scanState={scanState} safe={safe} />
       </View>
       {safe ? (
         <>
           <Feather name="check-circle" size={iconSize} color={"#a2f732"} />
-          <SafeScannedHaptic />
         </>
       ) : (
         <Feather name="alert-circle" size={iconSize} color={"#eb4034"} />
@@ -90,6 +81,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   )
   const scanningState = (
     <>
+      <OnScanHaptic scanState={scanState} />
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>Scanning...</Text>
         <Pressable onPress={scanAgain(errorMessage)}>
@@ -101,15 +93,21 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   )
 
   const leavingState = (
-    <View style={styles.textAndButton}>
-      <Text style={styles.infoText}>Leaving...</Text>
-    </View>
+    <>
+      <View style={styles.textAndButton}>
+        <Text style={styles.infoText}>Byeeeeeeeee</Text>
+        <Pressable onPress={scanAgain(errorMessage)}>
+          <Text style={{ color: colors.palette.secondary500 }}>No wait scan again!</Text>
+        </Pressable>
+      </View>
+      <Image source={require("./koala.gif")} style={{ width: iconSize, height: iconSize }} />
+    </>
   )
 
   return (
     <View style={styles.infoBox}>
       {scanState === "scanning" && scanningState}
-      {scanState === "scanned" && scannedState}
+      {scanState === "scanned" && !leaving && scannedState}
       {leaving && leavingState}
     </View>
   )
@@ -132,7 +130,7 @@ const styles = StyleSheet.create({
     right: "10%",
     bottom: 24,
     width: "80%", // adjust this value as needed
-    height: 104,
+    height: "auto",
     padding: 16,
     backgroundColor: "white",
     borderRadius: 10,

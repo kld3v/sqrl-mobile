@@ -27,7 +27,6 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
   const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
-  const [hasPermission, setHasPermission] = useState<string | boolean>("not_requested")
   const [url, setUrl] = useState<string>("")
   const [location, setLocation] = useState<LocationObject>()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -43,6 +42,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync()
         if (__DEV__) console.info(foregroundStatus)
 
+        // TODO - Move to global state and use it here
         let location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.BestForNavigation,
         })
@@ -78,31 +78,38 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   const onScan = async (qrCodeScan: BarCodeScanningResult) => {
     setScanState("scanning")
-    console.info(`Scanned QR code: ${qrCodeScan.data}`)
     setUrl(qrCodeScan.data)
-    let location = await Location.getLastKnownPositionAsync({})
-    if (!location) {
-      alert("Failed to attain location: please scan again")
-      return
-    }
-    setLocation(location)
-    let { latitude, longitude, altitude } = location.coords
-    console.info(`Latitude: ${latitude}, Longitude: ${longitude}, Altitude: ${altitude}`)
-    try {
-      let response = await sendUrlAndLocationData(qrCodeScan.data, latitude, longitude, altitude)
 
-      console.info(`Response: ${JSON.stringify(response.data)}`)
-      let trustScore = Number(JSON.stringify(response.data.trust_score))
-      console.info(`Trust score: ${trustScore}`)
-      setTrustScore(trustScore)
-      setSafe(trustScore && trustScore > 50 ? true : false)
-      setDisplayName("Nandos")
-    } catch (error) {
-      console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
-      setErrorMsg("Oops - Something went wrong :( Please try again")
+    if (location) {
+      // just get from state - much quicker!
+      // let { latitude, longitude, altitude } = location.coords
     }
+
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    if (qrCodeScan.data === "https://qrla.io/") {
+      setTrustScore(100)
+      setSafe(true)
+      setDisplayName("QRLA")
+    } else {
+      setTrustScore(1)
+      setSafe(false)
+      setDisplayName(`${qrCodeScan.data}`)
+    }
+    // try {
+    //   let response = await sendUrlAndLocationData(qrCodeScan.data, latitude, longitude, altitude)
+
+    //   console.info(`Response: ${JSON.stringify(response.data)}`)
+    //   let trustScore = Number(JSON.stringify(response.data.trust_score))
+    //   console.info(`Trust score: ${trustScore}`)
+    //   setTrustScore(trustScore)
+    //   setSafe(trustScore && trustScore > 50 ? true : false)
+    //   setDisplayName("Nandos")
+    // } catch (error) {
+    //   console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
+    //   setErrorMsg("Oops - Something went wrong :( Please try again")
+    // }
     setScanState("scanned")
-    alert(`Scanned QR code: ${qrCodeScan.data}, trust score: ${trustScore}`)
   }
 
   const Corner = ({
@@ -151,6 +158,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         <Corner position="BottomLeft" scanning={scanState === "scanning"} safe={safe} />
         <Corner position="BottomRight" scanning={scanState === "scanning"} safe={safe} />
       </View>
+
       {scanState !== "notScanned" && (
         <ScanResponseCard
           style={$card}
