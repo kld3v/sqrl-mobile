@@ -151,17 +151,19 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         <Corner position="BottomLeft" scanning={scanState === "scanning"} safe={safe} />
         <Corner position="BottomRight" scanning={scanState === "scanning"} safe={safe} />
       </View>
-      <ScanResponseCard
-        style={$card}
-        trustScore={trustScore}
-        destination={displayName}
-        url={url}
-        scanState={scanState}
-        safe={safe}
-        setScanState={setScanState}
-        errorMessage={errorMsg}
-        setErrorMessage={setErrorMsg}
-      />
+      {scanState !== "notScanned" && (
+        <ScanResponseCard
+          style={$card}
+          trustScore={trustScore}
+          destination={displayName}
+          url={url}
+          scanState={scanState}
+          safe={safe}
+          setScanState={setScanState}
+          errorMessage={errorMsg}
+          setErrorMessage={setErrorMsg}
+        />
+      )}
     </View>
   )
 })

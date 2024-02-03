@@ -48,20 +48,20 @@ const en = {
     debugTab: "Debug",
   },
   communityScreen: {
-    title: "Connect with the QR'la community",
+    title: "A koala-ty community",
     tagLine:
       "We're a group of Koalas looking to munch on some leaves and make the world a better place. Did you know every scan gets us leaf.",
     hireUsTitle: "We're a bunch of Koala fans looking to make the world that little bit safer.",
     hireUs: "We like leaves.",
     hireUsLink: "Send us a message",
   },
-  demoShowroomScreen: {
-    jumpStart: "Components to jump start your project!",
-    lorem2Sentences:
-      "Nulla cupidatat deserunt amet quis aliquip nostrud do adipisicing. Adipisicing excepteur elit laborum Lorem adipisicing do duis.",
-    demoHeaderTxExample: "Yay",
-    demoViaTxProp: "Via `tx` Prop",
-    demoViaSpecifiedTxProp: "Via `{{prop}}Tx` Prop",
+  mapScreen: {
+    title: "Map",
+    tagLine:
+      "We found these humans to make our app. They're pretty good at it. But they haven't made our map yet - do you think that's a cool idea?",
+    hireUsTitle: "btw we like leaves",
+    hireUs: "",
+    hireUsLink: "Click to see our headquarters",
   },
   demoDebugScreen: {
     howTo: "HOW TO",

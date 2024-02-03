@@ -39,7 +39,7 @@ export interface ScanResponseCardProps {
  * Describe your component here
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
-  const iconSize = 64
+  const iconSize = 72
   const {
     style,
     trustScore,
@@ -69,18 +69,20 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>{trustScore && `trust score: ${trustScore}`} </Text>
         <Pressable onPress={() => setDelayedLeaving()}>
-          <Text>
+          <Text style={styles.infoText}>
             {safe ? "Go to" : "Still proceed to"} {destination}
           </Text>
         </Pressable>
         <Pressable onPress={scanAgain(errorMessage)}>
-          <Text>Scan Again</Text>
+          <Text style={styles.infoText}>Scan Again</Text>
         </Pressable>
         <SafeScannedPing />
-        <SafeScannedHaptic />
       </View>
       {safe ? (
-        <Feather name="check-circle" size={iconSize} color={"#a2f732"} />
+        <>
+          <Feather name="check-circle" size={iconSize} color={"#a2f732"} />
+          <SafeScannedHaptic />
+        </>
       ) : (
         <Feather name="alert-circle" size={iconSize} color={"#eb4034"} />
       )}
@@ -91,26 +93,24 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>Scanning...</Text>
         <Pressable onPress={scanAgain(errorMessage)}>
-          <Text>Cancel</Text>
+          <Text style={{ color: colors.palette.secondary500 }}>Cancel</Text>
         </Pressable>
       </View>
-      <Image source={require("./loading.gif")} style={{ width: iconSize, height: iconSize }} />
+      <Image source={require("./koala.gif")} style={{ width: iconSize, height: iconSize }} />
     </>
   )
 
-  if (leaving)
-    return (
-      <View style={styles.infoBox}>
-        <View style={styles.textAndButton}>
-          <Text style={styles.infoText}>Leaving...</Text>
-        </View>
-      </View>
-    )
+  const leavingState = (
+    <View style={styles.textAndButton}>
+      <Text style={styles.infoText}>Leaving...</Text>
+    </View>
+  )
 
   return (
-    <View style={$styles}>
+    <View style={styles.infoBox}>
       {scanState === "scanning" && scanningState}
       {scanState === "scanned" && scannedState}
+      {leaving && leavingState}
     </View>
   )
 })
@@ -130,9 +130,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: "10%",
     right: "10%",
-    bottom: 116,
+    bottom: 24,
     width: "80%", // adjust this value as needed
-    height: 96,
+    height: 104,
     padding: 16,
     backgroundColor: "white",
     borderRadius: 10,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   infoText: {
-    color: "black",
+    color: colors.palette.neutral200,
     fontWeight: "bold",
     fontSize: 16,
   },
