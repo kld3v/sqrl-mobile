@@ -87,7 +87,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       // let { latitude, longitude, altitude } = location.coords
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 3000))
 
     if (qrCodeScan.data === "https://qrla.io/") {
       setTrustScore(100)

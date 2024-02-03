@@ -38,7 +38,7 @@ export const Reticule = observer(function Reticule(props: ReticuleProps) {
   useEffect(() => {
     if (scanning) {
       // Rotate 360 degrees indefinitely
-      rotation.value = withRepeat(withTiming(360, { duration: 2000 }), -1, false)
+      rotation.value = withRepeat(withTiming(360, { duration: 1000 }), -1, false)
     } else {
       // Reset rotation if not scanning
       rotation.value = withTiming(0, { duration: 0 })
