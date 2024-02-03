@@ -83,12 +83,15 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     <>
       <OnScanHaptic scanState={scanState} />
       <View style={styles.textAndButton}>
-        <Text style={styles.infoText}>Scanning...</Text>
+        <Text style={styles.infoText}>Checking...</Text>
         <Pressable onPress={scanAgain(errorMessage)}>
           <Text style={{ color: colors.palette.secondary500 }}>Cancel</Text>
         </Pressable>
       </View>
-      <Image source={require("./koala.gif")} style={{ width: iconSize, height: iconSize }} />
+      <Image
+        source={require("./koala.gif")}
+        style={{ width: iconSize, height: iconSize, zIndex: 100 }}
+      />
     </>
   )
 
@@ -100,7 +103,11 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
           <Text style={{ color: colors.palette.secondary500 }}>No wait scan again!</Text>
         </Pressable>
       </View>
-      <Image source={require("./koala.gif")} style={{ width: iconSize, height: iconSize }} />
+      <Image
+        source={require("./koala.gif")}
+        style={{ width: iconSize, height: iconSize }}
+        resizeMethod="auto"
+      />
     </>
   )
 
@@ -129,9 +136,9 @@ const styles = StyleSheet.create({
     left: "10%",
     right: "10%",
     bottom: 24,
-    width: "80%", // adjust this value as needed
+    width: "80%",
     height: "auto",
-    padding: 16,
+    padding: 24,
     backgroundColor: "white",
     borderRadius: 10,
     shadowColor: "#000",
