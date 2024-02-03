@@ -11,6 +11,8 @@ import { StatusBar } from "expo-status-bar"
 import * as Location from "expo-location"
 import { ApiResponse, create } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
+import { ReticuleCorner } from "./ReticuleCorner"
+import { Reticule } from "./Reticule"
 
 export interface QrScannerProps {
   /**
@@ -112,23 +114,6 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     setScanState("scanned")
   }
 
-  const Corner = ({
-    position,
-    scanning,
-  }: {
-    position: "TopLeft" | "TopRight" | "BottomLeft" | "BottomRight"
-    scanning: boolean
-    safe: boolean
-  }) => (
-    <View
-      style={[
-        styles[`corner${position}`],
-        scanning && $scanningCorner,
-        scanState === "scanned" ? (safe ? $scannedSafe : $scannedUnsafe) : null,
-      ]}
-    />
-  )
-
   if (!permission) {
     // Camera permissions are still loading
     return <View />
@@ -152,12 +137,13 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         type={CameraType.back}
         onBarCodeScanned={scanState === "notScanned" ? onScan : undefined}
       />
-      <View style={$reticule}>
-        <Corner position="TopLeft" scanning={scanState === "scanning"} safe={safe} />
-        <Corner position="TopRight" scanning={scanState === "scanning"} safe={safe} />
-        <Corner position="BottomLeft" scanning={scanState === "scanning"} safe={safe} />
-        <Corner position="BottomRight" scanning={scanState === "scanning"} safe={safe} />
-      </View>
+
+      <Reticule
+        style={$reticule}
+        scanState={scanState}
+        safe={safe}
+        scanning={scanState === "scanning"}
+      />
 
       {scanState !== "notScanned" && (
         <ScanResponseCard
@@ -210,63 +196,4 @@ const $reticule: ViewStyle = {
   height: 200,
   marginLeft: -100, // half of width to center
   marginTop: -100, // half of height to center
-}
-
-const styles = StyleSheet.create({
-  cornerTopLeft: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: 32,
-    height: 32,
-    borderTopWidth: 8,
-    borderLeftWidth: 8,
-    borderColor: "white",
-    borderTopLeftRadius: 10,
-  },
-  cornerTopRight: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    width: 32,
-    height: 32,
-    borderTopWidth: 8,
-    borderRightWidth: 8,
-    borderColor: "white",
-    borderTopRightRadius: 10,
-  },
-  cornerBottomLeft: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    width: 32,
-    height: 32,
-    borderBottomWidth: 8,
-    borderLeftWidth: 8,
-    borderColor: "white",
-    borderBottomLeftRadius: 10,
-  },
-  cornerBottomRight: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    width: 32,
-    height: 32,
-    borderBottomWidth: 8,
-    borderRightWidth: 8,
-    borderColor: "white",
-    borderBottomRightRadius: 10,
-  },
-})
-
-const $scanningCorner: ViewStyle = {
-  borderColor: colors.palette.neutral100,
-}
-
-const $scannedSafe: ViewStyle = {
-  borderColor: colors.palette.primary500,
-}
-
-const $scannedUnsafe: ViewStyle = {
-  borderColor: colors.palette.angry500,
 }
