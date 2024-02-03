@@ -51,7 +51,7 @@ export function DemoNavigator() {
           tabBarAccessibilityLabel: translate("demoNavigator.scannerTab"),
           tabBarLabel: translate("demoNavigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="view" color={focused ? colors.tint : colors.text} size={30} />
+            <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={30} />
           ),
         }}
       />
