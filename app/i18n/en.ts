@@ -45,7 +45,7 @@ const en = {
     scannerTab: "Scanner",
     mapTab: "Map",
     communityTab: "Community",
-    debugTab: "Debug",
+    debugTab: "Me",
   },
   communityScreen: {
     title: "A koala-ty community",
