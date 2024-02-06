@@ -7,3 +7,4 @@ export * from "./DemoShowroomScreen/MapScreen"
 
 export * from "./ErrorScreen/ErrorBoundary"
 // export other screens here
+export * from "./PushNotificationsScreen"

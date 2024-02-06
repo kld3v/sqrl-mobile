@@ -5,16 +5,23 @@ import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "../components"
 import { translate } from "../i18n"
-import { CommunityScreen, MapScreen, DebugScreen } from "../screens"
+import {
+  CommunityScreen,
+  MapScreen,
+  DebugScreen,
+  PushNotificationsScreen,
+  PushNotificationsScreenProps,
+} from "../screens"
 import { ScanScreen } from "../screens/ScanScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 
-export type DemoTabParamList = {
+export type TabParamList = {
   Community: undefined
   Map: { queryIndex?: string; itemIndex?: string }
   Scan: undefined
   Debug: undefined
+  PushNotifications: undefined
 }
 
 /**
@@ -22,14 +29,14 @@ export type DemoTabParamList = {
  *
  * More info: https://reactnavigation.org/docs/typescript/#organizing-types
  */
-export type DemoTabScreenProps<T extends keyof DemoTabParamList> = CompositeScreenProps<
-  BottomTabScreenProps<DemoTabParamList, T>,
+export type TabScreenProps<T extends keyof TabParamList> = CompositeScreenProps<
+  BottomTabScreenProps<TabParamList, T>,
   AppStackScreenProps<keyof AppStackParamList>
 >
 
-const Tab = createBottomTabNavigator<DemoTabParamList>()
+const Tab = createBottomTabNavigator<TabParamList>()
 
-export function DemoNavigator() {
+export function Navigator() {
   const { bottom } = useSafeAreaInsets()
 
   return (
@@ -48,8 +55,8 @@ export function DemoNavigator() {
         name="Scan"
         component={ScanScreen}
         options={{
-          tabBarAccessibilityLabel: translate("demoNavigator.scannerTab"),
-          tabBarLabel: translate("demoNavigator.scannerTab"),
+          tabBarAccessibilityLabel: translate("navigator.scannerTab"),
+          tabBarLabel: translate("navigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={30} />
           ),
@@ -60,7 +67,7 @@ export function DemoNavigator() {
         name="Map"
         component={MapScreen}
         options={{
-          tabBarLabel: translate("demoNavigator.mapTab"),
+          tabBarLabel: translate("navigator.mapTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="pin" color={focused ? colors.tint : colors.text} size={30} />
           ),
@@ -71,7 +78,7 @@ export function DemoNavigator() {
         name="Community"
         component={CommunityScreen}
         options={{
-          tabBarLabel: translate("demoNavigator.communityTab"),
+          tabBarLabel: translate("navigator.communityTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="community" color={focused ? colors.tint : colors.text} size={30} />
           ),
@@ -82,7 +89,17 @@ export function DemoNavigator() {
         name="Debug"
         component={DebugScreen}
         options={{
-          tabBarLabel: translate("demoNavigator.debugTab"),
+          tabBarLabel: translate("navigator.debugTab"),
+          tabBarIcon: ({ focused }) => (
+            <Icon icon="face" color={focused ? colors.tint : colors.text} size={30} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="PushNotifications"
+        component={PushNotificationsScreen}
+        options={{
+          tabBarLabel: translate("navigator.debugTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="face" color={focused ? colors.tint : colors.text} size={30} />
           ),
