@@ -8,6 +8,11 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
+    "extra": {
+      "eas": {
+        "projectId": "24d5ead5-ef54-41ac-a1ad-72e30e2e11c4"
+      }
+    },
     "splash": {
       "image": "./assets/images/splash-logo-all.png",
       "resizeMode": "contain",

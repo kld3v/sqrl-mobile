@@ -1,4 +1,4 @@
-import { StyleProp, TextStyle, View, ViewStyle, StyleSheet } from "react-native"
+import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
@@ -11,7 +11,6 @@ import { StatusBar } from "expo-status-bar"
 import * as Location from "expo-location"
 import { ApiResponse, create } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
-import { ReticuleCorner } from "./ReticuleCorner"
 import { Reticule } from "./Reticule"
 
 export interface QrScannerProps {
