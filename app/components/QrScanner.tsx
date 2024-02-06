@@ -1,4 +1,4 @@
-import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
+import { Pressable, StyleProp, TextStyle, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
@@ -12,7 +12,7 @@ import * as Location from "expo-location"
 import { ApiResponse, create } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
-
+import { Entypo } from "@expo/vector-icons"
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -127,7 +127,12 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       </View>
     )
   }
-
+  const scanAgain =
+    (errorMessage: string | null): (() => void) =>
+    (): void => {
+      errorMessage && setErrorMsg(null)
+      setScanState("notScanned")
+    }
   return (
     <View style={$styles}>
       <StatusBar style="light" />
@@ -154,13 +159,61 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           safe={safe}
           setScanState={setScanState}
           errorMessage={errorMsg}
-          setErrorMessage={setErrorMsg}
         />
       )}
+      <View style={$refresh}>
+        <Pressable onPress={scanAgain(errorMsg)}>
+          <Entypo
+            name="leaf"
+            size={16}
+            color={colors.palette.neutral100}
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: [{ translateX: -16 }, { translateY: 16 }, { rotate: "-45deg" }],
+            }}
+          />
+          <Entypo
+            name="leaf"
+            size={16}
+            color={colors.palette.neutral100}
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: [{ translateX: -4 }, { translateY: 16 }, { rotate: "135deg" }],
+            }}
+          />
+        </Pressable>
+      </View>
     </View>
   )
 })
 
+const $refresh: ViewStyle = {
+  position: "absolute",
+  bottom: 10,
+  right: 10,
+  backgroundColor: colors.palette.neutral200,
+  width: 48,
+  height: 48,
+  borderRadius: 50,
+
+  zIndex: 999,
+
+  transform: [{ rotate: "120deg" }],
+
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+
+  elevation: 5, // for Android
+}
 const $card: TextStyle = {
   color: colors.palette.primary500,
   fontSize: 20,

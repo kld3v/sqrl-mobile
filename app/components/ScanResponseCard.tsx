@@ -1,7 +1,7 @@
 import * as React from "react"
-import { StyleProp, TextStyle, View, ViewStyle, StyleSheet, Pressable, Image } from "react-native"
+import { StyleProp, View, ViewStyle, StyleSheet, Pressable, Image } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
+import { colors } from "app/theme"
 import { Text } from "app/components/Text"
 import { useState } from "react"
 import SafeScannedPing from "./Audio/SafeScannedPing"
@@ -22,7 +22,7 @@ export interface ScanResponseCardProps {
   scanState: ScanStateOptions
   setScanState: React.Dispatch<React.SetStateAction<ScanStateOptions>>
   errorMessage: string | null
-  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
+
   style?: StyleProp<ViewStyle>
 }
 
@@ -31,29 +31,14 @@ export interface ScanResponseCardProps {
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
   const iconSize = 72
-  const {
-    style,
-    trustScore,
-    safe,
-    destination,
-    errorMessage,
-    scanState,
-    setScanState,
-    setErrorMessage,
-  } = props
-  const $styles = [$container, style]
+  const { trustScore, safe, destination, scanState } = props
+
   const [leaving, setLeaving] = useState(false)
 
   const setDelayedLeaving = (): void => {
     setLeaving(true)
     setTimeout(() => openLinkInBrowser(destination!), 2000)
   }
-  const scanAgain =
-    (errorMessage: string | null): (() => void) =>
-    (): void => {
-      errorMessage && setErrorMessage(null)
-      setScanState("notScanned")
-    }
 
   const scannedState = (
     <>
@@ -64,9 +49,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
             {safe ? "Go to" : "Still proceed to"} {destination}
           </Text>
         </Pressable>
-        <Pressable onPress={scanAgain(errorMessage)}>
-          <Text style={styles.infoText}>Scan Again</Text>
-        </Pressable>
+
         <SafeScannedPing />
         <OnScanHaptic scanState={scanState} safe={safe} />
       </View>
@@ -84,9 +67,6 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       <OnScanHaptic scanState={scanState} />
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>Checking...</Text>
-        <Pressable onPress={scanAgain(errorMessage)}>
-          <Text style={{ color: colors.palette.secondary500 }}>Cancel</Text>
-        </Pressable>
       </View>
       <Image
         source={require("./koala.gif")}
@@ -99,9 +79,6 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     <>
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>Byeeeeeeeee</Text>
-        <Pressable onPress={scanAgain(errorMessage)}>
-          <Text style={{ color: colors.palette.secondary500 }}>No wait scan again!</Text>
-        </Pressable>
       </View>
       <Image
         source={require("./koala.gif")}
@@ -119,16 +96,6 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     </View>
   )
 })
-
-const $container: ViewStyle = {
-  justifyContent: "center",
-}
-
-const $text: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 14,
-  color: colors.palette.primary500,
-}
 
 const styles = StyleSheet.create({
   infoBox: {
