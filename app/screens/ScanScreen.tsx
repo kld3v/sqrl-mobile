@@ -43,7 +43,7 @@ export const ScanScreen: FC<DemoTabScreenProps<"Scan">> = observer(function Scan
   }
 
   return (
-    <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
+    <Screen preset="auto" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
       <QrScanner />
     </Screen>
   )

@@ -139,6 +139,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       <Camera
         style={$camera}
         type={CameraType.back}
+        ratio="16:9"
         onBarCodeScanned={scanState === "notScanned" ? onScan : undefined}
       />
 
@@ -191,6 +192,32 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   )
 })
 
+const $container: ViewStyle = {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "stretch",
+}
+const $camera: ViewStyle = {
+  flex: 1,
+  height: "100%",
+}
+
+const $text: TextStyle = {
+  fontFamily: typography.primary.normal,
+  fontSize: 14,
+  color: colors.palette.primary500,
+}
+
+const $reticule: ViewStyle = {
+  position: "absolute",
+  left: "50%",
+  top: "50%",
+  width: 200,
+  height: 200,
+  marginLeft: -100, // half of width to center
+  marginTop: -100, // half of height to center
+}
+
 const $refresh: ViewStyle = {
   position: "absolute",
   bottom: 10,
@@ -214,33 +241,10 @@ const $refresh: ViewStyle = {
 
   elevation: 5, // for Android
 }
+
 const $card: TextStyle = {
   color: colors.palette.primary500,
   fontSize: 20,
-  position: "absolute",
-  left: "50%",
-  top: "50%",
-  width: 200,
-  height: 200,
-  marginLeft: -100, // half of width to center
-  marginTop: -100, // half of height to center
-}
-const $container: ViewStyle = {
-  justifyContent: "center",
-}
-
-const $text: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 14,
-  color: colors.palette.primary500,
-}
-
-const $camera: ViewStyle = {
-  height: "100%",
-  width: "100%",
-}
-
-const $reticule: ViewStyle = {
   position: "absolute",
   left: "50%",
   top: "50%",
