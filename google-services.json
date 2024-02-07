@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "262749291664",
+    "project_id": "qrla-c43ff",
+    "storage_bucket": "qrla-c43ff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:262749291664:android:520cf77fd786780679c415",
+        "android_client_info": {
+          "package_name": "com.qrlaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjVZERXnAzY5tRUOBU781N_cCms8EplbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

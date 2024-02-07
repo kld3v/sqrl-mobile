@@ -28,6 +28,7 @@
     "jsEngine": "hermes",
     "assetBundlePatterns": ["**/*"],
     "android": {
+      "googleServicesFile": "./google-services.json",
       "icon": "./assets/images/app-icon-android-legacy.png",
       "package": "com.qrlaapp",
       "adaptiveIcon": {
@@ -62,6 +63,12 @@
     },
     "plugins": [
       [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": ["./assets/sounds/notification.wav"]
+        },
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Qrla to use your location.",
