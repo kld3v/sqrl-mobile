@@ -35,7 +35,9 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const [displayName, setDisplayName] = useState<string>("")
   const [safe, setSafe] = useState<boolean>(false)
 
+  const [showCamera, setShowCamera] = useState(false)
   useEffect(() => {
+    setShowCamera(true)
     ;(async () => {
       try {
         // I'm acquring this on user launch. This is because it can take a few seconds to attain the location. If already attained, I can use the much quicker API call getLastKnownPositionAsync() when the user scans to reduce wait time.
@@ -53,6 +55,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         console.error(`Failed to get location: ${error}`)
       }
     })()
+
+    // Need to force clean up of the camera component when the user navigates away from the screen. Fixes the weird camera bug which caused black screen when navigating back to the screen.
+    return () => {
+      setShowCamera(false)
+    }
   }, [])
 
   const urlLocationAPI = create({
@@ -136,12 +143,14 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   return (
     <View style={$styles}>
       <StatusBar style="light" />
-      <Camera
-        style={$camera}
-        type={CameraType.back}
-        ratio="16:9"
-        onBarCodeScanned={scanState === "notScanned" ? onScan : undefined}
-      />
+      {showCamera && (
+        <Camera
+          style={$camera}
+          type={CameraType.back}
+          ratio="16:9"
+          onBarCodeScanned={scanState === "notScanned" ? onScan : undefined}
+        />
+      )}
 
       <Reticule
         style={$reticule}

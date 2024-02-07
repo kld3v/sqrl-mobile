@@ -46,6 +46,7 @@ const en = {
     mapTab: "Map",
     communityTab: "Community",
     debugTab: "Me",
+    pushTab: "Push",
   },
   communityScreen: {
     title: "A koala-ty community",

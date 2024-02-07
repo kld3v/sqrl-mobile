@@ -5,13 +5,7 @@ import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "../components"
 import { translate } from "../i18n"
-import {
-  CommunityScreen,
-  MapScreen,
-  DebugScreen,
-  PushNotificationsScreen,
-  PushNotificationsScreenProps,
-} from "../screens"
+import { CommunityScreen, MapScreen, DebugScreen, PushNotificationsScreen } from "../screens"
 import { ScanScreen } from "../screens/ScanScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
@@ -99,7 +93,7 @@ export function Navigator() {
         name="PushNotifications"
         component={PushNotificationsScreen}
         options={{
-          tabBarLabel: translate("navigator.debugTab"),
+          tabBarLabel: translate("navigator.pushTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="face" color={focused ? colors.tint : colors.text} size={30} />
           ),
