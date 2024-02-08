@@ -32,14 +32,14 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
       handleNotification: async () => ({
         shouldShowAlert: true,
         shouldPlaySound: true,
-        shouldSetBadge: false,
+        shouldSetBadge: true,
       }),
     })
 
     const [message, setMessage] = useState({
       sound: "default",
-      title: "Original Title",
-      body: "And here is the cunt!",
+      title: "Hey",
+      body: "And here is the body!",
       data: { someData: "goes here" },
     })
 

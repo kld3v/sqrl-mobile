@@ -56,7 +56,7 @@ const en = {
     interweb: "get sneak peaks on our page on the interweb-net",
   },
   mapScreen: {
-    title: "Map",
+    title: "Maps",
     tagLine: "We found these humans to make our app. But they haven't made our map yet...",
     weLikeLeaves: "You'll get to see where the nearest and juiciest leaves are. Mmmmm.",
 

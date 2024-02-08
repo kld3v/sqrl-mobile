@@ -3,13 +3,13 @@ import { ImageStyle, TextStyle, ViewStyle } from "react-native"
 
 import { Icon, ListItem, Screen, Text } from "../../components"
 
-import { DemoTabScreenProps } from "../../navigators/DemoNavigator"
+import { TabScreenProps } from "../../navigators/DemoNavigator"
 import { StatusBar } from "expo-status-bar"
 import { colors, spacing } from "app/theme"
 import { openLinkInBrowser } from "app/utils/openLinkInBrowser"
 import { isRTL } from "app/i18n"
 
-export const MapScreen: FC<DemoTabScreenProps<"Map">> = function MapScreen(_props) {
+export const MapScreen: FC<TabScreenProps<"Map">> = function MapScreen(_props) {
   return (
     <>
       <StatusBar style="light" />
