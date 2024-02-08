@@ -1,6 +1,6 @@
 import React, { FC } from "react"
 import { observer } from "mobx-react-lite"
-import { ViewStyle } from "react-native"
+import { Linking, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { Screen, Text, TextField } from "app/components"
 // import { useNavigation } from "@react-navigation/native"
@@ -10,7 +10,7 @@ import { View, Button, Platform } from "react-native"
 import * as Device from "expo-device"
 import * as Notifications from "expo-notifications"
 import Constants from "expo-constants"
-import { colors } from "app/theme"
+import { useStores } from "app/models"
 
 export interface PushNotificationsScreenProps extends AppStackScreenProps<"PushNotifications"> {}
 
@@ -21,6 +21,8 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
 
     // Pull in navigation via hook
     // const navigation = useNavigation()
+
+    const { pushNotificationsStore } = useStores()
 
     const [expoPushToken, setExpoPushToken] = useState("")
     const [notification, setNotification] = useState<Notifications.Notification>()
@@ -36,16 +38,13 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
       }),
     })
 
-    const [message, setMessage] = useState({
-      sound: "default",
-      title: "Hey",
-      body: "And here is the body!",
-      data: { someData: "goes here" },
-    })
-
-    let { title, body, data, sound } = message
     // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
     async function sendPushNotification(expoPushToken: any) {
+      if (!pushNotificationsStore.notification) return
+
+      const notificationMessageContent = pushNotificationsStore!.notification!
+
+      const { title, body, data, sound } = notificationMessageContent
       const message = {
         to: expoPushToken,
         sound,
@@ -111,6 +110,8 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
 
       responseListener.current = Notifications.addNotificationResponseReceivedListener(
         (response) => {
+          const url = response.notification.request.content.data.url
+          Linking.openURL(url)
           console.info(`Notification response received: ${JSON.stringify(response)}`)
         },
       )
@@ -135,8 +136,10 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
               borderWidth: 1,
               flex: 1,
             }}
-            onChangeText={(text) => setMessage({ ...message, title: text })}
-            value={message.title}
+            onChange={(text) => {
+              pushNotificationsStore!.notification!.setTitle(text.nativeEvent.text)
+            }}
+            value={pushNotificationsStore && pushNotificationsStore.test}
           />
           <Text>Body: {notification && notification.request.content.body}</Text>
           <TextField
@@ -148,8 +151,11 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
               borderWidth: 1,
               flex: 1,
             }}
-            onChangeText={(text) => setMessage({ ...message, body: text })}
-            value={message.body}
+            value={
+              pushNotificationsStore && pushNotificationsStore.notification
+                ? pushNotificationsStore.notification.bodyForMessage || ""
+                : ""
+            }
           />
 
           <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
@@ -162,14 +168,21 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
               borderWidth: 1,
               flex: 1,
             }}
-            onChangeText={(text) => setMessage({ ...message, data: { someData: text } })}
-            value={message.data.someData}
+            value={
+              pushNotificationsStore && pushNotificationsStore.notification
+                ? pushNotificationsStore.notification.dataForMessage || ""
+                : ""
+            }
           />
 
           <Button
             title="Press to Send Notification"
             onPress={async () => {
-              await sendPushNotification(expoPushToken)
+              try {
+                await sendPushNotification(expoPushToken)
+              } catch (error) {
+                console.error(error)
+              }
             }}
           />
         </View>
