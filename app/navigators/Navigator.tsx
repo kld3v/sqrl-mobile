@@ -89,16 +89,18 @@ export function Navigator() {
           ),
         }}
       />
-      <Tab.Screen
-        name="PushNotifications"
-        component={PushNotificationsScreen}
-        options={{
-          tabBarLabel: translate("navigator.pushTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="face" color={focused ? colors.tint : colors.text} size={30} />
-          ),
-        }}
-      />
+      {__DEV__ && (
+        <Tab.Screen
+          name="PushNotifications"
+          component={PushNotificationsScreen}
+          options={{
+            tabBarLabel: translate("navigator.pushTab"),
+            tabBarIcon: ({ focused }) => (
+              <Icon icon="face" color={focused ? colors.tint : colors.text} size={30} />
+            ),
+          }}
+        />
+      )}
     </Tab.Navigator>
   )
 }

@@ -8,7 +8,6 @@ function IgniteApp() {
   return (
     <>
       <StatusBar style="light" />
-
       <App hideSplashScreen={SplashScreen.hideAsync} />
     </>
   )

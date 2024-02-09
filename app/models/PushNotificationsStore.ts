@@ -2,18 +2,11 @@ import { types } from "mobx-state-tree"
 import { PushNotificationModel } from "./PushNotifications"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 
-const defaultNotification = PushNotificationModel.create({
-  title: "title",
-  body: "body",
-  sound: "default",
-  data: { url: "https://www.google.com" },
-})
-
 export const PushNotificationsStoreModel = types
   .model("PushNotificationsStore")
   .props({
     notification: types.maybe(PushNotificationModel),
-    test: types.optional(types.string, "test"),
+    expoPushToken: types.maybe(types.string),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -21,6 +14,12 @@ export const PushNotificationsStoreModel = types
       store.notification = notification
     },
     clearNotification() {
-      store.notification = defaultNotification
+      let reset = PushNotificationModel.create({
+        title: "title",
+        body: "body",
+        sound: "default",
+        data: { url: "https://www.google.com" },
+      })
+      store.notification = reset
     },
   }))

@@ -3,7 +3,7 @@ import { ImageStyle, TextStyle, ViewStyle } from "react-native"
 
 import { Icon, ListItem, Screen, Text } from "../../components"
 
-import { TabScreenProps } from "../../navigators/DemoNavigator"
+import { TabScreenProps } from "../../navigators/Navigator"
 import { StatusBar } from "expo-status-bar"
 import { colors, spacing } from "app/theme"
 import { openLinkInBrowser } from "app/utils/openLinkInBrowser"

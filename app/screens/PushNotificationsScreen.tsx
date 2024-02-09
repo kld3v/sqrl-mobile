@@ -11,6 +11,8 @@ import * as Device from "expo-device"
 import * as Notifications from "expo-notifications"
 import Constants from "expo-constants"
 import { useStores } from "app/models"
+import { WebView } from "react-native-webview"
+import * as WebBrowser from "expo-web-browser"
 
 export interface PushNotificationsScreenProps extends AppStackScreenProps<"PushNotifications"> {}
 
@@ -24,7 +26,6 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
 
     const { pushNotificationsStore } = useStores()
 
-    const [expoPushToken, setExpoPushToken] = useState("")
     const [notification, setNotification] = useState<Notifications.Notification>()
     // Tacky ts hack but it works. If you're seeing this Majeed, well alas.
     const notificationListener = useRef<Notifications.Subscription>(undefined!)
@@ -100,7 +101,15 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
     }
 
     useEffect(() => {
-      registerForPushNotificationsAsync().then((token) => setExpoPushToken(token as string))
+      pushNotificationsStore.addNotification({
+        title: "title",
+        body: "body",
+        sound: "default",
+        data: { url: "https://www.google.com" },
+      })
+      registerForPushNotificationsAsync().then((token) =>
+        pushNotificationsStore.setProp("expoPushToken", token as string),
+      )
 
       notificationListener.current = Notifications.addNotificationReceivedListener(
         (notification) => {
@@ -122,10 +131,19 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
       }
     }, [])
 
+    const [result, setResult] = useState(null)
+
+    const _handlePressButtonAsync = async () => {
+      let result = await WebBrowser.openBrowserAsync("https://expo.dev")
+      setResult(result)
+    }
+
     return (
       <Screen style={$root} preset="scroll" safeAreaEdges={["top"]}>
-        <View style={{ flex: 1, justifyContent: "space-around" }}>
-          <Text>Your expo push token: {expoPushToken}</Text>
+        <View style={$webViewContainer}>
+          <Button title="Open WebBrowser" onPress={_handlePressButtonAsync} />
+          <Text style={{ color: "white" }}>{result && JSON.stringify(result)} dsfsdf</Text>
+          {/* <Text>Your expo push token: {pushNotificationsStore.expoPushToken}</Text>
           <Text>Title: {notification && notification.request.content.title} </Text>
           <TextField
             placeholder="Title"
@@ -139,7 +157,7 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
             onChange={(text) => {
               pushNotificationsStore!.notification!.setTitle(text.nativeEvent.text)
             }}
-            value={pushNotificationsStore && pushNotificationsStore.test}
+            value={pushNotificationsStore.notification?.titleForMessage}
           />
           <Text>Body: {notification && notification.request.content.body}</Text>
           <TextField
@@ -179,10 +197,32 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
             title="Press to Send Notification"
             onPress={async () => {
               try {
-                await sendPushNotification(expoPushToken)
+                if (pushNotificationsStore.expoPushToken) {
+                  await sendPushNotification(pushNotificationsStore.expoPushToken)
+                } else {
+                  console.error("No expo push token found")
+                  return
+                }
               } catch (error) {
                 console.error(error)
               }
+            }}
+          /> */}
+          <WebView
+            style={{ flex: 1 }}
+            originWhitelist={["*"]}
+            source={{ uri: "https://expo.dev" }}
+            onError={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent
+              console.warn("WebView error: ", nativeEvent)
+            }}
+            onLoadEnd={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent
+              console.warn("WebView load end: ", nativeEvent)
+            }}
+            onLoad={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent
+              console.warn("WebView load: ", nativeEvent)
             }}
           />
         </View>
@@ -192,8 +232,14 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
 )
 
 const $root: ViewStyle = {
-  flex: 1,
   width: "100%",
   paddingHorizontal: 20,
   paddingVertical: 20,
+}
+
+const $webViewContainer: ViewStyle = {
+  width: "100%",
+  height: "100%",
+  backgroundColor: "white",
+  zIndex: 1000,
 }

@@ -1,7 +1,6 @@
 import * as React from "react"
-import { StyleProp, TextStyle, ViewStyle } from "react-native"
+import { Linking, StyleProp, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
 
 import { useState, useEffect, useRef } from "react"
 import { Text, View, Button, Platform } from "react-native"
@@ -9,6 +8,7 @@ import * as Device from "expo-device"
 import * as Notifications from "expo-notifications"
 import Constants from "expo-constants"
 import { Subscription } from "expo-notifications"
+import { useStores } from "app/models"
 export interface PushNotificationsManagerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -22,22 +22,34 @@ export interface PushNotificationsManagerProps {
 export const PushNotificationsManager = observer(function PushNotificationsManager(
   props: PushNotificationsManagerProps,
 ) {
+  const { pushNotificationsStore } = useStores()
+
+  const [notification, setNotification] = useState<Notifications.Notification>()
+  // Tacky ts hack but it works. If you're seeing this Majeed, well alas.
+  const notificationListener = useRef<Notifications.Subscription>(undefined!)
+  const responseListener = useRef<Notifications.Subscription>(undefined!)
+
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
-      shouldPlaySound: false,
-      shouldSetBadge: false,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
     }),
   })
 
   // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-  async function sendPushNotification(expoPushToken: any) {
+  async function sendPushNotification(expoPushToken: string) {
+    if (!pushNotificationsStore.notification) return
+
+    const notificationMessageContent = pushNotificationsStore!.notification!
+
+    const { title, body, data, sound } = notificationMessageContent
     const message = {
       to: expoPushToken,
-      sound: "default",
-      title: "Original Title",
-      body: "And here is the body!",
-      data: { someData: "goes here" },
+      sound,
+      title,
+      body,
+      data,
     }
 
     await fetch("https://exp.host/--/api/v2/push/send", {
@@ -63,6 +75,7 @@ export const PushNotificationsManager = observer(function PushNotificationsManag
       })
     }
 
+    // Test for physical device.
     if (Device.isDevice) {
       const { status: existingStatus } = await Notifications.getPermissionsAsync()
       let finalStatus = existingStatus
@@ -77,28 +90,32 @@ export const PushNotificationsManager = observer(function PushNotificationsManag
       token = await Notifications.getExpoPushTokenAsync({
         projectId: Constants!.expoConfig!.extra!.eas.projectId,
       })
-      console.log(token)
     } else {
       alert("Must use physical device for Push Notifications")
+      return
     }
-
     return token.data
   }
 
-  const [expoPushToken, setExpoPushToken] = useState("")
-  const [notification, setNotification] = useState<Notification>()
-  const notificationListener = useRef<Subscription>()
-  const responseListener = useRef<Subscription>()
-
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => setExpoPushToken(token as string))
+    pushNotificationsStore.addNotification({
+      title: "title",
+      body: "body",
+      sound: "default",
+      data: { url: "https://www.google.com" },
+    })
+    registerForPushNotificationsAsync().then((token) =>
+      pushNotificationsStore.setProp("expoPushToken", token as string),
+    )
 
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       setNotification(notification)
     })
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log(response)
+      const url = response.notification.request.content.data.url
+      Linking.openURL(url)
+      console.info(`Notification response received: ${JSON.stringify(response)}`)
     })
 
     return () => {
@@ -107,20 +124,5 @@ export const PushNotificationsManager = observer(function PushNotificationsManag
     }
   }, [])
 
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "space-around" }}>
-      <Text>Your expo push token: {expoPushToken}</Text>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text>Title: {notification && notification.request.content.title} </Text>
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-      </View>
-      <Button
-        title="Press to Send Notification"
-        onPress={async () => {
-          await sendPushNotification(expoPushToken)
-        }}
-      />
-    </View>
-  )
+  return <></>
 })
