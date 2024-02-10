@@ -8,10 +8,10 @@ import { withSetPropAction } from "./helpers/withSetPropAction"
 export const MessageModel = types
   .model("Message")
   .props({
-    title: types.maybe(types.string),
-    body: types.maybe(types.string),
-    sound: types.maybe(types.string),
-    data: types.maybe(types.model({ url: types.string })),
+    title: types.string,
+    body: types.string,
+    sound: types.string,
+    data: types.model({ url: types.string }),
   })
   .actions(withSetPropAction)
   .views((self) => ({
