@@ -5,13 +5,13 @@ import { withSetPropAction } from "./helpers/withSetPropAction"
  * Model description here for TypeScript hints.
  */
 
-export const PushNotificationModel = types
-  .model("PushNotification")
+export const MessageModel = types
+  .model("Message")
   .props({
-    title: types.string,
-    body: types.string,
-    sound: types.string,
-    data: types.model({ url: types.string }),
+    title: types.maybe(types.string),
+    body: types.maybe(types.string),
+    sound: types.maybe(types.string),
+    data: types.maybe(types.model({ url: types.string })),
   })
   .actions(withSetPropAction)
   .views((self) => ({
@@ -43,7 +43,7 @@ export const PushNotificationModel = types
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
 
-export interface PushNotifications extends Instance<typeof PushNotificationModel> {}
-export interface PushNotificationsSnapshotOut extends SnapshotOut<typeof PushNotificationModel> {}
-export interface PushNotificationsSnapshotIn extends SnapshotIn<typeof PushNotificationModel> {}
-export const createPushNotificationsDefaultModel = () => types.optional(PushNotificationModel, {})
+export interface Messages extends Instance<typeof MessageModel> {}
+export interface MessagesSnapshotOut extends SnapshotOut<typeof MessageModel> {}
+export interface MessagesSnapshotIn extends SnapshotIn<typeof MessageModel> {}
+export const createMessagesDefaultModel = () => types.optional(MessageModel, {})

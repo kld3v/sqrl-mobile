@@ -8,7 +8,7 @@ import SafeScannedPing from "./Audio/SafeScannedPing"
 import { Feather } from "@expo/vector-icons"
 import { openLinkInBrowser } from "app/utils/openLinkInBrowser"
 import OnScanHaptic from "./Haptics/OnScanHaptic"
-
+import * as WebBrowser from "expo-web-browser"
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
 export interface ScanResponseCardProps {
@@ -37,7 +37,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
 
   const setDelayedLeaving = (): void => {
     setLeaving(true)
-    setTimeout(() => openLinkInBrowser(destination!), 2000)
+    setTimeout(async () => await WebBrowser.openBrowserAsync(destination!), 2000)
   }
 
   const scannedState = (

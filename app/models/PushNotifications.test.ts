@@ -1,4 +1,4 @@
-import { PushNotificationsModel } from "./PushNotifications"
+import { PushNotificationsModel } from "./MessageModel"
 
 test("can be created", () => {
   const instance = PushNotificationsModel.create({})

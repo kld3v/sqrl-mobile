@@ -131,18 +131,15 @@ export const PushNotificationsScreen: FC<PushNotificationsScreenProps> = observe
       }
     }, [])
 
-    const [result, setResult] = useState(null)
-
     const _handlePressButtonAsync = async () => {
-      let result = await WebBrowser.openBrowserAsync("https://expo.dev")
-      setResult(result)
+      await WebBrowser.openBrowserAsync("https://expo.dev")
     }
 
     return (
       <Screen style={$root} preset="scroll" safeAreaEdges={["top"]}>
         <View style={$webViewContainer}>
           <Button title="Open WebBrowser" onPress={_handlePressButtonAsync} />
-          <Text style={{ color: "white" }}>{result && JSON.stringify(result)} dsfsdf</Text>
+
           {/* <Text>Your expo push token: {pushNotificationsStore.expoPushToken}</Text>
           <Text>Title: {notification && notification.request.content.title} </Text>
           <TextField
