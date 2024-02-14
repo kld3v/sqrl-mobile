@@ -63,60 +63,78 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   }, [])
 
   const urlLocationAPI = create({
-    baseURL: "http://192.168.1.151:8000/api/receiveUrlData",
+    baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan?",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
   })
 
   // TODO: Fix the type of the response
   const sendUrlAndLocationData = async (
-    data: string,
+    url: string,
+    userId: number,
     latitude: number,
     longitude: number,
-    altitude: number | null,
   ): Promise<ApiResponse<any, any>> => {
-    return await urlLocationAPI.post("/", {
-      url: data,
-      location: {
-        latitude,
-        longitude,
-        altitude,
-      },
-    })
+    // const postData = `url=${encodeURIComponent(url)}&user_id=${encodeURIComponent(
+    //   userId,
+    // )}&latitude=${latitude}&longitude=${longitude}`
+
+    const postData = {
+      url, // No need to encode URI components manually
+      user_id: userId, // Use the exact field names expected by your Laravel backend
+      latitude,
+      longitude,
+    }
+
+    return await urlLocationAPI.post("/", postData)
   }
 
   const onScan = async (qrCodeScan: BarCodeScanningResult) => {
     setScanState("scanning")
     setUrl(qrCodeScan.data)
 
+    // Get Location
+    let latitude, longitude
     if (location) {
       // just get from state - much quicker!
-      // let { latitude, longitude, altitude } = location.coords
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-
-    if (qrCodeScan.data === "https://qrla.io/") {
-      setTrustScore(100)
-      setSafe(true)
-      setDisplayName("QRLA")
+      latitude = location.coords.latitude
+      longitude = location.coords.longitude
     } else {
-      setTrustScore(1)
-      setSafe(false)
-      setDisplayName(`${qrCodeScan.data}`)
+      // if location is not available, get it from the API
+      const currentLocation = await Location.getCurrentPositionAsync()
+      latitude = currentLocation.coords.latitude
+      longitude = currentLocation.coords.longitude
     }
-    // try {
-    //   let response = await sendUrlAndLocationData(qrCodeScan.data, latitude, longitude, altitude)
 
-    //   console.info(`Response: ${JSON.stringify(response.data)}`)
-    //   let trustScore = Number(JSON.stringify(response.data.trust_score))
-    //   console.info(`Trust score: ${trustScore}`)
-    //   setTrustScore(trustScore)
-    //   setSafe(trustScore && trustScore > 50 ? true : false)
-    //   setDisplayName("Nandos")
-    // } catch (error) {
-    //   console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
-    //   setErrorMsg("Oops - Something went wrong :( Please try again")
-    // }
+    // Send Location and URL to API
+    try {
+      let dummyUserID = 123
+
+      let response = await sendUrlAndLocationData(qrCodeScan.data, dummyUserID, latitude, longitude)
+
+      console.info(
+        `Response: ${JSON.stringify(response.data)}`,
+        `Status: ${response.status}`,
+        `qrCodeScan: ${qrCodeScan}`,
+      )
+
+      let trustScore = Number(JSON.stringify(response.data.trust_score))
+
+      console.info(`Trust score: ${trustScore}`)
+
+      setTrustScore(trustScore)
+
+      setSafe(trustScore && trustScore > 50 ? true : false)
+
+      // setDisplayName("Nandos")
+    } catch (error) {
+      console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
+      setErrorMsg("Oops - Something went wrong :( Please try again")
+    }
+
+    // The result is too darn fast!
+    const createPromiseDelay = new Promise((resolve) => setTimeout(resolve, 2000))
+    await createPromiseDelay
+
     setScanState("scanned")
   }
 
@@ -172,31 +190,33 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         />
       )}
 
-      {!safe && scanState === "scanned" && (
-        <Pressable onPress={scanAgain(errorMsg)}>
-          <Entypo
-            name="leaf"
-            size={16}
-            color={colors.palette.neutral100}
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: [{ translateX: -16 }, { translateY: 16 }, { rotate: "-45deg" }],
-            }}
-          />
-          <Entypo
-            name="leaf"
-            size={16}
-            color={colors.palette.neutral100}
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: [{ translateX: -4 }, { translateY: 16 }, { rotate: "135deg" }],
-            }}
-          />
-        </Pressable>
+      {safe && scanState === "scanned" && (
+        <View style={$refresh}>
+          <Pressable onPress={scanAgain(errorMsg)}>
+            <Entypo
+              name="leaf"
+              size={16}
+              color={colors.palette.neutral100}
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: [{ translateX: -16 }, { translateY: 16 }, { rotate: "-45deg" }],
+              }}
+            />
+            <Entypo
+              name="leaf"
+              size={16}
+              color={colors.palette.neutral100}
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: [{ translateX: -4 }, { translateY: 16 }, { rotate: "135deg" }],
+              }}
+            />
+          </Pressable>
+        </View>
       )}
     </View>
   )

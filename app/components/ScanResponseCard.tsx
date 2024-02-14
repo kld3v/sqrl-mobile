@@ -32,13 +32,13 @@ export interface ScanResponseCardProps {
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
   const iconSize = 64
-  const { trustScore, safe, destination, scanState, setScanState } = props
+  const { trustScore, safe, scanState, setScanState, url } = props
 
   const [leaving, setLeaving] = useState(false)
 
   const setDelayedLeaving = (): void => {
     setLeaving(true)
-    setTimeout(async () => await WebBrowser.openBrowserAsync(destination!), 2000)
+    setTimeout(async () => await WebBrowser.openBrowserAsync(url!), 2000)
     setScanState("notScanned")
   }
 
@@ -47,13 +47,21 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       setScanState("notScanned")
     }
   }
+
   const scannedState = (
     <>
       <View style={styles.textAndButton}>
-        <Text style={styles.infoText}>{trustScore && `Trust score: ${trustScore}`} </Text>
+        <Text style={styles.infoText}>
+          {trustScore && `Trust score: ${trustScore}`}
+          {url}{" "}
+        </Text>
 
         {safe ? (
-          <Button text="Go" onPress={() => setDelayedLeaving()} />
+          <Button
+            text="Go"
+            onPress={() => setDelayedLeaving()}
+            style={{ backgroundColor: colors.palette.primary600 }}
+          />
         ) : (
           <View style={$unsafeScanButtons}>
             <Button text="Cancel" tx="common.cancel" preset="filled" onPress={cancelScan()} />
@@ -70,7 +78,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       </View>
       {safe ? (
         <>
-          <Feather name="check-circle" size={iconSize} color={colors.palette.primary500} />
+          <Feather name="check-circle" size={iconSize} color={colors.palette.primary600} />
         </>
       ) : (
         <Feather name="alert-circle" size={iconSize} color={colors.palette.angry500} />
