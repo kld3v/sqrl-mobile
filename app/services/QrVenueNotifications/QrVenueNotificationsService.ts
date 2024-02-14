@@ -3,7 +3,7 @@ import { LocationObject } from "expo-location"
 import * as Location from "expo-location"
 import { QrVenueNotificationsConfig } from "./QrVenueNotificationService.types"
 
-export class VenueLocationService {
+export class QrVenueNotificationService {
   location: LocationObject | null = null
   apisauce: ApisauceInstance
   config: QrVenueNotificationsConfig
@@ -64,3 +64,5 @@ export class VenueLocationService {
     return false
   }
 }
+
+export const qrVenueNotificationService = new QrVenueNotificationService()
