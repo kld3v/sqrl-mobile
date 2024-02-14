@@ -22,6 +22,7 @@ export const PushNotificationsManager = observer(function PushNotificationsManag
   const { pushNotificationsStore } = useStores()
 
   useEffect(() => {
+    pushNotificationsStore.fetchExpoPushToken()
     ;(async () => {
       const qrVenueApiResponse =
         await qrVenueNotificationService.seeIfUserLocationMatchesQrVenueGeoFence()

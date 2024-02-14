@@ -64,7 +64,7 @@ export const TestingScreen: FC<TabScreenProps<"Testing">> = observer(function Te
   //   await WebBrowser.openBrowserAsync(url)
   // }
   useEffect(() => {
-    pushNotificationsStore.fetchExpoPushToken()
+    // pushNotificationsStore.fetchExpoPushToken()
 
     // needed to display the notification in the component text ( while testing )
     // notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {

@@ -80,7 +80,7 @@ const AppStack = observer(function AppStack() {
       )}
 
       {/** 🔥 Your screens go here */}
-      <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} />
+      {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
