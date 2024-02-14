@@ -6,18 +6,15 @@ import { Screen, Text, TextField } from "app/components"
 // import { useNavigation } from "@react-navigation/native"
 import { useState, useEffect, useRef } from "react"
 import { View, Button, Platform } from "react-native"
-import * as Device from "expo-device"
 import * as Notifications from "expo-notifications"
-import Constants from "expo-constants"
 import { useStores } from "app/models"
 // import { WebView } from "react-native-webview"
 import * as WebBrowser from "expo-web-browser"
 
 import { pushNotificationService } from "app/services/PushNotifications"
+import { TabScreenProps } from "app/navigators/Navigator"
 
-export interface TestingScreenProps extends AppStackScreenProps<"PushNotifications"> {}
-
-export const TestingScreen: FC<TestingScreenProps> = observer(function TestingScreen() {
+export const TestingScreen: FC<TabScreenProps<"Testing">> = observer(function TestingScreen() {
   // Pull in navigation via hook
   // const navigation = useNavigation()
 

@@ -13,6 +13,9 @@ import { ApiResponse, create } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
 import { Entypo } from "@expo/vector-icons"
+
+import * as ExpoTrackingTransparency from "expo-tracking-transparency"
+
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -32,7 +35,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const [location, setLocation] = useState<LocationObject>()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [trustScore, setTrustScore] = useState<number | null>(null)
-  const [displayName, setDisplayName] = useState<string>("")
+
   const [safe, setSafe] = useState<boolean>(false)
 
   const [showCamera, setShowCamera] = useState(false)
@@ -51,6 +54,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         })
         setLocation(location)
         if (__DEV__) console.info(location)
+
+        const { status } = await ExpoTrackingTransparency.requestTrackingPermissionsAsync()
+        if (status === "granted") {
+          console.log("Yay! I have user permission to track data")
+        }
       } catch (error) {
         console.error(`Failed to get location: ${error}`)
       }
@@ -107,14 +115,13 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
     // Send Location and URL to API
     try {
-      let dummyUserID = 123
-
-      let response = await sendUrlAndLocationData(qrCodeScan.data, dummyUserID, latitude, longitude)
+      const userID = 123 // TODO: Replace with actual user ID
+      let response = await sendUrlAndLocationData(qrCodeScan.data, userID, latitude, longitude)
 
       console.info(
         `Response: ${JSON.stringify(response.data)}`,
         `Status: ${response.status}`,
-        `qrCodeScan: ${qrCodeScan}`,
+        `qrCodeScan: ${qrCodeScan.data}`,
       )
 
       let trustScore = Number(JSON.stringify(response.data.trust_score))
@@ -130,10 +137,6 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
       setErrorMsg("Oops - Something went wrong :( Please try again")
     }
-
-    // The result is too darn fast!
-    const createPromiseDelay = new Promise((resolve) => setTimeout(resolve, 2000))
-    await createPromiseDelay
 
     setScanState("scanned")
   }
@@ -181,7 +184,6 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         <ScanResponseCard
           style={$card}
           trustScore={trustScore}
-          destination={displayName}
           url={url}
           scanState={scanState}
           safe={safe}

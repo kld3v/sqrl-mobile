@@ -89,7 +89,7 @@ export function Navigator() {
           ),
         }}
       />
-      {__DEV__ && (
+      {/* {__DEV__ && (
         <Tab.Screen
           name="Testing"
           component={TestingScreen}
@@ -100,7 +100,7 @@ export function Navigator() {
             ),
           }}
         />
-      )}
+      )} */}
     </Tab.Navigator>
   )
 }

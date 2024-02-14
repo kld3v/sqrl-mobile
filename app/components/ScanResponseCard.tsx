@@ -1,5 +1,5 @@
 import * as React from "react"
-import { StyleProp, View, ViewStyle, StyleSheet, Image } from "react-native"
+import { StyleProp, View, ViewStyle, StyleSheet, Image, TextStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors } from "app/theme"
 import { Text } from "app/components/Text"
@@ -17,7 +17,6 @@ export interface ScanResponseCardProps {
    * An optional style override useful for padding & margin.
    */
   trustScore: number | null
-  destination: string | null
   url: string
   safe: boolean
   scanState: ScanStateOptions
@@ -36,10 +35,12 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
 
   const [leaving, setLeaving] = useState(false)
 
-  const setDelayedLeaving = (): void => {
+  const setDelayedLeaving = (): (() => void) => () => {
     setLeaving(true)
-    setTimeout(async () => await WebBrowser.openBrowserAsync(url!), 2000)
-    setScanState("notScanned")
+    setTimeout(async () => {
+      await WebBrowser.openBrowserAsync(url!)
+      setScanState("notScanned")
+    }, 2000)
   }
 
   const cancelScan = (): (() => void) => {
@@ -48,26 +49,44 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     }
   }
 
+  function extractMainDomain(url: string): string | null {
+    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i)
+    if (match != null && match.length > 2 && typeof match[2] === "string" && match[2].length > 0) {
+      const parts = match[2].split(".")
+      return parts[parts.length - 2]
+    }
+    return null
+  }
   const scannedState = (
     <>
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>
-          {trustScore && `Trust score: ${trustScore}`}
-          {url}{" "}
+          <Text preset="bold" style={{ color: colors.palette.neutral200 }}>
+            {extractMainDomain(url!)}
+          </Text>{" "}
+          - {trustScore && `trust score: ${trustScore}`}
         </Text>
-
         {safe ? (
           <Button
-            text="Go"
-            onPress={() => setDelayedLeaving()}
-            style={{ backgroundColor: colors.palette.primary600 }}
+            tx="scannerScreen.proceedButton"
+            onPress={setDelayedLeaving()}
+            style={{
+              backgroundColor: colors.palette.primary600,
+              width: "90%",
+            }}
+            pressedStyle={[{ backgroundColor: colors.palette.primary300 }, { borderRadius: 0 }]}
+            pressedTextStyle={{ color: colors.palette.neutral200 }}
+            textStyle={{
+              color: colors.palette.neutral200,
+              textAlign: "center",
+            }}
           />
         ) : (
           <View style={$unsafeScanButtons}>
             <Button text="Cancel" tx="common.cancel" preset="filled" onPress={cancelScan()} />
             <Button
               text="Accept Risk"
-              onPress={() => setDelayedLeaving()}
+              onPress={setDelayedLeaving()}
               style={{ backgroundColor: colors.palette.angry500 }}
             />
           </View>
@@ -141,11 +160,10 @@ const styles = StyleSheet.create({
   },
   infoText: {
     color: colors.palette.neutral200,
-    fontWeight: "bold",
   },
   textAndButton: {
     flex: 2,
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "space-between",
   },
 })
