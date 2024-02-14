@@ -1,14 +1,15 @@
 import * as React from "react"
-import { StyleProp, View, ViewStyle, StyleSheet, Pressable, Image } from "react-native"
+import { StyleProp, View, ViewStyle, StyleSheet, Image } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors } from "app/theme"
 import { Text } from "app/components/Text"
 import { useState } from "react"
 import SafeScannedPing from "./Audio/SafeScannedPing"
 import { Feather } from "@expo/vector-icons"
-import { openLinkInBrowser } from "app/utils/openLinkInBrowser"
+
 import OnScanHaptic from "./Haptics/OnScanHaptic"
 import * as WebBrowser from "expo-web-browser"
+import { Button } from "./Button"
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
 export interface ScanResponseCardProps {
@@ -30,35 +31,49 @@ export interface ScanResponseCardProps {
  * Describe your component here
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
-  const iconSize = 72
-  const { trustScore, safe, destination, scanState } = props
+  const iconSize = 64
+  const { trustScore, safe, destination, scanState, setScanState } = props
 
   const [leaving, setLeaving] = useState(false)
 
   const setDelayedLeaving = (): void => {
     setLeaving(true)
     setTimeout(async () => await WebBrowser.openBrowserAsync(destination!), 2000)
+    setScanState("notScanned")
   }
 
+  const cancelScan = (): (() => void) => {
+    return () => {
+      setScanState("notScanned")
+    }
+  }
   const scannedState = (
     <>
       <View style={styles.textAndButton}>
-        <Text style={styles.infoText}>{trustScore && `trust score: ${trustScore}`} </Text>
-        <Pressable onPress={() => setDelayedLeaving()}>
-          <Text style={styles.infoText}>
-            {safe ? "Go to" : "Still proceed to"} {destination}
-          </Text>
-        </Pressable>
+        <Text style={styles.infoText}>{trustScore && `Trust score: ${trustScore}`} </Text>
+
+        {safe ? (
+          <Button text="Go" onPress={() => setDelayedLeaving()} />
+        ) : (
+          <View style={$unsafeScanButtons}>
+            <Button text="Cancel" tx="common.cancel" preset="filled" onPress={cancelScan()} />
+            <Button
+              text="Accept Risk"
+              onPress={() => setDelayedLeaving()}
+              style={{ backgroundColor: colors.palette.angry500 }}
+            />
+          </View>
+        )}
 
         <SafeScannedPing />
         <OnScanHaptic scanState={scanState} safe={safe} />
       </View>
       {safe ? (
         <>
-          <Feather name="check-circle" size={iconSize} color={"#a2f732"} />
+          <Feather name="check-circle" size={iconSize} color={colors.palette.primary500} />
         </>
       ) : (
-        <Feather name="alert-circle" size={iconSize} color={"#eb4034"} />
+        <Feather name="alert-circle" size={iconSize} color={colors.palette.angry500} />
       )}
     </>
   )
@@ -78,7 +93,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   const leavingState = (
     <>
       <View style={styles.textAndButton}>
-        <Text style={styles.infoText}>Byeeeeeeeee</Text>
+        <Text style={styles.infoText}>See ya! </Text>
       </View>
       <Image
         source={require("./koala.gif")}
@@ -105,8 +120,8 @@ const styles = StyleSheet.create({
     bottom: 24,
     width: "80%",
     height: "auto",
-    padding: 24,
-    backgroundColor: "white",
+    padding: 16,
+    backgroundColor: colors.palette.neutral900,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -114,18 +129,21 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
     elevation: 3,
     flexDirection: "row",
+    alignItems: "center",
   },
   infoText: {
     color: colors.palette.neutral200,
     fontWeight: "bold",
-    fontSize: 16,
   },
   textAndButton: {
     flex: 2,
     alignItems: "flex-start",
     justifyContent: "space-between",
   },
-  checkCircle: {
-    flex: 1,
-  },
 })
+
+const $unsafeScanButtons: ViewStyle = {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  width: "100%",
+}

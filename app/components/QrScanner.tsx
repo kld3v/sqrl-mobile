@@ -171,7 +171,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           errorMessage={errorMsg}
         />
       )}
-      <View style={$refresh}>
+
+      {!safe && scanState === "scanned" && (
         <Pressable onPress={scanAgain(errorMsg)}>
           <Entypo
             name="leaf"
@@ -196,7 +197,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
             }}
           />
         </Pressable>
-      </View>
+      )}
     </View>
   )
 })
