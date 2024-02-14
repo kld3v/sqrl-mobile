@@ -126,11 +126,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
       let trustScore = Number(JSON.stringify(response.data.trust_score))
 
-      console.info(`Trust score: ${trustScore}`)
-
       setTrustScore(trustScore)
-
-      setSafe(trustScore && trustScore > 50 ? true : false)
+      setSafe(trustScore && trustScore > 500 ? true : false)
 
       // setDisplayName("Nandos")
     } catch (error) {
