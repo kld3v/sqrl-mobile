@@ -42,6 +42,14 @@ export const PushNotificationsStoreModel = types
       })
       store.notification = reset
     },
+
+    async sendPushNotificationOfQrVenueToUser() {
+      // get user location
+      // send userlocation to BE and get response
+      // if null, return
+      // if response, prep message to push to user
+      // send push notification to user
+    },
   }))
 // .views((store) => ({
 //   get expoPushToken() {
