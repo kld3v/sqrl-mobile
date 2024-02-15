@@ -31,7 +31,7 @@ export interface ScanResponseCardProps {
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
   const iconSize = 64
-  const { trustScore, safe, scanState, setScanState, url } = props
+  const { trustScore, safe, scanState, setScanState, url, errorMessage } = props
 
   const [leaving, setLeaving] = useState(false)
 
@@ -130,13 +130,33 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     </>
   )
 
-  return (
-    <View style={styles.infoBox}>
-      {scanState === "scanning" && scanningState}
-      {scanState === "scanned" && !leaving && scannedState}
-      {leaving && leavingState}
-    </View>
+  const errorState = (
+    <>
+      <OnScanHaptic scanState={scanState} safe={false} />
+      <View style={$errorMessageStyle}>
+        <Text style={styles.infoText}>{errorMessage}</Text>
+        <Button text="Try Again" preset="filled" onPress={cancelScan()} style={{ margin: 2 }} />
+      </View>
+      <Feather name="alert-circle" size={iconSize} color={colors.palette.angry500} />
+    </>
   )
+
+  const renderState = (): React.JSX.Element | null => {
+    switch (true) {
+      case !!errorMessage:
+        return errorState
+      case scanState === "scanning":
+        return scanningState
+      case scanState === "scanned" && !leaving:
+        return scannedState
+      case leaving:
+        return leavingState
+      default:
+        return null
+    }
+  }
+
+  return <View style={styles.infoBox}>{renderState()}</View>
 })
 
 const styles = StyleSheet.create({
@@ -172,4 +192,11 @@ const $unsafeScanButtons: ViewStyle = {
   flexDirection: "row",
   justifyContent: "space-between",
   width: "100%",
+}
+
+const $errorMessageStyle: ViewStyle = {
+  flex: 2,
+  alignItems: "flex-start",
+  justifyContent: "space-between",
+  flexDirection: "column",
 }

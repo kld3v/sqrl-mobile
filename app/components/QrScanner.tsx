@@ -51,6 +51,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           accuracy: Location.Accuracy.BestForNavigation,
         })
         setLocation(location)
+
         if (__DEV__) console.info(location)
       } catch (error) {
         console.error(`Failed to get location: ${error}`)
@@ -74,23 +75,28 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     userId: number,
     latitude: number,
     longitude: number,
-  ): Promise<ApiResponse<any, any>> => {
-    // const postData = `url=${encodeURIComponent(url)}&user_id=${encodeURIComponent(
-    //   userId,
-    // )}&latitude=${latitude}&longitude=${longitude}`
-
-    const postData = {
-      url, // No need to encode URI components manually
-      user_id: userId, // Use the exact field names expected by your Laravel backend
+  ): Promise<ApiResponse<any, any>> =>
+    await urlLocationAPI.post("/", {
+      url,
+      user_id: userId,
       latitude,
       longitude,
-    }
+    })
 
-    return await urlLocationAPI.post("/", postData)
+  const basicUrlValidationForScaredKoalas = (url: string): boolean => {
+    const regex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+    return regex.test(url)
   }
 
   const onScan = async (qrCodeScan: BarCodeScanningResult) => {
     setScanState("scanning")
+
+    if (!basicUrlValidationForScaredKoalas(qrCodeScan.data)) {
+      setErrorMsg("Don't like the look of that URL! Please try again with a different QR code.")
+      setScanState("scanned")
+      setSafe(false)
+      return
+    }
     setUrl(qrCodeScan.data)
 
     // Get Location
@@ -109,20 +115,24 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     // Send Location and URL to API
     try {
       const userID = 123 // TODO: Replace with actual user ID
-      let response = await sendUrlAndLocationData(qrCodeScan.data, userID, latitude, longitude)
-
-      console.info(
-        `Response: ${JSON.stringify(response.data)}`,
-        `Status: ${response.status}`,
-        `qrCodeScan: ${qrCodeScan.data}`,
+      let response: ApiResponse<any, any> = await sendUrlAndLocationData(
+        qrCodeScan.data,
+        userID,
+        latitude,
+        longitude,
       )
+
+      __DEV__ &&
+        console.info(
+          `Response: ${JSON.stringify(response.data)}`,
+          `Status: ${response.status}`,
+          `qrCodeScan: ${qrCodeScan.data}`,
+        )
 
       let trustScore = Number(JSON.stringify(response.data.trust_score))
 
       setTrustScore(trustScore)
       setSafe(trustScore && trustScore > 500 ? true : false)
-
-      // setDisplayName("Nandos")
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
       setErrorMsg("Oops - Something went wrong :( Please try again")
@@ -145,12 +155,10 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       </View>
     )
   }
-  const scanAgain =
-    (errorMessage: string | null): (() => void) =>
-    (): void => {
-      errorMessage && setErrorMsg(null)
-      setScanState("notScanned")
-    }
+  const scanAgain = (): (() => void) => (): void => {
+    setErrorMsg(null)
+    setScanState("notScanned")
+  }
   return (
     <View style={$styles}>
       <StatusBar style="light" />
@@ -184,7 +192,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
       {safe && scanState === "scanned" && (
         <View style={$refresh}>
-          <Pressable onPress={scanAgain(errorMsg)}>
+          <Pressable onPress={scanAgain()}>
             <Entypo
               name="leaf"
               size={16}

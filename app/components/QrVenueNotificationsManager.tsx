@@ -22,26 +22,22 @@ export const QrVenueNotificationsManager = observer(function QrVenueNotification
   const { pushNotificationsStore } = useStores()
 
   useEffect(() => {
-    pushNotificationsStore.fetchExpoPushToken()
     ;(async () => {
       const qrVenueApiResponse =
         await qrVenueNotificationService.seeIfUserLocationMatchesQrVenueGeoFence()
-      console.log(qrVenueApiResponse, "venueApiResponse")
+
+      await pushNotificationsStore.fetchExpoPushToken()
 
       const expoPushToken = pushNotificationsStore.expoPushToken
 
-      const messageToSend = {
-        title: "You are near a venue",
-        body: "Click to see the menu",
-        sound: "default",
-        data: { url: "" },
-      }
-
       if (qrVenueApiResponse && expoPushToken) {
         try {
-          messageToSend.data.url = qrVenueApiResponse.url
-
-          await pushNotificationService.sendPushNotificationToUser(expoPushToken, messageToSend)
+          await pushNotificationService.sendPushNotificationToUser(expoPushToken, {
+            title: `Welcome to ${qrVenueApiResponse.company}!`,
+            body: "Click to see the trusted QR",
+            sound: "default",
+            data: { url: qrVenueApiResponse.url },
+          })
         } catch (error) {
           console.error(`failed to sendPushNotificationToUser: ${error}`)
         }

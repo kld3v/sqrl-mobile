@@ -35,24 +35,19 @@ export const PushNotificationsStoreModel = types
     },
     clearNotification() {
       let reset = MessageModel.create({
-        title: "Hello from QRLA!",
-        body: "Welcome to the QRLA app!",
+        title: "",
+        body: "",
         sound: "default",
         data: { url: "https://www.qrla.io" },
       })
       store.notification = reset
     },
-
-    async sendPushNotificationOfQrVenueToUser() {
-      // get user location
-      // send userlocation to BE and get response
-      // if null, return
-      // if response, prep message to push to user
-      // send push notification to user
+  }))
+  .views((store) => ({
+    get hasNotification() {
+      return store.notification !== undefined
+    },
+    get hasExpoPushToken() {
+      return store.expoPushToken !== undefined
     },
   }))
-// .views((store) => ({
-//   get expoPushToken() {
-//     return store.expoPushToken ? store.expoPushToken : "No token"
-//   },
-// }))
