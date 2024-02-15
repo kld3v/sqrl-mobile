@@ -44,34 +44,20 @@ export class QrVenueNotificationService {
     })
   }
 
-  async seeIfUserLocationMatchesQrVenueGeoFence(): Promise<
-    false | { url: string; company: string }
-  > {
-    if (this.location === null) {
-      try {
-        await this.setCurrentLocation()
-        console.info("Location set in QrVenueNotificationService", this.location)
-      } catch (error) {
-        console.error(`Error getting location in QrVenueNotificationService:  ${error}`)
-        return false
-      }
+  async seeIfUserLocationMatchesQrVenueGeoFence(
+    latitude: number,
+    longitude: number,
+  ): Promise<false | { url: string; company: string }> {
+    const response = await this.apisauce_locationEndPoint.get("", { latitude, longitude })
+
+    if (response.ok) {
+      //@ts-ignore
+      // TODO - Sort typing
+      return { url: response.data[0].url.url, company: response.data[0].company }
+    } else {
+      console.error(`Failed at get request to API -> ${response.data}, ${response.problem}`)
+      return false
     }
-
-    if (this.location) {
-      const { latitude, longitude } = this.location.coords
-
-      const response = await this.apisauce_locationEndPoint.get("", { latitude, longitude })
-
-      if (response.ok) {
-        //@ts-ignore
-        // TODO - Sort typing
-        return { url: response.data[0].url.url, company: response.data[0].company }
-      } else {
-        console.error(`Failed at get request to API -> ${response.data}, ${response.problem}`)
-        return false
-      }
-    }
-    return false
   }
 }
 

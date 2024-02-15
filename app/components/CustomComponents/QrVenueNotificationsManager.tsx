@@ -19,12 +19,19 @@ export interface QrVenueNotificationsManagerProps {
 export const QrVenueNotificationsManager = observer(function QrVenueNotificationsManager(
   props: QrVenueNotificationsManagerProps,
 ) {
-  const { pushNotificationsStore } = useStores()
+  const { pushNotificationsStore, locationStore } = useStores()
 
   useEffect(() => {
     ;(async () => {
+      const { latitude, longitude } = locationStore
+
+      if (latitude === undefined || longitude === undefined) return
+
       const qrVenueApiResponse =
-        await qrVenueNotificationService.seeIfUserLocationMatchesQrVenueGeoFence()
+        await qrVenueNotificationService.seeIfUserLocationMatchesQrVenueGeoFence(
+          latitude,
+          longitude,
+        )
 
       await pushNotificationsStore.fetchExpoPushToken()
 

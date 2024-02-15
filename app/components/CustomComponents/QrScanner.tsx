@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite"
 import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
-import { LocationObject } from "expo-location"
 import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
 import { ScanStateOptions } from "types"
 import { useEffect, useState } from "react"
@@ -14,6 +13,8 @@ import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
 import { Entypo } from "@expo/vector-icons"
 import { qrScannerService } from "app/services/QrScanner"
+import { locationService } from "app/services/Location/LocationService"
+import { useStores } from "app/models"
 
 export interface QrScannerProps {
   /**
@@ -26,46 +27,49 @@ export interface QrScannerProps {
  * Describe your component here
  */
 export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
+  const { locationStore } = useStores()
   const { style } = props
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
-  const [scanState, setScanState] = useState<ScanStateOptions>("scanned")
+  const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
   const [url, setUrl] = useState<string>("")
-  const [location, setLocation] = useState<LocationObject>()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [trustScore, setTrustScore] = useState<number | null>(0)
+  const [trustScore, setTrustScore] = useState<number | null>(null)
 
   const [safe, setSafe] = useState<boolean>(false)
 
   const [showCamera, setShowCamera] = useState(false)
+
   useEffect(() => {
     setShowCamera(true)
     ;(async () => {
       try {
-        // I'm acquring this on user launch. This is because it can take a few seconds to attain the location. If already attained, I can use the much quicker API call getLastKnownPositionAsync() when the user scans to reduce wait time.
-        // However this is going to require some testing to ensure getLastKnownPositionAsync() returns this location rather than an incorrect location.
-        const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync()
-        if (__DEV__) console.info(foregroundStatus)
-
-        // TODO - Move to global state and use it here
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation,
-        })
-        setLocation(location)
-
-        if (__DEV__) console.info(location)
+        await locationService.requestPermission()
+        locationStore.setPermission()
+        await locationStore.setLocation()
       } catch (error) {
         console.error(`Failed to get location: ${error}`)
       }
     })()
 
-    // Need to force clean up of the camera component when the user navigates away from the screen. Fixes the weird camera bug which caused black screen when navigating back to the screen.
+    // Need to force clean up of the camera component when the user navigates away from the screen.
     return () => {
       setShowCamera(false)
     }
   }, [])
 
-  const onScan = async (qrCodeScan: BarCodeScanningResult) => {
+  const handleTrustScore = (trustScore: any) => {
+    let sanitisedTrustScore = Number(JSON.stringify(trustScore))
+    setTrustScore(sanitisedTrustScore)
+    setSafe(sanitisedTrustScore && sanitisedTrustScore > 500 ? true : false)
+  }
+
+  const scanAgain = (): (() => void) => (): void => {
+    setErrorMsg(null)
+    setScanState("notScanned")
+  }
+
+  const onScan = async (qrCodeScan: BarCodeScanningResult): Promise<void> => {
     setScanState("scanning")
 
     if (!qrScannerService.isUrlSafeForKoalasToSendToBackEnd(qrCodeScan.data)) {
@@ -75,26 +79,14 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       return
     }
     setUrl(qrCodeScan.data)
-    // Get Location
-    let latitude, longitude
-    if (location) {
-      // just get from state - much quicker!
-      latitude = location.coords.latitude
-      longitude = location.coords.longitude
-    } else {
-      // if location is not available, get it from the API
-      const currentLocation = await Location.getCurrentPositionAsync()
-      latitude = currentLocation.coords.latitude
-      longitude = currentLocation.coords.longitude
-    }
 
     try {
-      const userID = 123 // TODO: Replace with actual user ID
+      const userID = 123
       let response: ApiResponse<any, any> = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
         userID,
-        latitude,
-        longitude,
+        locationStore.latitude,
+        locationStore.longitude,
       )
 
       __DEV__ &&
@@ -104,10 +96,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           `qrCodeScan: ${qrCodeScan.data}`,
         )
 
-      let trustScore = Number(JSON.stringify(response.data.trust_score))
-
-      setTrustScore(trustScore)
-      setSafe(trustScore && trustScore > 500 ? true : false)
+      handleTrustScore(response.data.trustScore)
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
       setErrorMsg("Oops - Something went wrong :( Please try again")
@@ -130,10 +119,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       </View>
     )
   }
-  const scanAgain = (): (() => void) => (): void => {
-    setErrorMsg(null)
-    setScanState("notScanned")
-  }
+
   return (
     <View style={$styles}>
       <StatusBar style="light" />
