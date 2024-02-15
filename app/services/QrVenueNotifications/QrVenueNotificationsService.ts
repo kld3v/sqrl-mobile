@@ -43,6 +43,7 @@ export class QrVenueNotificationService {
     if (this.location === null) {
       try {
         await this.setLocation()
+        console.info("Location set in QrVenueNotificationService", this.location)
       } catch (error) {
         console.error(`Error getting location in QrVenueNotificationService:  ${error}`)
         return false
@@ -51,13 +52,21 @@ export class QrVenueNotificationService {
 
     if (this.location) {
       const { latitude, longitude } = this.location?.coords
-      const response = await this.apisauce.get(`lat=${latitude}&lon=${longitude}`)
+      console.log("latitude", latitude, "longitude", longitude)
+
+      const response = await this.apisauce.get("", { latitude, longitude })
+
+      console.log(response.data[0].url.url, "response")
+
       if (response.ok) {
-        console.info("User is within the geo-fence of a venue", response.data)
+        console.info("User is within the geo-fence of a venue", response.data[0])
 
         //@ts-ignore
-        return { url: response.data.url }
+        return { url: response.data[0].url.url }
       } else {
+        console.error(
+          `Failed at get request to API -> ${response.data.message}, ${response.problem}`,
+        )
         return false
       }
     }

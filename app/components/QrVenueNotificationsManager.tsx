@@ -6,7 +6,7 @@ import { useStores } from "app/models"
 import { qrVenueNotificationService } from "app/services/QrVenueNotifications"
 import { pushNotificationService } from "app/services/PushNotifications"
 
-export interface PushNotificationsManagerProps {
+export interface QrVenueNotificationsManagerProps {
   /**
    * An optional style override useful for padding & margin.
    */
@@ -16,8 +16,8 @@ export interface PushNotificationsManagerProps {
 /**
  * Describe your component here
  */
-export const PushNotificationsManager = observer(function PushNotificationsManager(
-  props: PushNotificationsManagerProps,
+export const QrVenueNotificationsManager = observer(function QrVenueNotificationsManager(
+  props: QrVenueNotificationsManagerProps,
 ) {
   const { pushNotificationsStore } = useStores()
 
@@ -26,6 +26,7 @@ export const PushNotificationsManager = observer(function PushNotificationsManag
     ;(async () => {
       const qrVenueApiResponse =
         await qrVenueNotificationService.seeIfUserLocationMatchesQrVenueGeoFence()
+      console.log(qrVenueApiResponse, "venueApiResponse")
 
       const expoPushToken = pushNotificationsStore.expoPushToken
 
@@ -37,11 +38,16 @@ export const PushNotificationsManager = observer(function PushNotificationsManag
       }
 
       if (qrVenueApiResponse && expoPushToken) {
-        messageToSend.data.url = qrVenueApiResponse.url
-        pushNotificationService.sendPushNotificationToUser(expoPushToken, messageToSend)
+        try {
+          messageToSend.data.url = qrVenueApiResponse.url
+
+          await pushNotificationService.sendPushNotificationToUser(expoPushToken, messageToSend)
+        } catch (error) {
+          console.error(`failed to sendPushNotificationToUser: ${error}`)
+        }
       } else {
         console.warn(
-          `User location does not match any venue geo-fence or expoPushToken unavailable: qrVenueApiResponse: ${qrVenueApiResponse} expoPushToken: ${expoPushToken}`,
+          `Error in QrVenueNotificationManager: qrVenueApiResponse: ${qrVenueApiResponse} expoPushToken: ${expoPushToken}`,
         )
       }
     })()
