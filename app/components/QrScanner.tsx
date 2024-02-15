@@ -84,10 +84,10 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     })
 
   const basicUrlValidationForScaredKoalas = (url: string): boolean => {
-    const regex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+    const regex =
+      /[\w\-]+\.(com|net|org|edu|gov|co|int|eu|us|mil|io|app|dev|ai|biz|info|name|mobi|pro|xxx|asia|cat|coop|jobs|museum|tel|travel|arpa|pdf|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az)/
     return regex.test(url)
   }
-
   const onScan = async (qrCodeScan: BarCodeScanningResult) => {
     setScanState("scanning")
 
