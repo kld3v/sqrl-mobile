@@ -1,15 +1,15 @@
 import * as React from "react"
-import { StyleProp, View, ViewStyle, StyleSheet, Image, TextStyle } from "react-native"
+import { StyleProp, View, ViewStyle, StyleSheet, Image } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors } from "app/theme"
 import { Text } from "app/components/Text"
 import { useState } from "react"
-import SafeScannedPing from "./Audio/SafeScannedPing"
+import SafeScannedPing from "../Audio/SafeScannedPing"
 import { Feather } from "@expo/vector-icons"
 
-import OnScanHaptic from "./Haptics/OnScanHaptic"
+import OnScanHaptic from "../Haptics/OnScanHaptic"
 import * as WebBrowser from "expo-web-browser"
-import { Button } from "./Button"
+import { Button } from "../Button"
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
 export interface ScanResponseCardProps {
@@ -32,6 +32,7 @@ export interface ScanResponseCardProps {
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
   const iconSize = 64
   const { trustScore, safe, scanState, setScanState, url, errorMessage } = props
+  const koalaGif = require("../../../assets/images/koala.gif")
 
   const [leaving, setLeaving] = useState(false)
 
@@ -110,10 +111,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>Checking...</Text>
       </View>
-      <Image
-        source={require("./koala.gif")}
-        style={{ width: iconSize, height: iconSize, zIndex: 100 }}
-      />
+      <Image source={koalaGif} style={{ width: iconSize, height: iconSize, zIndex: 100 }} />
     </>
   )
 
@@ -122,11 +120,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>See ya! </Text>
       </View>
-      <Image
-        source={require("./koala.gif")}
-        style={{ width: iconSize, height: iconSize }}
-        resizeMethod="auto"
-      />
+      <Image source={koalaGif} style={{ width: iconSize, height: iconSize }} resizeMethod="auto" />
     </>
   )
 

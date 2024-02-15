@@ -13,6 +13,7 @@ import { ApiResponse, create } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
 import { Entypo } from "@expo/vector-icons"
+import { qrScannerService } from "app/services/QrScanner"
 
 export interface QrScannerProps {
   /**
@@ -64,41 +65,16 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     }
   }, [])
 
-  const urlLocationAPI = create({
-    baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan?",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-  })
-
-  // TODO: Fix the type of the response
-  const sendUrlAndLocationData = async (
-    url: string,
-    userId: number,
-    latitude: number,
-    longitude: number,
-  ): Promise<ApiResponse<any, any>> =>
-    await urlLocationAPI.post("/", {
-      url,
-      user_id: userId,
-      latitude,
-      longitude,
-    })
-
-  const basicUrlValidationForScaredKoalas = (url: string): boolean => {
-    const regex =
-      /[\w\-]+\.(com|net|org|edu|gov|co|int|eu|us|mil|io|app|dev|ai|biz|info|name|mobi|pro|xxx|asia|cat|coop|jobs|museum|tel|travel|arpa|pdf|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az)/
-    return regex.test(url)
-  }
   const onScan = async (qrCodeScan: BarCodeScanningResult) => {
     setScanState("scanning")
 
-    if (!basicUrlValidationForScaredKoalas(qrCodeScan.data)) {
+    if (!qrScannerService.isUrlSafeForKoalasToSendToBackEnd(qrCodeScan.data)) {
       setErrorMsg("Don't like the look of that URL! Please try again with a different QR code.")
       setScanState("scanned")
       setSafe(false)
       return
     }
     setUrl(qrCodeScan.data)
-
     // Get Location
     let latitude, longitude
     if (location) {
@@ -112,10 +88,9 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       longitude = currentLocation.coords.longitude
     }
 
-    // Send Location and URL to API
     try {
       const userID = 123 // TODO: Replace with actual user ID
-      let response: ApiResponse<any, any> = await sendUrlAndLocationData(
+      let response: ApiResponse<any, any> = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
         userID,
         latitude,
