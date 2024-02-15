@@ -9,7 +9,7 @@ import { ScanStateOptions } from "types"
 import { useEffect, useState } from "react"
 import { StatusBar } from "expo-status-bar"
 import * as Location from "expo-location"
-import { ApiResponse, create } from "apisauce"
+import { ApiResponse } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
 import { Entypo } from "@expo/vector-icons"
@@ -29,11 +29,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const { style } = props
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
-  const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
+  const [scanState, setScanState] = useState<ScanStateOptions>("scanned")
   const [url, setUrl] = useState<string>("")
   const [location, setLocation] = useState<LocationObject>()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [trustScore, setTrustScore] = useState<number | null>(null)
+  const [trustScore, setTrustScore] = useState<number | null>(0)
 
   const [safe, setSafe] = useState<boolean>(false)
 
@@ -161,6 +161,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           scanState={scanState}
           safe={safe}
           setScanState={setScanState}
+          setErrorMessage={setErrorMsg}
           errorMessage={errorMsg}
         />
       )}

@@ -10,6 +10,7 @@ import { Feather } from "@expo/vector-icons"
 import OnScanHaptic from "../Haptics/OnScanHaptic"
 import * as WebBrowser from "expo-web-browser"
 import { Button } from "../Button"
+import { qrScannerService } from "app/services/QrScanner"
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
 export interface ScanResponseCardProps {
@@ -21,6 +22,7 @@ export interface ScanResponseCardProps {
   safe: boolean
   scanState: ScanStateOptions
   setScanState: React.Dispatch<React.SetStateAction<ScanStateOptions>>
+  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
   errorMessage: string | null
 
   style?: StyleProp<ViewStyle>
@@ -31,7 +33,7 @@ export interface ScanResponseCardProps {
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
   const iconSize = 64
-  const { trustScore, safe, scanState, setScanState, url, errorMessage } = props
+  const { trustScore, safe, scanState, setScanState, url, errorMessage, setErrorMessage } = props
   const koalaGif = require("../../../assets/images/koala.gif")
 
   const [leaving, setLeaving] = useState(false)
@@ -39,8 +41,13 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   const setDelayedLeaving = (): (() => void) => () => {
     setLeaving(true)
     setTimeout(async () => {
-      await WebBrowser.openBrowserAsync(url!)
-      setScanState("notScanned")
+      try {
+        await WebBrowser.openBrowserAsync(url!)
+        setScanState("notScanned")
+      } catch (error) {
+        console.error(error)
+        setErrorMessage("Failed to open browser, please scan again!")
+      }
     }, 2000)
   }
 
@@ -50,20 +57,12 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     }
   }
 
-  function extractMainDomain(url: string): string | null {
-    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i)
-    if (match != null && match.length > 2 && typeof match[2] === "string" && match[2].length > 0) {
-      const parts = match[2].split(".")
-      return parts[parts.length - 2]
-    }
-    return null
-  }
   const scannedState = (
     <>
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>
           <Text preset="bold" style={{ color: colors.palette.neutral200 }}>
-            {extractMainDomain(url!)}
+            {qrScannerService.getPrimaryDomainName(url!)}
           </Text>{" "}
           - {trustScore && `trust score: ${trustScore}`}
         </Text>

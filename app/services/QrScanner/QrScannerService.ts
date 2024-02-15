@@ -23,6 +23,15 @@ export class QrScannerService {
     return regex.test(url)
   }
 
+  getPrimaryDomainName(url: string): string | null {
+    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i)
+    if (match != null && match.length > 2 && typeof match[2] === "string" && match[2].length > 0) {
+      const parts = match[2].split(".")
+      return parts[parts.length - 2]
+    }
+    return null
+  }
+
   async sendUrlAndLocationData(
     url: string,
     userId: number,
