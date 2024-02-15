@@ -14,8 +14,6 @@ import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
 import { Entypo } from "@expo/vector-icons"
 
-import * as ExpoTrackingTransparency from "expo-tracking-transparency"
-
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -54,11 +52,6 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         })
         setLocation(location)
         if (__DEV__) console.info(location)
-
-        const { status } = await ExpoTrackingTransparency.requestTrackingPermissionsAsync()
-        if (status === "granted") {
-          console.log("Yay! I have user permission to track data")
-        }
       } catch (error) {
         console.error(`Failed to get location: ${error}`)
       }

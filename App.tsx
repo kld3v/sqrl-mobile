@@ -7,7 +7,7 @@ SplashScreen.preventAutoHideAsync()
 function IgniteApp() {
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style="auto" />
       <App hideSplashScreen={SplashScreen.hideAsync} />
     </>
   )
