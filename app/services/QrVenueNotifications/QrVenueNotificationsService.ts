@@ -10,8 +10,7 @@ export class QrVenueNotificationService {
 
   constructor() {
     this.config = {
-      baseURL:
-        "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/venues/location?",
+      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/venues/location",
       timeout: 10000,
       headers: {
         Accept: "application/json",
@@ -52,7 +51,6 @@ export class QrVenueNotificationService {
 
     if (this.location) {
       const { latitude, longitude } = this.location?.coords
-      console.log("latitude", latitude, "longitude", longitude)
 
       const response = await this.apisauce.get("", { latitude, longitude })
 
