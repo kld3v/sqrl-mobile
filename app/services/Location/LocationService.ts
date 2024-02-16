@@ -14,9 +14,13 @@ export class LocationService {
     this.permission = await Location.requestForegroundPermissionsAsync()
   }
   async getCurrentPosition(): Promise<Location.LocationObject> {
+<<<<<<< HEAD
     let currentPosition = await Location.getCurrentPositionAsync()
     console.log("currentPosition", currentPosition)
     return currentPosition
+=======
+    return await Location.getCurrentPositionAsync()
+>>>>>>> e1d1f2f01f095e92a707aca4851c9ea1cd679ba8
   }
 }
 

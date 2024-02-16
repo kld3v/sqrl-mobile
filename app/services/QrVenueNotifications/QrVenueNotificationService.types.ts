@@ -8,6 +8,7 @@ export interface QrVenueNotificationsConfig {
     "Content-Type": string
   }
 }
+<<<<<<< HEAD
 
 export type QrVenueNotificationApiResponse = {
   address: string | null
@@ -26,3 +27,5 @@ export type QrVenueNotificationApiResponse = {
   }
   url_id: number
 }
+=======
+>>>>>>> e1d1f2f01f095e92a707aca4851c9ea1cd679ba8

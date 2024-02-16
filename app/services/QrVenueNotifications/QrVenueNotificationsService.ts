@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { LocationObject } from "expo-location"
 import * as Location from "expo-location"
@@ -5,6 +6,12 @@ import {
   QrVenueNotificationApiResponse,
   QrVenueNotificationsConfig,
 } from "./QrVenueNotificationService.types"
+=======
+import { ApisauceInstance, create } from "apisauce"
+import { LocationObject } from "expo-location"
+import * as Location from "expo-location"
+import { QrVenueNotificationsConfig } from "./QrVenueNotificationService.types"
+>>>>>>> e1d1f2f01f095e92a707aca4851c9ea1cd679ba8
 
 export class QrVenueNotificationService {
   currentLocation: LocationObject | null = null
@@ -51,6 +58,7 @@ export class QrVenueNotificationService {
     latitude: number,
     longitude: number,
   ): Promise<false | { url: string; company: string }> {
+<<<<<<< HEAD
     const response: ApiResponse<
       QrVenueNotificationApiResponse[],
       QrVenueNotificationApiResponse[]
@@ -64,6 +72,18 @@ export class QrVenueNotificationService {
       console.log(
         `Failed at get request to API for QrVenueNotificationService -> ${response.data}, ${response.problem}`,
       )
+=======
+    const response = await this.apisauce_locationEndPoint.get("", { latitude, longitude })
+
+    if (response.ok) {
+      //@ts-ignore
+      // TODO - Sort typing
+      console.log(response.data[0])
+
+      return { url: response.data[0].url.url, company: response.data[0].company }
+    } else {
+      console.error(`Failed at get request to API -> ${response.data}, ${response.problem}`)
+>>>>>>> e1d1f2f01f095e92a707aca4851c9ea1cd679ba8
       return false
     }
   }
