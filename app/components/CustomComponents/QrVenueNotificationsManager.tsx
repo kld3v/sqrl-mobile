@@ -27,13 +27,21 @@ export const QrVenueNotificationsManager = observer(function QrVenueNotification
 
       if (latitude === undefined || longitude === undefined) return
 
-      const qrVenueApiResponse =
-        await qrVenueNotificationService.seeIfUserLocationMatchesQrVenueGeoFence(
+      let qrVenueApiResponse
+      try {
+        qrVenueApiResponse = await qrVenueNotificationService.getCompanyAndUrlOfMatchedQrVenue(
           latitude,
           longitude,
         )
+      } catch (error) {
+        console.error(`Failed to seeIfUserLocationMatchesQrVenueGeoFence: ${error}`)
+      }
 
-      await pushNotificationsStore.fetchExpoPushToken()
+      try {
+        await pushNotificationsStore.fetchExpoPushToken()
+      } catch (error) {
+        console.error(`Failed to fetchExpoPushToken: ${error}`)
+      }
 
       const expoPushToken = pushNotificationsStore.expoPushToken
 
@@ -41,7 +49,7 @@ export const QrVenueNotificationsManager = observer(function QrVenueNotification
         try {
           await pushNotificationService.sendPushNotificationToUser(expoPushToken, {
             title: `Welcome to ${qrVenueApiResponse.company}!`,
-            body: "Click to see the trusted QR",
+            body: "Click to see the trusted QR Destination!",
             sound: "default",
             data: { url: qrVenueApiResponse.url },
           })

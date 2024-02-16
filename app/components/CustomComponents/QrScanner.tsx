@@ -7,7 +7,6 @@ import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
 import { ScanStateOptions } from "types"
 import { useEffect, useState } from "react"
 import { StatusBar } from "expo-status-bar"
-import * as Location from "expo-location"
 import { ApiResponse } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
@@ -59,6 +58,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   }, [])
 
   const handleTrustScore = (trustScore: any) => {
+    console.log("trustScore", trustScore)
     let sanitisedTrustScore = Number(trustScore)
     setTrustScore(sanitisedTrustScore)
     setSafe(sanitisedTrustScore && sanitisedTrustScore > 500 ? true : false)
@@ -97,7 +97,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         )
 
       handleTrustScore(response.data.trust_score)
-      console.log(response.data)
+      console.log("scan response", response.data)
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
       setErrorMsg("Oops - Something went wrong :( Please try again")

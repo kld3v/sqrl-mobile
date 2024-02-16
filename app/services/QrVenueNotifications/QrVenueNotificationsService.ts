@@ -44,7 +44,7 @@ export class QrVenueNotificationService {
     })
   }
 
-  async seeIfUserLocationMatchesQrVenueGeoFence(
+  async getCompanyAndUrlOfMatchedQrVenue(
     latitude: number,
     longitude: number,
   ): Promise<false | { url: string; company: string }> {
@@ -53,6 +53,8 @@ export class QrVenueNotificationService {
     if (response.ok) {
       //@ts-ignore
       // TODO - Sort typing
+      console.log(response.data[0])
+
       return { url: response.data[0].url.url, company: response.data[0].company }
     } else {
       console.error(`Failed at get request to API -> ${response.data}, ${response.problem}`)
