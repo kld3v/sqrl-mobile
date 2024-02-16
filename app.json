@@ -77,9 +77,7 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Qrla to use your location.",
           "locationAlwaysPermission": "Allow Qrla to use your location",
-          "locationWhenInUsePermission": "Allow Qrla to use your location",
-          "isIosBackgroundLocationEnabled": true,
-          "isAndroidBackgroundLocationEnabled": true
+          "locationWhenInUsePermission": "Allow Qrla to use your location"
         }
       ],
       [

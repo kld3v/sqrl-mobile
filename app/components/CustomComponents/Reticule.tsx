@@ -1,8 +1,6 @@
 import * as React from "react"
-import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
+import { StyleProp, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
-
 import { ScanStateOptions } from "types"
 import { ReticuleCorner } from "./ReticuleCorner"
 import Animated, {

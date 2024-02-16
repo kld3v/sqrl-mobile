@@ -72,16 +72,16 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const onScan = async (qrCodeScan: BarCodeScanningResult): Promise<void> => {
     setScanState("scanning")
 
-    if (!qrScannerService.isUrlSafeForKoalasToSendToBackEnd(qrCodeScan.data)) {
-      setErrorMsg("Don't like the look of that URL! Please try again with a different QR code.")
-      setScanState("scanned")
-      setSafe(false)
-      return
-    }
+    // if (!qrScannerService.isUrlSafeForKoalasToSendToBackEnd(qrCodeScan.data)) {
+    //   setErrorMsg("Don't like the look of that URL! Please try again with a different QR code.")
+    //   setScanState("scanned")
+    //   setSafe(false)
+    //   return
+    // }
     setUrl(qrCodeScan.data)
 
     try {
-      const userID = null
+      const userID = 123
       let response: ApiResponse<any, any> = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
         userID,
