@@ -59,7 +59,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   }, [])
 
   const handleTrustScore = (trustScore: any) => {
-    let sanitisedTrustScore = Number(JSON.stringify(trustScore))
+    let sanitisedTrustScore = Number(trustScore)
     setTrustScore(sanitisedTrustScore)
     setSafe(sanitisedTrustScore && sanitisedTrustScore > 500 ? true : false)
   }
@@ -81,7 +81,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     setUrl(qrCodeScan.data)
 
     try {
-      const userID = 123
+      const userID = null
       let response: ApiResponse<any, any> = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
         userID,
@@ -96,7 +96,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           `qrCodeScan: ${qrCodeScan.data}`,
         )
 
-      handleTrustScore(response.data.trustScore)
+      handleTrustScore(response.data.trust_score)
+      console.log(response.data)
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
       setErrorMsg("Oops - Something went wrong :( Please try again")

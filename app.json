@@ -5,7 +5,7 @@
     "name": "qrlaApp",
     "slug": "qrlaApp",
     "scheme": "qrlaapp",
-    "version": "1.0.0",
+    "version": "2",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
     "extra": {
@@ -26,10 +26,9 @@
       "fallbackToCacheTimeout": 0
     },
     "jsEngine": "hermes",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "android": {
+      "versionCode": 2,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/images/app-icon-android-legacy.png",
       "package": "com.qrlaapp",
@@ -44,6 +43,7 @@
       }
     },
     "ios": {
+      "buildNumber": "2",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
@@ -69,10 +69,7 @@
         {
           "icon": "./assets/images/notification-icon.png",
           "color": "#ffffff",
-          "sounds": [
-            "./assets/sounds/notification.wav",
-            "./assets/sounds/notification.wav"
-          ]
+          "sounds": ["./assets/sounds/notification.wav", "./assets/sounds/notification.wav"]
         }
       ],
       [

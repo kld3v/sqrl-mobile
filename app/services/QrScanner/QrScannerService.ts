@@ -34,7 +34,7 @@ export class QrScannerService {
 
   async sendUrlAndLocationData(
     url: string,
-    userId: number,
+    userId: number | null,
     latitude: number | undefined,
     longitude: number | undefined,
   ): Promise<ApiResponse<any, any>> {
