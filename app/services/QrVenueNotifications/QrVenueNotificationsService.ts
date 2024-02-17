@@ -63,7 +63,7 @@ export class QrVenueNotificationService {
       return { url: response.data[0].url.url, company: response.data[0].company }
     } else {
       console.log(
-        `Failed at get request to API for QrVenueNotificationService -> res.data: ${response.data}, res.problem: ${response.problem}`,
+        `No QrVenue match to user coordinates of lon: ${longitude}, lat: ${latitude} -> res.data: ${response.data}, res.problem: ${response.problem}`,
       )
       return false
     }
