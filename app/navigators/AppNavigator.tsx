@@ -12,7 +12,7 @@ import {
 } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import { observer } from "mobx-react-lite"
-import React from "react"
+import React, { useEffect } from "react"
 import { useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
@@ -20,7 +20,7 @@ import { useStores } from "../models"
 import { Navigator, TabParamList } from "./Navigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
-
+import { locationService } from "app/services/Location/LocationService"
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
  * as well as what properties (if any) they might take when navigating to them.
@@ -61,7 +61,30 @@ const AppStack = observer(function AppStack() {
   const {
     authenticationStore: { isAuthenticated },
   } = useStores()
+  const { locationStore } = useStores()
 
+  const recurringlyUpdateLocation = async () => {
+    try {
+      await locationStore.getAndSetCurrentPosition()
+    } catch (error) {
+      console.error(`Failed to get location: ${error}`)
+    }
+    console.log(locationStore.latitude, locationStore.longitude)
+  }
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        await locationService.requestPermission()
+        locationStore.setPermission()
+        await locationStore.getAndSetCurrentPosition()
+        setInterval(recurringlyUpdateLocation, 10000)
+      } catch (error) {
+        console.error(`Failed to get location: ${error}`)
+      }
+    })()
+    // setInterval(recurringlyUpdateLocation, 10000)
+  }, [])
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false, navigationBarColor: colors.background }}

@@ -12,7 +12,7 @@ import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
 import { Entypo } from "@expo/vector-icons"
 import { qrScannerService } from "app/services/QrScanner"
-import { locationService } from "app/services/Location/LocationService"
+
 import { useStores } from "app/models"
 
 export interface QrScannerProps {
@@ -41,16 +41,6 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   useEffect(() => {
     setShowCamera(true)
-    ;(async () => {
-      try {
-        await locationService.requestPermission()
-        locationStore.setPermission()
-        await locationStore.setLocation()
-      } catch (error) {
-        console.error(`Failed to get location: ${error}`)
-      }
-    })()
-
     // Need to force clean up of the camera component when the user navigates away from the screen.
     return () => {
       setShowCamera(false)
@@ -92,15 +82,17 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       __DEV__ &&
         console.info(
           `Response: ${JSON.stringify(response.data)}`,
+          `Trust Score: ${JSON.stringify(response.data.trust_score)}`,
           `Status: ${response.status}`,
           `qrCodeScan: ${qrCodeScan.data}`,
+          `latitude: ${locationStore.latitude}`,
+          `longitude: ${locationStore.longitude}`,
         )
 
       handleTrustScore(response.data.trust_score)
-      console.log("scan response", response.data)
     } catch (error) {
-      console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
-      setErrorMsg("Oops - Something went wrong :( Please try again")
+      console.error(`Error with sendUrlAndLocationDataFunction: ${error}`)
+      setErrorMsg("Oops! Failed to send scan data to the bush. Please try again.")
     }
 
     setScanState("scanned")

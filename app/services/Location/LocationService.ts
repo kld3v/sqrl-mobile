@@ -10,14 +10,42 @@ export class LocationService {
       canAskAgain: true,
     }
   }
+
   async requestPermission() {
     this.permission = await Location.requestForegroundPermissionsAsync()
   }
-  async getCurrentPosition(): Promise<Location.LocationObject> {
-    let currentPosition = await Location.getCurrentPositionAsync()
+
+  async getCurrentPosition(distance?: number): Promise<Location.LocationObject> {
+    let currentPosition = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+      distanceInterval: distance || 0,
+    })
     console.log("currentPosition", currentPosition)
     return currentPosition
   }
+
+  async getLastKnownPosition(): Promise<Location.LocationObject | null> {
+    let lastKnownPosition = await Location.getLastKnownPositionAsync()
+    console.log("lastKnownPosition", lastKnownPosition)
+    return lastKnownPosition
+  }
+
+  // Need to revisit this
+  // activateLocationWatch = (): Promise<Location.LocationObject> => {
+  //   return new Promise((resolve, reject) => {
+  //     Location.watchPositionAsync(
+  //       {
+  //         accuracy: Location.Accuracy.BestForNavigation,
+  //         distanceInterval: 10,
+  //       },
+  //       (location) => {
+  //         resolve(location)
+  //       },
+  //     ).catch((error) => {
+  //       reject(error)
+  //     })
+  //   })
+  // }
 }
 
 export const locationService = new LocationService()
