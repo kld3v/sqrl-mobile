@@ -69,7 +69,7 @@ const AppStack = observer(function AppStack() {
     } catch (error) {
       console.error(`Failed to get location: ${error}`)
     }
-    console.log(locationStore.latitude, locationStore.longitude)
+    // console.log(locationStore.latitude, locationStore.longitude)
   }
 
   useEffect(() => {

@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from "uuid"
+import * as Crypto from "expo-crypto"
 
 export default class UUIDService {
   public static generateUUID(): string {
-    return uuidv4()
+    return Crypto.randomUUID()
   }
 }

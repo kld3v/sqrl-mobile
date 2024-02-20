@@ -17,16 +17,16 @@ export class LocationService {
 
   async getCurrentPosition(distance?: number): Promise<Location.LocationObject> {
     let currentPosition = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Highest,
+      accuracy: Location.Accuracy.BestForNavigation,
       distanceInterval: distance || 0,
     })
-    console.log("currentPosition", currentPosition)
+    // console.log("currentPosition", currentPosition)
     return currentPosition
   }
 
   async getLastKnownPosition(): Promise<Location.LocationObject | null> {
     let lastKnownPosition = await Location.getLastKnownPositionAsync()
-    console.log("lastKnownPosition", lastKnownPosition)
+    // console.log("lastKnownPosition", lastKnownPosition)
     return lastKnownPosition
   }
 

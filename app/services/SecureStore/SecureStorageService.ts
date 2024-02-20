@@ -12,6 +12,7 @@ export default class SecureStorageService {
   async initDeviceUUID(): Promise<void> {
     try {
       let uuid: string | null = await SecureStore.getItemAsync("device_uuid")
+      console.log("get uuid from store", uuid)
       if (uuid === null) {
         uuid = UUIDService.generateUUID()
         await SecureStore.setItemAsync("device_uuid", uuid)
@@ -27,9 +28,9 @@ export default class SecureStorageService {
     return this.device_uuid
   }
 
-  async getDeviceUUIDAsNumber() {
-    await this.initPromise
-    return Number(this.device_uuid)
+  private async clearDeviceUUID() {
+    await SecureStore.deleteItemAsync("device_uuid")
+    this.device_uuid = null
   }
 }
 

@@ -1,5 +1,6 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { QrScannerServiceConfig } from "./QrScannerService.types"
+import { secureStoreInstance } from "../SecureStore/SecureStorageService"
 
 export class QrScannerService {
   config: QrScannerServiceConfig
@@ -34,16 +35,21 @@ export class QrScannerService {
 
   async sendUrlAndLocationData(
     url: string,
-    device_uuid: number | null,
     latitude: number | undefined,
     longitude: number | undefined,
   ): Promise<ApiResponse<any, any>> {
-    return await this.apisauce_urlScanEndPoint.post("/", {
+    const device_uuid = await secureStoreInstance.getDeviceUUID()
+    console.log(
+      "\n device_uuid being sent off to backend: \n",
+      `------------> ${device_uuid} <------------`,
+    )
+    let res = await this.apisauce_urlScanEndPoint.post("/", {
       url,
-      device_uuid: device_uuid,
+      device_uuid,
       latitude,
       longitude,
     })
+    return res
   }
 }
 

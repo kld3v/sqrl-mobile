@@ -14,9 +14,6 @@ import { Entypo } from "@expo/vector-icons"
 import { qrScannerService } from "app/services/QrScanner"
 
 import { useStores } from "app/models"
-import SecureStorageService, {
-  secureStoreInstance,
-} from "app/services/SecureStore/SecureStorageService"
 
 export interface QrScannerProps {
   /**
@@ -68,21 +65,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   const onScan = async (qrCodeScan: BarCodeScanningResult): Promise<void> => {
     setScanState("scanning")
-
-    // if (!qrScannerService.isUrlSafeForKoalasToSendToBackEnd(qrCodeScan.data)) {
-    //   setErrorMsg("Don't like the look of that URL! Please try again with a different QR code.")
-    //   setScanState("scanned")
-    //   setSafe(false)
-    //   return
-    // }
     setUrl(qrCodeScan.data)
 
     try {
-      const device_uuid = await secureStoreInstance.getDeviceUUIDAsNumber()
-
       let response: ApiResponse<any, any> = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
-        device_uuid,
         locationStore.latitude,
         locationStore.longitude,
       )
