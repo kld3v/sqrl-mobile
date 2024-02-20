@@ -41,7 +41,7 @@ export type AppStackParamList = {
   // 🔥 Your screens go here
   PushNotifications: undefined
   MarketPlace: undefined
-	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -91,6 +91,11 @@ const AppStack = observer(function AppStack() {
       screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
       initialRouteName={isAuthenticated ? "Welcome" : "Login"}
     >
+      <Stack.Screen name="Demo" component={Navigator} />
+
+      {/* 
+      For when authentication set up! 
+      
       {isAuthenticated ? (
         <>
           <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
@@ -101,12 +106,12 @@ const AppStack = observer(function AppStack() {
         <>
           <Stack.Screen name="Login" component={Screens.LoginScreen} />
         </>
-      )}
+      )} */}
 
       {/** 🔥 Your screens go here */}
       {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
       <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} />
-			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 })

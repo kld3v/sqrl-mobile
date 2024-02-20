@@ -16,9 +16,25 @@ export const customFontsToLoad = {
   spaceGroteskMedium,
   spaceGroteskSemiBold,
   spaceGroteskBold,
+  Borsok: require("../../assets/Fonts/Borsok/Borsok.ttf"),
+  PoppinsBold: require("../../assets/Fonts/Poppins/Poppins-Bold.ttf"),
+  PoppinsExtraBold: require("../../assets/Fonts/Poppins/Poppins-ExtraBold.ttf"),
+  PoppinsSemiBold: require("../../assets/Fonts/Poppins/Poppins-SemiBold.ttf"),
+  Poppins: require("../../assets/Fonts/Poppins/Poppins-Regular.ttf"),
 }
 
 const fonts = {
+  borsok: {
+    // Custom font.
+    normal: "Borsok",
+  },
+  poppins: {
+    // Custom font.
+    normal: "Poppins",
+    semiBold: "PoppinsSemiBold",
+    bold: "PoppinsBold",
+    extraBold: "PoppinsExtraBold",
+  },
   spaceGrotesk: {
     // Cross-platform Google font.
     light: "spaceGroteskLight",

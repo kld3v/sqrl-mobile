@@ -93,7 +93,7 @@ export function Navigator() {
         }}
       />
 
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Debug"
         component={DebugScreen}
         options={{
@@ -103,7 +103,7 @@ export function Navigator() {
             <Icon icon="face" color={focused ? colors.tint : colors.text} size={56} />
           ),
         }}
-      />
+      /> */}
       {/* {__DEV__ && (
         <Tab.Screen
           name="Testing"
