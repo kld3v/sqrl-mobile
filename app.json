@@ -8,6 +8,7 @@
     "version": "2.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
+
     "extra": {
       "eas": {
         "projectId": "24d5ead5-ef54-41ac-a1ad-72e30e2e11c4"
@@ -47,6 +48,9 @@
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "splash": {
         "image": "./assets/images/splash-logo-ios-mobile.png",
         "tabletImage": "./assets/images/splash-logo-ios-tablet.png",

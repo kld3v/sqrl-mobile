@@ -46,7 +46,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
         setScanState("notScanned")
       } catch (error) {
         console.error(error)
-        setErrorMessage("Failed to open browser, please scan again!")
+        setErrorMessage("Not a valid URL. Soz. Try again.")
       }
     }, 2000)
   }

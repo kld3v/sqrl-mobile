@@ -7,7 +7,7 @@ export class QrScannerService {
 
   constructor() {
     this.config = {
-      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan?",
+      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       timeout: 10000,
     }
@@ -23,24 +23,24 @@ export class QrScannerService {
     return regex.test(url)
   }
 
-  getPrimaryDomainName(url: string): string | null {
+  getPrimaryDomainName(url: string): string {
     const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i)
     if (match != null && match.length > 2 && typeof match[2] === "string" && match[2].length > 0) {
       const parts = match[2].split(".")
       return parts[parts.length - 2]
     }
-    return null
+    return url
   }
 
   async sendUrlAndLocationData(
     url: string,
-    userId: number | null,
+    device_uuid: number | null,
     latitude: number | undefined,
     longitude: number | undefined,
   ): Promise<ApiResponse<any, any>> {
     return await this.apisauce_urlScanEndPoint.post("/", {
       url,
-      user_id: userId,
+      device_uuid: device_uuid,
       latitude,
       longitude,
     })
