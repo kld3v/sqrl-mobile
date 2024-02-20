@@ -113,6 +113,7 @@ export const iconRegistry = {
   map: require("../../assets/icons/map.png"),
   eucalyptus: require("../../assets/icons/eucalyptus.png"),
   shoppingCart: require("../../assets/icons/shopping-cart.png"),
+  paperPlane: require("../../assets/icons/paperPlane.png"),
 }
 
 const $imageStyleBase: ImageStyle = {
