@@ -13,18 +13,22 @@ import { colors, spacing } from "../theme"
 import { openLinkInBrowser } from "../utils/openLinkInBrowser"
 // import { isRTL } from "../i18n"
 import { StatusBar } from "expo-status-bar"
+import { observer } from "mobx-react-lite"
+import { AppStackScreenProps } from "app/navigators"
 
-export const CommunityScreen: FC<TabScreenProps<"Community">> = function CommunityScreen(_props) {
+interface MarketPlaceScreenProps extends AppStackScreenProps<"MarketPlace"> {}
+
+export const MarketPlaceScreen: FC<MarketPlaceScreenProps> = observer(function MarketPlaceScreen() {
   const [Roger, setRoger] = useState(false)
   return (
     <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top"]}>
       <StatusBar style="light" />
 
-      <Text preset="heading" tx="communityScreen.title" style={$title} />
-      <Text tx="communityScreen.tagLine" style={$tagline} />
+      <Text preset="heading" text="Market Place" style={$title} />
+      <Text text="Coming Soon..." style={$tagline} />
 
-      <Text preset="subheading" text="Scan and Compete" style={$sectionTitle} />
-      <Text tx="communityScreen.description" style={$description} />
+      <Text preset="subheading" text="Scan, Earn, Spend" style={$sectionTitle} />
+      <Text tx="marketPlaceScreen.description" style={$description} />
 
       <IsThisSomethingYouWouldUse />
 
@@ -53,7 +57,7 @@ export const CommunityScreen: FC<TabScreenProps<"Community">> = function Communi
       /> */}
     </Screen>
   )
-}
+})
 
 const $container: ViewStyle = {
   paddingTop: spacing.lg + spacing.xl,

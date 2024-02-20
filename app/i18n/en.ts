@@ -47,13 +47,22 @@ const en = {
     communityTab: "Community",
     debugTab: "Me",
     pushTab: "Push",
+    marketPlaceTab: "MarketPlace",
   },
   communityScreen: {
-    title: "A koala-ty community",
-    tagLine: "We're a group of Koalas looking to find the best leaves.",
+    title: "JOIN OUR COMMUNITY",
+    tagLine: "Coming Soon...",
+    description:
+      "Challenge your friends, family, and local community to ramp up your scan game and unlock even greater rewards.",
     thisIsRoger: "This is Roger.",
     hireUs: "He likes leaves.",
     interweb: "get sneak peaks on our page on the interweb-net",
+  },
+  marketPlaceScreen: {
+    title: "Market Place",
+    tagLine: "Coming Soon...",
+    description:
+      "Earn in-app tokens effortlessly as you scan, for exclusive perks from top brands in our marketplace.",
   },
   mapScreen: {
     title: "Maps",
