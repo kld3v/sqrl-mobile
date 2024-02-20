@@ -77,6 +77,10 @@ export const typography = {
    */
   primary: fonts.spaceGrotesk,
   /**
+   * Like the famous dog poppins in always sunny, a font that never dies.
+   */
+  Poppins: fonts.poppins,
+  /**
    * An alternate font used for perhaps titles and stuff.
    */
   secondary: Platform.select({ ios: fonts.helveticaNeue, android: fonts.sansSerif }),

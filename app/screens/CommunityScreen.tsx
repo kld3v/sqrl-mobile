@@ -2,7 +2,7 @@ import React, { FC, useState } from "react"
 import { ImageStyle, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
 import { AutoImage, IsThisSomethingYouWouldUse, Screen, Text } from "../components"
 import { TabScreenProps } from "../navigators/Navigator"
-import { colors, spacing } from "../theme"
+import { colors, spacing, typography } from "../theme"
 
 // import { isRTL } from "../i18n"
 import { StatusBar } from "expo-status-bar"
@@ -94,6 +94,7 @@ const $description: TextStyle = {
   color: colors.textGreen,
   fontSize: 20,
   paddingHorizontal: spacing.lg,
+  fontFamily: typography.Poppins.normal,
   ...baseTextStyle,
 }
 
