@@ -66,7 +66,7 @@ const $container: ViewStyle = {
 const $title: TextStyle = {
   marginBottom: spacing.sm,
   fontFamily: "Borsok",
-  fontSize: 48,
+  fontSize: 40,
   lineHeight: 56,
   ...baseTextStyle,
 }
@@ -74,7 +74,7 @@ const $title: TextStyle = {
 const $tagline: TextStyle = {
   marginBottom: spacing.sm,
   paddingTop: spacing.xxs,
-  fontFamily: "PoppinsSemiBold",
+  fontFamily: "Poppins",
   color: colors.textGreen,
   fontSize: 24,
   ...baseTextStyle,

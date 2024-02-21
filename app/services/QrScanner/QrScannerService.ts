@@ -26,11 +26,23 @@ export class QrScannerService {
 
   getPrimaryDomainName(url: string): string {
     const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i)
-    if (match != null && match.length > 2 && typeof match[2] === "string" && match[2].length > 0) {
+    if (match && match[2]) {
       const parts = match[2].split(".")
-      return parts[parts.length - 2]
+      // Handling for known SLDs with ccTLDs like '.co.uk'
+      if (parts.length > 2) {
+        // Identify if the last two parts match known SLD + ccTLD patterns
+        const knownSLDs = ["co.uk", "org.uk", "com.au", "co.nz", "co.za", "com.sg"]
+        const lastTwo = parts.slice(-2).join(".")
+        if (knownSLDs.includes(lastTwo)) {
+          return parts.slice(-3, -2).join() // Return the part just before the SLD + ccTLD
+        } else {
+          return parts.slice(-2, -1).join() // Return the second level domain
+        }
+      } else {
+        return parts.slice(-2, -1).join() // Directly return the domain if there's no SLD + ccTLD pattern
+      }
     }
-    return url
+    return url // Return the original URL if no match is found
   }
 
   async sendUrlAndLocationData(

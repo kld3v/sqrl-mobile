@@ -21,6 +21,8 @@ export const customFontsToLoad = {
   PoppinsExtraBold: require("../../assets/Fonts/Poppins/Poppins-ExtraBold.ttf"),
   PoppinsSemiBold: require("../../assets/Fonts/Poppins/Poppins-SemiBold.ttf"),
   Poppins: require("../../assets/Fonts/Poppins/Poppins-Regular.ttf"),
+  PoppinsLight: require("../../assets/Fonts/Poppins/Poppins-Light.ttf"),
+  PoppinsMedium: require("../../assets/Fonts/Poppins/Poppins-Medium.ttf"),
 }
 
 const fonts = {
@@ -30,7 +32,9 @@ const fonts = {
   },
   poppins: {
     // Custom font.
+    light: "PoppinsLight",
     normal: "Poppins",
+    medium: "PoppinsMedium",
     semiBold: "PoppinsSemiBold",
     bold: "PoppinsBold",
     extraBold: "PoppinsExtraBold",
@@ -75,7 +79,7 @@ export const typography = {
   /**
    * The primary font. Used in most places.
    */
-  primary: fonts.spaceGrotesk,
+  primary: fonts.poppins,
   /**
    * Like the famous dog poppins in always sunny, a font that never dies.
    */

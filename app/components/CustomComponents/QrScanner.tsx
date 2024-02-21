@@ -47,15 +47,16 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     }
   }, [])
 
-  const handleTrustScore = (trustScore: any) => {
+  const handleTrustScore = (trustScore: number | null) => {
     console.log("trustScore", trustScore)
-    if (!trustScore) {
+    if (typeof trustScore !== "number") {
       setErrorMsg("Oops! Didn't get a trust score back from the server. Try again I guess.")
       return
     }
-    let sanitisedTrustScore = Number(trustScore)
+    const sanitisedTrustScore = Math.round(trustScore / 100)
+
     setTrustScore(sanitisedTrustScore)
-    setSafe(sanitisedTrustScore && sanitisedTrustScore > 500 ? true : false)
+    setSafe(sanitisedTrustScore && sanitisedTrustScore > 5 ? true : false)
   }
 
   const scanAgain = (): (() => void) => (): void => {

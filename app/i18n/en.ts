@@ -47,7 +47,7 @@ const en = {
     communityTab: "Community",
     debugTab: "Me",
     pushTab: "Push",
-    marketPlaceTab: "MarketPlace",
+    marketPlaceTab: "Rewards",
   },
   communityScreen: {
     title: "JOIN OUR COMMUNITY",
@@ -59,7 +59,7 @@ const en = {
     interweb: "get sneak peaks on our page on the interweb-net",
   },
   marketPlaceScreen: {
-    title: "Market Place",
+    title: "Rewards",
     tagLine: "Coming Soon...",
     description:
       "Earn in-app tokens effortlessly as you scan, for exclusive perks from top brands in our marketplace.",

@@ -2,10 +2,11 @@
   "name": "qrlaApp",
   "displayName": "qrlaApp",
   "expo": {
+    "owner": "qrlalabs",
     "name": "qrlaApp",
     "slug": "qrlaApp",
     "scheme": "qrlaapp",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
 
@@ -44,7 +45,7 @@
       }
     },
     "ios": {
-      "buildNumber": "2.0.6",
+      "buildNumber": "6",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
