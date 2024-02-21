@@ -19,7 +19,9 @@ export interface ScanResponseCardProps {
    */
   trustScore: number | null
   url: string
+  setUrl: React.Dispatch<React.SetStateAction<string>>
   safe: boolean
+  setSafe: React.Dispatch<React.SetStateAction<boolean>>
   scanState: ScanStateOptions
   setScanState: React.Dispatch<React.SetStateAction<ScanStateOptions>>
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
@@ -33,7 +35,17 @@ export interface ScanResponseCardProps {
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
   const iconSize = 64
-  const { trustScore, safe, scanState, setScanState, url, errorMessage, setErrorMessage } = props
+  const {
+    trustScore,
+    safe,
+    setSafe,
+    scanState,
+    setScanState,
+    url,
+    setUrl,
+    errorMessage,
+    setErrorMessage,
+  } = props
   const koalaGif = require("../../../assets/images/koala.gif")
 
   const [leaving, setLeaving] = useState(false)
@@ -43,7 +55,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     setTimeout(async () => {
       try {
         await WebBrowser.openBrowserAsync(url!)
-        setScanState("notScanned")
+        resetScanState()()
       } catch (error) {
         console.error(error)
         setErrorMessage("Not a valid URL. Soz. Try again.")
@@ -51,9 +63,12 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     }, 2000)
   }
 
-  const cancelScan = (): (() => void) => {
+  const resetScanState = (): (() => void) => {
     return () => {
       setScanState("notScanned")
+      setSafe(false)
+      setUrl("")
+      setErrorMessage(null)
     }
   }
 
@@ -83,7 +98,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
           />
         ) : (
           <View style={$unsafeScanButtons}>
-            <Button text="Cancel" tx="common.cancel" preset="filled" onPress={cancelScan()} />
+            <Button text="Cancel" tx="common.cancel" preset="filled" onPress={resetScanState()} />
             <Button
               text="Accept Risk"
               onPress={setDelayedLeaving()}
@@ -128,7 +143,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       <OnScanHaptic scanState={scanState} safe={false} />
       <View style={$errorMessageStyle}>
         <Text style={styles.infoText}>{errorMessage}</Text>
-        <Button text="Try Again" preset="filled" onPress={cancelScan()} style={{ margin: 2 }} />
+        <Button text="Try Again" preset="filled" onPress={resetScanState()} style={{ margin: 2 }} />
       </View>
       <Feather name="alert-circle" size={iconSize} color={colors.palette.angry500} />
     </>

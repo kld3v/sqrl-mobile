@@ -18,9 +18,9 @@ export class QrScannerService {
       timeout: this.config.timeout,
     })
   }
-  isUrlSafeForKoalasToSendToBackEnd(url: string): boolean {
+  isUrl(url: string): boolean {
     const regex =
-      /[\w\-]+\.(com|net|org|edu|gov|co|int|eu|us|mil|io|app|dev|ai|biz|info|name|mobi|pro|xxx|asia|cat|coop|jobs|museum|tel|travel|arpa|pdf|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az)/
+      /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?(\?[=&\w]*)?(#[\/\w]*)?$/i
     return regex.test(url)
   }
 

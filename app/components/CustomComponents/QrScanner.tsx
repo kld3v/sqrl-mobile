@@ -60,13 +60,20 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   const scanAgain = (): (() => void) => (): void => {
     setErrorMsg(null)
+    setUrl("")
+    setTrustScore(null)
+    setSafe(false)
     setScanState("notScanned")
   }
 
   const onScan = async (qrCodeScan: BarCodeScanningResult): Promise<void> => {
     setScanState("scanning")
+    if (!qrScannerService.isUrl(qrCodeScan.data)) {
+      setErrorMsg("Oops! That doesn't look like a valid URL.")
+      setScanState("scanned")
+      return
+    }
     setUrl(qrCodeScan.data)
-
     try {
       let response: ApiResponse<any, any> = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
@@ -132,8 +139,10 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           style={$card}
           trustScore={trustScore}
           url={url}
+          setUrl={setUrl}
           scanState={scanState}
           safe={safe}
+          setSafe={setSafe}
           setScanState={setScanState}
           setErrorMessage={setErrorMsg}
           errorMessage={errorMsg}
