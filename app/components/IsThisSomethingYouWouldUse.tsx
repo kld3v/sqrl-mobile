@@ -27,58 +27,92 @@ export const IsThisSomethingYouWouldUse = observer(function IsThisSomethingYouWo
   const { style, questionID } = props
   const $styles = [$container, style]
 
-  const [switchState, setSwitchState] = useState(false)
+  const [yesReponse, setYesReponse] = useState(false)
+  const [noResponse, setNoResponse] = useState(false)
   const [why, setWhy] = useState("")
+  const [sent, setSent] = useState(false)
 
-  const sendFeedback = useCallback(async (): Promise<void> => {
-    try {
-      await userFeedbackService.sendFeedback(questionID, String(switchState), why)
-    } catch (error) {
-      console.log(
-        `\n error at sendFeedback in IsThisSomethingYouWouldUse component. \n Failed to send feedback. \n Soz. \n ${error}`,
-      )
-    }
-  }, [])
+  const sendFeedback = useCallback(
+    async (
+      questionID: number,
+      yesReponse: boolean,
+      noResponse: boolean,
+      why: string,
+    ): Promise<void> => {
+      let toggleResponse
+      if (!yesReponse && !noResponse) {
+        toggleResponse = "no response"
+      } else {
+        toggleResponse = yesReponse ? "yes" : "no"
+      }
+
+      try {
+        await userFeedbackService.sendFeedback(questionID, toggleResponse, why)
+      } catch (error) {
+        console.log(
+          `\n error at sendFeedback in IsThisSomethingYouWouldUse component. \n Failed to send feedback. \n Soz. \n ${error}`,
+        )
+      }
+      setSent(true)
+    },
+    [],
+  )
 
   return (
     <View style={$styles}>
-      <View style={{}}>
-        <Text style={$text}>Is this something you would use? </Text>
-        <Toggle
-          variant="switch"
-          value={switchState}
-          onValueChange={(_) => {
-            setSwitchState(true)
-          }}
-          inputOuterStyle={{ backgroundColor: colors.palette.primary500 }}
-          inputInnerStyle={{ backgroundColor: colors.palette.neutral400 }}
-          helper="Hell yeah"
-          status={!switchState ? "disabled" : undefined}
-        />
-        <Toggle
-          variant="switch"
-          value={switchState}
-          onValueChange={(_) => setSwitchState(false)}
-          inputOuterStyle={{ backgroundColor: colors.palette.angry500 }}
-          inputInnerStyle={{ backgroundColor: colors.palette.neutral400 }}
-          helper="nah"
-          status={switchState ? "disabled" : undefined}
-        />
-      </View>
-      <TextField
-        value={why}
-        onChangeText={(text) => setWhy(text)}
-        label="Any other thoughts?"
-        placeholder="The name for a group of koalas should be..."
-        RightAccessory={(props) => (
-          <Button
-            onPress={() => alert("click")}
-            RightAccessory={() => (
-              <Icon icon="paperPlane" color={colors.palette.primary500} size={24} />
-            )}
+      {sent ? (
+        <Text style={$text}>Thank you for your feedback!</Text>
+      ) : (
+        <>
+          <Text style={$text}>Is this something you would use? </Text>
+          <Toggle
+            variant="switch"
+            value={yesReponse}
+            onValueChange={() => {
+              setYesReponse(true)
+              setNoResponse(false)
+            }}
+            inputOuterStyle={{ backgroundColor: colors.palette.neutral300 }}
+            inputInnerStyle={{ backgroundColor: colors.palette.primary500 }}
+            helper="Yes"
+            HelperTextProps={{ style: { marginTop: -4 } }}
           />
-        )}
-      />
+          <Toggle
+            variant="switch"
+            value={noResponse}
+            onValueChange={() => {
+              setNoResponse(true)
+              setYesReponse(false)
+            }}
+            containerStyle={{ marginBottom: spacing.sm }}
+            inputOuterStyle={{ backgroundColor: colors.palette.neutral300 }}
+            inputInnerStyle={{ backgroundColor: colors.palette.angry500 }}
+            helper="No"
+            HelperTextProps={{ style: { marginTop: -4 } }}
+          />
+          <TextField
+            value={why}
+            onChangeText={(text) => setWhy(text)}
+            accessibilityLabel="Any other thoughts?"
+            placeholder="Any other thoughts?"
+            numberOfLines={8}
+            multiline
+          />
+          <Button
+            onPress={() => sendFeedback(questionID, yesReponse, noResponse, why)}
+            text="Send"
+            textStyle={{ paddingRight: spacing.xxs }}
+            RightAccessory={() => (
+              <Icon icon="paperPlane" size={16} color={colors.palette.accent100} />
+            )}
+            style={{
+              borderRadius: 40,
+              marginTop: spacing.sm,
+              marginVertical: spacing.md,
+            }}
+          />
+        </>
+      )}
     </View>
   )
 })

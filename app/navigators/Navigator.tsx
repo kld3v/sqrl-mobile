@@ -46,18 +46,6 @@ export function Navigator() {
         tabBarItemStyle: $tabBarItem,
       }}
     >
-      <Tab.Screen
-        name="Scan"
-        component={ScanScreen}
-        options={{
-          tabBarLabel: "",
-          tabBarAccessibilityLabel: translate("navigator.scannerTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={iconSize} />
-          ),
-        }}
-      />
-
       {/* <Tab.Screen
         name="Map"
         component={MapScreen}
@@ -77,6 +65,18 @@ export function Navigator() {
           tabBarAccessibilityLabel: translate("navigator.communityTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Scan"
+        component={ScanScreen}
+        options={{
+          tabBarLabel: "",
+          tabBarAccessibilityLabel: translate("navigator.scannerTab"),
+          tabBarIcon: ({ focused }) => (
+            <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
       />
