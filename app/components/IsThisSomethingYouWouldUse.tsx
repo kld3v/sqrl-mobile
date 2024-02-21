@@ -4,10 +4,11 @@ import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { Toggle } from "./Toggle"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { TextField } from "./TextField"
 import { Icon } from "./Icon"
 import { Button } from "./Button"
+import { userFeedbackService } from "app/services/UserFeedback/UserFeedbackService"
 
 export interface IsThisSomethingYouWouldUseProps {
   /**
@@ -26,9 +27,18 @@ export const IsThisSomethingYouWouldUse = observer(function IsThisSomethingYouWo
   const { style, questionID } = props
   const $styles = [$container, style]
 
-  const [yesReponse, setYesReponse] = useState(false)
-  const [noResponse, setNoResponse] = useState(false)
+  const [switchState, setSwitchState] = useState(false)
   const [why, setWhy] = useState("")
+
+  const sendFeedback = useCallback(async (): Promise<void> => {
+    try {
+      await userFeedbackService.sendFeedback(questionID, String(switchState), why)
+    } catch (error) {
+      console.log(
+        `\n error at sendFeedback in IsThisSomethingYouWouldUse component. \n Failed to send feedback. \n Soz. \n ${error}`,
+      )
+    }
+  }, [])
 
   return (
     <View style={$styles}>
@@ -36,24 +46,23 @@ export const IsThisSomethingYouWouldUse = observer(function IsThisSomethingYouWo
         <Text style={$text}>Is this something you would use? </Text>
         <Toggle
           variant="switch"
-          value={yesReponse}
-          onValueChange={(value) => {
-            setYesReponse(value)
-            alert("yes")
+          value={switchState}
+          onValueChange={(_) => {
+            setSwitchState(true)
           }}
           inputOuterStyle={{ backgroundColor: colors.palette.primary500 }}
           inputInnerStyle={{ backgroundColor: colors.palette.neutral400 }}
           helper="Hell yeah"
-          status={noResponse ? "disabled" : undefined}
+          status={!switchState ? "disabled" : undefined}
         />
         <Toggle
           variant="switch"
-          value={noResponse}
-          onValueChange={(value) => setNoResponse(value)}
+          value={switchState}
+          onValueChange={(_) => setSwitchState(false)}
           inputOuterStyle={{ backgroundColor: colors.palette.angry500 }}
           inputInnerStyle={{ backgroundColor: colors.palette.neutral400 }}
           helper="nah"
-          status={yesReponse ? "disabled" : undefined}
+          status={switchState ? "disabled" : undefined}
         />
       </View>
       <TextField

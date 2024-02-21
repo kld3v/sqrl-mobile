@@ -19,7 +19,7 @@ export const CommunityScreen: FC<TabScreenProps<"Community">> = function Communi
       <Text preset="subheading" text="Scan and Compete" style={$sectionTitle} />
       <Text tx="communityScreen.description" style={$description} />
 
-      <IsThisSomethingYouWouldUse />
+      <IsThisSomethingYouWouldUse questionID={1} />
 
       <TouchableOpacity onPress={() => setRoger(!Roger)}>
         {Roger ? (

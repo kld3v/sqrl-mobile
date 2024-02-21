@@ -1,17 +1,18 @@
 import { ApisauceInstance, create } from "apisauce"
 import { secureStoreInstance } from "../SecureStore/SecureStorageService"
-
+import { ApiConfig, DEFAULT_API_CONFIG } from "../api"
 export default class UserFeedbackService {
   private apisauce: ApisauceInstance
   private config: any
   constructor() {
     this.config = {
-      url: "https://example.com",
+      baseUrl: DEFAULT_API_CONFIG.url,
       timeout: 10000,
     }
     this.apisauce = create({
-      baseURL: this.config.url,
+      baseURL: this.config.baseUrl,
       timeout: this.config.timeout,
+      //TODO DRY CLEANUP
       headers: {
         Accept: "application/json",
         "Accept-encoding": "gzip, deflate",
@@ -20,7 +21,7 @@ export default class UserFeedbackService {
     })
   }
   public async sendFeedback(questionID: number, responseAnswer?: string, responseText?: string) {
-    const response = await this.apisauce.post("/feedback", {
+    const response = await this.apisauce.post("question-responses", {
       questionID,
       device_uuid: secureStoreInstance.getDeviceUUID(),
       responseAnswer,

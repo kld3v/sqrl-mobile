@@ -21,7 +21,7 @@ export const MarketPlaceScreen: FC<MarketPlaceScreenProps> = observer(function M
       <Text preset="subheading" text="Scan, Earn, Spend" style={$sectionTitle} />
       <Text tx="marketPlaceScreen.description" style={$description} />
 
-      <IsThisSomethingYouWouldUse />
+      <IsThisSomethingYouWouldUse questionID={2} />
 
       <TouchableOpacity onPress={() => setRoger(!Roger)}>
         {Roger ? (
