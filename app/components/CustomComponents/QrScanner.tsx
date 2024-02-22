@@ -14,6 +14,7 @@ import { Entypo } from "@expo/vector-icons"
 import { qrScannerService } from "app/services/QrScanner"
 
 import { useStores } from "app/models"
+import { AutoImage } from "../AutoImage"
 
 export interface QrScannerProps {
   /**
@@ -65,6 +66,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     setTrustScore(null)
     setSafe(false)
     setScanState("notScanned")
+    setShowCamera(false)
+    setShowCamera(true)
   }
 
   const onScan = async (qrCodeScan: BarCodeScanningResult): Promise<void> => {
@@ -153,27 +156,9 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       {safe && scanState === "scanned" && (
         <View style={$refresh}>
           <Pressable onPress={scanAgain()}>
-            <Entypo
-              name="leaf"
-              size={16}
-              color={colors.palette.neutral100}
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: [{ translateX: -16 }, { translateY: 16 }, { rotate: "-45deg" }],
-              }}
-            />
-            <Entypo
-              name="leaf"
-              size={16}
-              color={colors.palette.neutral100}
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: [{ translateX: -4 }, { translateY: 16 }, { rotate: "135deg" }],
-              }}
+            <AutoImage
+              source={require("../../../assets/images/refreshButton.png")}
+              style={{ width: 48, height: 48 }}
             />
           </Pressable>
         </View>

@@ -1,6 +1,6 @@
 import { BottomTabScreenProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { CompositeScreenProps } from "@react-navigation/native"
-import React from "react"
+import { CompositeScreenProps, useNavigation } from "@react-navigation/native"
+import React, { useEffect } from "react"
 import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "../components"
@@ -34,8 +34,17 @@ const Tab = createBottomTabNavigator<TabParamList>()
 export function Navigator() {
   const { bottom } = useSafeAreaInsets()
   const iconSize = 42
+
+  const navigation = useNavigation()
+  useEffect(() => {
+    // Why on earth is the ...args param typed as never?
+    // Implemented because initialRouteName is not working as expected.
+    navigation.navigate("Scan")
+  }, [])
+
   return (
     <Tab.Navigator
+      initialRouteName="Scan"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,

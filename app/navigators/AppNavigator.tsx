@@ -89,7 +89,8 @@ const AppStack = observer(function AppStack() {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
-      initialRouteName={isAuthenticated ? "Welcome" : "Login"}
+      // initialRouteName={isAuthenticated ? "Welcome" : "Login"}
+      initialRouteName="Demo"
     >
       <Stack.Screen name="Demo" component={Navigator} />
 
@@ -110,7 +111,7 @@ const AppStack = observer(function AppStack() {
 
       {/** 🔥 Your screens go here */}
       {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
-      <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} />
+      {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
