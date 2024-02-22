@@ -1,7 +1,7 @@
 import * as React from "react"
-import { StyleProp, View, ViewStyle, StyleSheet, Image } from "react-native"
+import { StyleProp, View, ViewStyle, StyleSheet, Image, ImageStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors } from "app/theme"
+import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { useState } from "react"
 import SafeScannedPing from "../Audio/SafeScannedPing"
@@ -11,6 +11,7 @@ import OnScanHaptic from "../Haptics/OnScanHaptic"
 import * as WebBrowser from "expo-web-browser"
 import { Button } from "../Button"
 import { qrScannerService } from "app/services/QrScanner"
+import { AutoImage } from "../AutoImage"
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
 export interface ScanResponseCardProps {
@@ -34,7 +35,7 @@ export interface ScanResponseCardProps {
  * Describe your component here
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
-  const iconSize = 64
+  const iconSize = 220
   const {
     trustScore,
     safe,
@@ -122,10 +123,14 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   const scanningState = (
     <>
       <OnScanHaptic scanState={scanState} />
-      <View style={styles.textAndButton}>
-        <Text style={styles.infoText}>Checking...</Text>
-      </View>
-      <Image source={koalaGif} style={{ width: iconSize, height: iconSize, zIndex: 100 }} />
+
+      <Text style={styles.infoText}>Checking your QR code...</Text>
+
+      <AutoImage
+        source={koalaGif}
+        // to resize gif correctly. Do not mess with lest you feel my wrath.
+        style={$koalaGif}
+      />
     </>
   )
 
@@ -134,7 +139,11 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       <View style={styles.textAndButton}>
         <Text style={styles.infoText}>See ya! </Text>
       </View>
-      <Image source={koalaGif} style={{ width: iconSize, height: iconSize }} resizeMethod="auto" />
+      <AutoImage
+        source={koalaGif}
+        style={{ width: iconSize, height: iconSize }}
+        resizeMethod="auto"
+      />
     </>
   )
 
@@ -173,29 +182,38 @@ const styles = StyleSheet.create({
     left: "10%",
     right: "10%",
     bottom: 24,
-    width: "80%",
-    height: "auto",
-    padding: 16,
-    backgroundColor: colors.palette.neutral900,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
+    height: 100,
+    padding: spacing.md,
+    backgroundColor: colors.palette.neutral100,
+    borderRadius: 28,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 1 },
+    // shadowOpacity: 0.22,
+    // shadowRadius: 2.22,
+    // elevation: 3,
     flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
   },
   infoText: {
+    fontFamily: typography.Poppins.bold,
     color: colors.palette.neutral200,
+    fontSize: typography.ResponseCard.fontSize.medium,
+    marginTop: spacing.md,
+    // backgroundColor: colors.palette.neutral300,
+    alignSelf: "center",
+    width: "70%",
+    marginLeft: 120,
   },
-  textAndButton: {
-    flex: 2,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
+  textAndButton: {},
 })
 
+const $koalaGif: ImageStyle = {
+  width: "100%",
+  height: 220,
+  transform: [{ scale: 0.3 }],
+  marginLeft: -100,
+}
 const $unsafeScanButtons: ViewStyle = {
   flexDirection: "row",
   justifyContent: "space-between",

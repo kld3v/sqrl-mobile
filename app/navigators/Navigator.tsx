@@ -38,7 +38,8 @@ export function Navigator() {
   const navigation = useNavigation()
   useEffect(() => {
     // Why on earth is the ...args param typed as never?
-    // Implemented because initialRouteName is not working as expected.
+    // Implemented because initialRouteName is not working as expected.🐨
+
     navigation.navigate("Scan")
   }, [])
 

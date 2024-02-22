@@ -71,6 +71,19 @@ const fonts = {
   },
 }
 
+const fontSizes = {
+  h1: 38,
+  h2: 34,
+  h3: 30,
+  h4: 26,
+  h5: 20,
+  h6: 19,
+  body1: 16,
+  body2: 14,
+  body3: 12,
+  body4: 10,
+}
+
 export const typography = {
   /**
    * The fonts are available to use, but prefer using the semantic name.
@@ -92,4 +105,12 @@ export const typography = {
    * Lets get fancy with a monospace font!
    */
   code: Platform.select({ ios: fonts.courier, android: fonts.monospace }),
+
+  ResponseCard: {
+    fontSize: {
+      large: fontSizes.h3,
+      medium: fontSizes.h5,
+      small: 12,
+    },
+  },
 }
