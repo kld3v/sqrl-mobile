@@ -32,6 +32,14 @@ export default class SecureStorageService {
     await SecureStore.deleteItemAsync("device_uuid")
     this.device_uuid = null
   }
+
+  public async getValueFromSecureStore(key: string) {
+    return SecureStore.getItemAsync(key)
+  }
+
+  public async setValueInSecureStore(key: string, value: string) {
+    return SecureStore.setItemAsync(key, value)
+  }
 }
 
 export const secureStoreInstance = new SecureStorageService()

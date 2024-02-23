@@ -64,6 +64,15 @@ const AppStack = observer(function AppStack() {
   } = useStores()
   const { locationStore } = useStores()
 
+  const checkIfUserHasSignedUpToDateContract = () => {
+    // get signed version code from secure store
+    // send to server to check if it's the latest version
+    // if it's not, return the version the user needs to sign, and send user to the contract screen
+    // 1. if user signs, update local storage and send version to server which will upon success, send user to QR scanner
+    // 2. If user rejects terms, update contract page to say sorry but they cannot use the app without your consent.
+    // if it is the latest version, proceed to QR scanner
+  }
+
   const recurringlyUpdateLocation = async () => {
     try {
       await locationStore.getAndSetCurrentPosition()

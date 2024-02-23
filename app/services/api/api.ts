@@ -16,6 +16,11 @@ import type { ApiConfig, ApiFeedResponse } from "./api.types"
 export const DEFAULT_API_CONFIG: ApiConfig = {
   url: Config.API_URL,
   timeout: 10000,
+  headers: {
+    Accept: "application/json",
+    "Accept-encoding": "gzip, deflate",
+    "Content-Type": "application/json",
+  },
 }
 
 /**
