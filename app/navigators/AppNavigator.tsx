@@ -14,13 +14,14 @@ import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navig
 import { observer } from "mobx-react-lite"
 import React, { useEffect } from "react"
 import { useColorScheme } from "react-native"
-import * as Screens from "app/screens"
+
 import Config from "../config"
 import { useStores } from "../models"
 import { Navigator, TabParamList } from "./Navigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { locationService } from "app/services/Location/LocationService"
+import * as Screens from "app/screens"
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
  * as well as what properties (if any) they might take when navigating to them.
@@ -41,6 +42,7 @@ export type AppStackParamList = {
   // 🔥 Your screens go here
   PushNotifications: undefined
   MarketPlace: undefined
+  TermsAndConditions: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -61,8 +63,8 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 const AppStack = observer(function AppStack() {
   const {
     authenticationStore: { isAuthenticated },
+    locationStore,
   } = useStores()
-  const { locationStore } = useStores()
 
   const checkIfUserHasSignedUpToDateContract = () => {
     // get signed version code from secure store
@@ -97,7 +99,11 @@ const AppStack = observer(function AppStack() {
   }, [])
   return (
     <Stack.Navigator
-      screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
+      screenOptions={{
+        headerShown: false,
+        navigationBarColor: colors.background,
+        navigationBarHidden: true,
+      }}
       // initialRouteName={isAuthenticated ? "Welcome" : "Login"}
       initialRouteName="Demo"
     >
@@ -121,6 +127,7 @@ const AppStack = observer(function AppStack() {
       {/** 🔥 Your screens go here */}
       {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
       {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
+      <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )

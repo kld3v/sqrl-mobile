@@ -1,11 +1,9 @@
-import { ApisauceConfig, ApisauceInstance, create } from "apisauce"
+import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { secureStoreInstance } from "../SecureStore/SecureStorageService"
-import { TermsServiceConfig } from "./TermsService.types"
-import configProd from "app/config/config.prod"
+import { DocumentsToSignResponseObject } from "./TermsService.types"
 import { DEFAULT_API_CONFIG } from "../api"
 
 export class TermsService {
-  // config: TermsServiceConfig
   apisauce: ApisauceInstance
 
   constructor() {
@@ -16,9 +14,24 @@ export class TermsService {
     })
   }
 
-  async getSignedTermsVersion() {
-    secureStoreInstance.getValueFromSecureStore()
+  async checkUserAgreements(): Promise<DocumentsToSignResponseObject["documents_to_sign"] | false> {
+    let res: ApiResponse<DocumentsToSignResponseObject> = await this.apisauce.get(
+      "agreements/check",
+      {
+        uuid: await secureStoreInstance.getDeviceUUID(),
+      },
+    )
+    if (!res.data) return false
+
+    if (!res.data.documents_to_sign) return false
+
+    return res.data.documents_to_sign
   }
 
-  async checkIfUserHasSignedUpToDateContract() {}
+  async signUserAgreements(signedDocIds: number[]): Promise<void> {
+    await this.apisauce.post("agreements/sign", {
+      uuid: await secureStoreInstance.getDeviceUUID(),
+      doc_id: signedDocIds,
+    })
+  }
 }

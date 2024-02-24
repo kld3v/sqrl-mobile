@@ -35,14 +35,6 @@ export function Navigator() {
   const { bottom } = useSafeAreaInsets()
   const iconSize = 42
 
-  const navigation = useNavigation()
-  useEffect(() => {
-    // Why on earth is the ...args param typed as never?
-    // Implemented because initialRouteName is not working as expected.🐨
-
-    navigation.navigate("Scan")
-  }, [])
-
   return (
     <Tab.Navigator
       initialRouteName="Scan"
@@ -56,17 +48,6 @@ export function Navigator() {
         tabBarItemStyle: $tabBarItem,
       }}
     >
-      {/* <Tab.Screen
-        name="Map"
-        component={MapScreen}
-        options={{
-          tabBarLabel: translate("navigator.mapTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="pin" color={focused ? colors.tint : colors.text} size={iconSize} />
-          ),
-        }}
-      /> */}
-
       <Tab.Screen
         name="Community"
         component={CommunityScreen}
@@ -102,35 +83,12 @@ export function Navigator() {
           ),
         }}
       />
-
-      {/* <Tab.Screen
-        name="Debug"
-        component={DebugScreen}
-        options={{
-          tabBarLabel: "",
-          tabBarAccessibilityLabel: translate("navigator.debugTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="face" color={focused ? colors.tint : colors.text} size={56} />
-          ),
-        }}
-      /> */}
-      {/* {__DEV__ && (
-        <Tab.Screen
-          name="Testing"
-          component={TestingScreen}
-          options={{
-            tabBarLabel: translate("navigator.pushTab"),
-            tabBarIcon: ({ focused }) => (
-              <Icon icon="lock" color={focused ? colors.tint : colors.text} size={iconSize} />
-            ),
-          }}
-        />
-      )} */}
     </Tab.Navigator>
   )
 }
 
 const $tabBar: ViewStyle = {
+  display: "none",
   backgroundColor: colors.background,
   borderTopColor: colors.transparent,
 }
