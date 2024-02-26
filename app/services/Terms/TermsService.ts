@@ -1,6 +1,6 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { secureStoreInstance } from "../SecureStore/SecureStorageService"
-import { DocumentsToSignResponseObject } from "./TermsService.types"
+import { DocumentResponseObject, DocumentsToSignResponseObject } from "./TermsService.types"
 import { DEFAULT_API_CONFIG } from "../api"
 
 export class TermsService {
@@ -14,13 +14,18 @@ export class TermsService {
     })
   }
 
-  async checkUserAgreements(): Promise<DocumentsToSignResponseObject["documents_to_sign"] | false> {
-    let res: ApiResponse<DocumentsToSignResponseObject> = await this.apisauce.get(
-      "agreements/check",
-      {
+  async checkUserAgreements(): Promise<DocumentResponseObject[] | false | Error> {
+    let res: ApiResponse<DocumentsToSignResponseObject>
+    try {
+      res = await this.apisauce.get("agreements/check", {
         uuid: await secureStoreInstance.getDeviceUUID(),
-      },
-    )
+      })
+    } catch (error) {
+      // Needs to handle error so that user cannot use app without signing t/c's.
+      console.error("Error checking user agreements API Request", error)
+      return new Error("Error checking user agreements API Request")
+    }
+
     if (!res.data) return false
 
     if (!res.data.documents_to_sign) return false
@@ -35,3 +40,5 @@ export class TermsService {
     })
   }
 }
+
+export const termsService = new TermsService()

@@ -22,6 +22,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { locationService } from "app/services/Location/LocationService"
 import * as Screens from "app/screens"
+import { DocumentResponseObject, termsService } from "app/services/Terms"
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
  * as well as what properties (if any) they might take when navigating to them.
@@ -61,19 +62,7 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
-  const {
-    authenticationStore: { isAuthenticated },
-    locationStore,
-  } = useStores()
-
-  const checkIfUserHasSignedUpToDateContract = () => {
-    // get signed version code from secure store
-    // send to server to check if it's the latest version
-    // if it's not, return the version the user needs to sign, and send user to the contract screen
-    // 1. if user signs, update local storage and send version to server which will upon success, send user to QR scanner
-    // 2. If user rejects terms, update contract page to say sorry but they cannot use the app without your consent.
-    // if it is the latest version, proceed to QR scanner
-  }
+  const { locationStore, termsAndConditionsStore } = useStores()
 
   const recurringlyUpdateLocation = async () => {
     try {
@@ -91,12 +80,15 @@ const AppStack = observer(function AppStack() {
         locationStore.setPermission()
         await locationStore.getAndSetCurrentPosition()
         setInterval(recurringlyUpdateLocation, 10000)
+        // await termsAndConditionsStore.checkIfUserHasSignedUpToDateContract()
+        // termsAndConditionsStore.addDocumentIdToTermIDs(1)
+        console.log(termsAndConditionsStore.termsIds)
       } catch (error) {
         console.error(`Failed to get location: ${error}`)
       }
     })()
-    // setInterval(recurringlyUpdateLocation, 10000)
   }, [])
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -104,30 +96,17 @@ const AppStack = observer(function AppStack() {
         navigationBarColor: colors.background,
         navigationBarHidden: true,
       }}
-      // initialRouteName={isAuthenticated ? "Welcome" : "Login"}
-      initialRouteName="Demo"
     >
-      <Stack.Screen name="Demo" component={Navigator} />
-
-      {/* 
-      For when authentication set up! 
-      
-      {isAuthenticated ? (
-        <>
-          <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
-
-          <Stack.Screen name="Demo" component={Navigator} />
-        </>
+      {termsAndConditionsStore.hasTermsToSign && !termsAndConditionsStore.hasUserAcceptedTerms ? (
+        <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       ) : (
-        <>
-          <Stack.Screen name="Login" component={Screens.LoginScreen} />
-        </>
-      )} */}
+        <Stack.Screen name="Demo" component={Navigator} />
+      )}
 
       {/** 🔥 Your screens go here */}
       {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
       {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
-      <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
+
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )

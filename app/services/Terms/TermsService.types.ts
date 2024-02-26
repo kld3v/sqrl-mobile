@@ -1,3 +1,5 @@
+export type DocumentResponseObject = { id: number; term_name: string; term_url: string }
+
 export interface DocumentsToSignResponseObject {
-  documents_to_sign: null | { id: number; term_name: string; term_url: string }[]
+  documents_to_sign: null | DocumentResponseObject[]
 }
