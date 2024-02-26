@@ -17,12 +17,14 @@ export const customFontsToLoad = {
   spaceGroteskSemiBold,
   spaceGroteskBold,
   Borsok: require("../../assets/Fonts/Borsok/Borsok.ttf"),
-  PoppinsBold: require("../../assets/Fonts/Poppins/Poppins-Bold.ttf"),
-  PoppinsExtraBold: require("../../assets/Fonts/Poppins/Poppins-ExtraBold.ttf"),
-  PoppinsSemiBold: require("../../assets/Fonts/Poppins/Poppins-SemiBold.ttf"),
   Poppins: require("../../assets/Fonts/Poppins/Poppins-Regular.ttf"),
   PoppinsLight: require("../../assets/Fonts/Poppins/Poppins-Light.ttf"),
   PoppinsMedium: require("../../assets/Fonts/Poppins/Poppins-Medium.ttf"),
+  PoppinsMediumItalic: require("../../assets/Fonts/Poppins/Poppins-MediumItalic.ttf"),
+  PoppinsBold: require("../../assets/Fonts/Poppins/Poppins-Bold.ttf"),
+  PoppinsBoldItalic: require("../../assets/Fonts/Poppins/Poppins-BoldItalic.ttf"),
+  PoppinsExtraBold: require("../../assets/Fonts/Poppins/Poppins-ExtraBold.ttf"),
+  PoppinsSemiBold: require("../../assets/Fonts/Poppins/Poppins-SemiBold.ttf"),
 }
 
 const fonts = {
@@ -35,8 +37,10 @@ const fonts = {
     light: "PoppinsLight",
     normal: "Poppins",
     medium: "PoppinsMedium",
+    mediumItalic: "PoppinsMediumItalic",
     semiBold: "PoppinsSemiBold",
     bold: "PoppinsBold",
+    boldItalic: "PoppinsBoldItalic",
     extraBold: "PoppinsExtraBold",
   },
   spaceGrotesk: {
