@@ -9,4 +9,4 @@ export * from "./ErrorScreen/ErrorBoundary"
 // export other screens here
 export * from "./TestingScreen"
 export * from "./MarketPlaceScreen"
-export * from "./TermsAndConditionsScreen"
+export * from "./TermsAndConditionsScreen/TermsAndConditionsScreen"

@@ -13,9 +13,9 @@ export const TermsAndConditionsStoreModel = types
   })
   .actions(withSetPropAction)
   .views((self) => ({
-    get hasTermsToSign(): boolean {
-      return self.termsIds.length > 0
-    },
+    // get hasTermsToSign(): boolean {
+    //   return self.termsIds?.length > 0
+    // },
     get hasUserAcceptedTerms(): boolean {
       return self.userHasAcceptedTerms
     },

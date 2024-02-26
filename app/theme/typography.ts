@@ -84,7 +84,25 @@ const fontSizes = {
   body4: 10,
 }
 
+const lineHeights = {
+  h1: 40,
+  h2: 36,
+  h3: 32,
+  h4: 28,
+  h5: 22,
+  h6: 21,
+  body1: 20,
+  body2: 18,
+  body3: 16,
+  body4: 14,
+}
+
 export const typography = {
+  /** 
+  Basic font sizes and line heights.
+  */
+  fontSizes,
+  lineHeights,
   /**
    * The fonts are available to use, but prefer using the semantic name.
    */

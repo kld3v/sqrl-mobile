@@ -97,7 +97,7 @@ const AppStack = observer(function AppStack() {
         navigationBarHidden: true,
       }}
     >
-      {termsAndConditionsStore.hasTermsToSign && !termsAndConditionsStore.hasUserAcceptedTerms ? (
+      {true && !termsAndConditionsStore.hasUserAcceptedTerms ? (
         <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       ) : (
         <Stack.Screen name="Demo" component={Navigator} />
