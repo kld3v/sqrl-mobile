@@ -1,6 +1,7 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { DocumentResponseObject, termsService } from "app/services/Terms"
+import { TermsModel } from "./Terms"
 
 /**
  * Model description here for TypeScript hints.
@@ -8,22 +9,31 @@ import { DocumentResponseObject, termsService } from "app/services/Terms"
 export const TermsAndConditionsStoreModel = types
   .model("TermsAndConditionsStore")
   .props({
-    termsIds: types.optional(types.array(types.number), []),
-    userHasAcceptedTerms: types.optional(types.boolean, false),
+    terms: types.optional(types.array(TermsModel), []),
   })
   .actions(withSetPropAction)
   .views((self) => ({
     // get hasTermsToSign(): boolean {
     //   return self.termsIds?.length > 0
     // },
-    get hasUserAcceptedTerms(): boolean {
-      return self.userHasAcceptedTerms
+
+    get userHasTermsToSign(): boolean {
+      console.log(self.terms.length, "terms length")
+      return self.terms.length > 0
+    },
+
+    get termsIds(): number[] {
+      return self.terms.map((term) => term.id)
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
-  .actions((self) => ({
+  .actions((store) => ({
+    clearTerms(): void {
+      store.setProp("terms", [])
+    },
+
     async signUserAgreements(): Promise<void> {
-      await termsService.signUserAgreements(self.termsIds)
-      self.setProp("userHasAcceptedTerms", true)
+      await termsService.signUserAgreements(store.termsIds)
+      this.clearTerms()
     },
 
     async checkIfUserHasSignedUpToDateContract(): Promise<void> {
@@ -35,19 +45,31 @@ export const TermsAndConditionsStoreModel = types
         return
       }
       if (!documentsToSign) {
-        self.setProp("termsIds", [])
+        store.setProp("terms", [])
         console.log("No documents to sign")
       }
       if (documentsToSign) {
-        self.setProp(
-          "termsIds",
-          documentsToSign.map((doc) => doc.id),
+        store.setProp(
+          "terms",
+          documentsToSign.map((doc) => {
+            return {
+              guid: Math.random().toString(),
+              id: doc.id,
+              term_name: doc.term_name,
+              term_url: doc.term_url,
+            }
+          }),
         )
         console.log("Docs to sign")
       }
     },
-    addDocumentIdToTermIDs(docId: number): void {
-      self.termsIds.push(docId)
+    addDummyDocumentToSign(): void {
+      store.terms.push({
+        guid: Math.random().toString(),
+        id: Math.random() * 1000,
+        term_name: "Dummy Document",
+        term_url: "https://qrla.io",
+      })
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
 

@@ -22,7 +22,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { locationService } from "app/services/Location/LocationService"
 import * as Screens from "app/screens"
-import { DocumentResponseObject, termsService } from "app/services/Terms"
+
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
  * as well as what properties (if any) they might take when navigating to them.
@@ -81,7 +81,7 @@ const AppStack = observer(function AppStack() {
         await locationStore.getAndSetCurrentPosition()
         setInterval(recurringlyUpdateLocation, 10000)
         // await termsAndConditionsStore.checkIfUserHasSignedUpToDateContract()
-        // termsAndConditionsStore.addDocumentIdToTermIDs(1)
+        termsAndConditionsStore.addDummyDocumentToSign()
         console.log(termsAndConditionsStore.termsIds)
       } catch (error) {
         console.error(`Failed to get location: ${error}`)
@@ -97,7 +97,7 @@ const AppStack = observer(function AppStack() {
         navigationBarHidden: true,
       }}
     >
-      {true && !termsAndConditionsStore.hasUserAcceptedTerms ? (
+      {termsAndConditionsStore.userHasTermsToSign ? (
         <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       ) : (
         <Stack.Screen name="Demo" component={Navigator} />

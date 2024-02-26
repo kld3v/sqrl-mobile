@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite"
 import { View } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { AutoImage, Screen, Text, Toggle, Button } from "app/components"
-import { typography } from "app/theme"
+import { colors, typography } from "app/theme"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 import * as WebBrowser from "expo-web-browser"
@@ -15,12 +15,15 @@ import {
   $toggleAndButtonContainer,
   $toggleContainerStyle,
 } from "./TermsAndConditionsStyles"
+import { useStores } from "app/models"
 
 interface TermsAndConditionsScreenProps extends AppStackScreenProps<"TermsAndConditions"> {}
 
 export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = observer(
   function TermsAndConditionsScreen() {
     const [value, setValue] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const { termsAndConditionsStore } = useStores()
 
     return (
       <Screen style={$rootScreen} preset="scroll">
@@ -50,7 +53,6 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
             <Text weight="mediumItalic" text=" and " />
             <Text
               style={$hyperlink}
-              text="Privacy Policy"
               onPress={() => WebBrowser.openBrowserAsync("https://qrla.io")}
             />
             <Text
@@ -73,7 +75,16 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
               containerStyle={$toggleContainerStyle}
               koalify
             />
-            <Button text="Scan" style={{ flex: 1 }} />
+            <Button
+              text={loading ? "Loading..." : "Continue"}
+              style={{ flex: 1 }}
+              disabled={!value}
+              disabledStyle={{
+                backgroundColor: colors.palette.neutral200,
+                borderColor: colors.palette.neutral300,
+              }}
+              disabledTextStyle={{ color: colors.palette.neutral500 }}
+            />
           </View>
         </View>
       </Screen>
