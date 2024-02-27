@@ -15,6 +15,7 @@ import { qrScannerService } from "app/services/QrScanner"
 
 import { useStores } from "app/models"
 import { AutoImage } from "../AutoImage"
+import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 export interface QrScannerProps {
   /**
@@ -49,7 +50,6 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   }, [])
 
   const handleTrustScore = (trustScore: number | null) => {
-    console.log("trustScore", trustScore)
     if (typeof trustScore !== "number") {
       setErrorMsg("Oops! Didn't get a trust score back from the server. Try again I guess.")
       return
@@ -85,15 +85,14 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         locationStore.longitude,
       )
 
-      __DEV__ &&
-        console.info(
-          `Response: ${JSON.stringify(response.data)} \n`,
-          `Trust Score: ${JSON.stringify(response.data.trust_score)}\n`,
-          `Status: ${response.status}\n`,
-          `qrCodeScan: ${qrCodeScan.data}\n`,
-          `latitude: ${locationStore.latitude}\n`,
-          `longitude: ${locationStore.longitude}\n`,
-        )
+      quintonTheCybear.log("response from the outback...", [
+        `${JSON.stringify(response.data)} \n`,
+        `Trust Score: ${JSON.stringify(response.data.trust_score)}\n`,
+        `Status: ${response.status}\n`,
+        `qrCodeScan: ${qrCodeScan.data}\n`,
+        `latitude: ${locationStore.latitude}\n`,
+        `longitude: ${locationStore.longitude}\n`,
+      ])
 
       handleTrustScore(response.data.trust_score)
     } catch (error) {
