@@ -3,11 +3,10 @@ import {
   StyleProp,
   View,
   ViewStyle,
-  StyleSheet,
-  Image,
   ImageStyle,
   Dimensions,
   TextStyle,
+  TouchableOpacity,
 } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
@@ -19,7 +18,6 @@ import { Feather } from "@expo/vector-icons"
 import OnScanHaptic from "../Haptics/OnScanHaptic"
 import * as WebBrowser from "expo-web-browser"
 import { Button } from "../Button"
-import { qrScannerService } from "app/services/QrScanner"
 
 import Cancel from "../Svg/Cancel"
 import Tick from "../Svg/Tick"
@@ -47,17 +45,8 @@ export interface ScanResponseCardProps {
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
   const iconSize = 220
-  const {
-    trustScore,
-    safe,
-    setSafe,
-    scanState,
-    setScanState,
-    url,
-    setUrl,
-    errorMessage,
-    setErrorMessage,
-  } = props
+  const { safe, setSafe, scanState, setScanState, url, setUrl, errorMessage, setErrorMessage } =
+    props
 
   const [leaving, setLeaving] = useState(false)
 
@@ -85,69 +74,46 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
 
   const scannedState = (
     <>
-      <View style={styles.textAndButton}>
-        <Text style={styles.infoText}>
-          <Text preset="bold" style={{ color: colors.palette.neutral200 }}>
-            {qrScannerService.getPrimaryDomainName(url!)}
-          </Text>{" "}
-          - {trustScore && `trust score: ${trustScore}`}
-        </Text>
-        {safe ? (
-          <Button
-            tx="scannerScreen.proceedButton"
-            onPress={setDelayedLeaving()}
-            style={{
-              backgroundColor: colors.palette.primary600,
-              width: "90%",
-            }}
-            pressedStyle={[{ backgroundColor: colors.palette.primary300 }, { borderRadius: 0 }]}
-            pressedTextStyle={{ color: colors.palette.neutral200 }}
-            textStyle={{
-              color: colors.palette.neutral200,
-              textAlign: "center",
-            }}
-          />
-        ) : (
-          <View style={$unsafeScanButtons}>
-            <Button text="Cancel" tx="common.cancel" preset="filled" onPress={resetScanState()} />
-            <Button
-              text="Accept Risk"
-              onPress={setDelayedLeaving()}
-              style={{ backgroundColor: colors.palette.angry500 }}
-            />
-          </View>
-        )}
-
-        <SafeScannedPing />
-        <OnScanHaptic scanState={scanState} safe={safe} />
-      </View>
       {safe ? (
-        <>
-          <Feather name="check-circle" size={iconSize} color={colors.palette.primary600} />
-        </>
+        <Button
+          tx="scannerScreen.proceedButton"
+          onPress={setDelayedLeaving()}
+          style={{
+            backgroundColor: colors.palette.primary600,
+            borderRadius: 25, // Half of the height
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 30,
+          }}
+          textStyle={{
+            color: colors.palette.neutral200,
+            fontSize: 16,
+            fontFamily: typography.primary.bold,
+          }}
+        />
       ) : (
-        <Feather name="alert-circle" size={iconSize} color={colors.palette.angry500} />
+        <Button
+          text="Cancel"
+          tx="common.cancel"
+          style={{
+            backgroundColor: colors.palette.angry500,
+            borderRadius: 25, // Half of the height
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 30,
+          }}
+          onPress={resetScanState()}
+        />
       )}
+
+      <SafeScannedPing />
+      <OnScanHaptic scanState={scanState} safe={safe} />
     </>
   )
   const scanningState = (
     <>
       <OnScanHaptic scanState={scanState} />
-
-      <Text style={styles.infoText}>Checking your QR code...</Text>
-    </>
-  )
-
-  const leavingState = (
-    <>
-      <View style={styles.textAndButton}>
-        <Text style={styles.infoText}>See ya! </Text>
-      </View>
-      {/* <AutoImage
-        source={koalaGif}
-        style={{ width: iconSize, height: iconSize }}
-        resizeMethod="auto"
-      /> */}
+      <Text>Checking your QR code...</Text>
     </>
   )
 
@@ -155,7 +121,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     <>
       <OnScanHaptic scanState={scanState} safe={false} />
       <View style={$errorMessageStyle}>
-        <Text style={styles.infoText}>{errorMessage}</Text>
+        <Text>{errorMessage}</Text>
         <Button text="Try Again" preset="filled" onPress={resetScanState()} style={{ margin: 2 }} />
       </View>
       <Feather name="alert-circle" size={iconSize} color={colors.palette.angry500} />
@@ -170,20 +136,30 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
         return scanningState
       case scanState === "scanned" && !leaving:
         return scannedState
-      case leaving:
-        return leavingState
       default:
         return null
     }
   }
-
+  const ProceedAnyway = (
+    <TouchableOpacity onPress={setDelayedLeaving()}>
+      <Text
+        weight="mediumItalic"
+        style={{
+          color: colors.palette.angry100,
+          textAlign: "center",
+          textDecorationLine: "underline", // Add this line
+        }}
+        text="Proceed Anyway"
+      />
+    </TouchableOpacity>
+  )
   return (
     <>
       {scanState === "scanned" && (
         <View style={$messageBoxContainer}>
           <View
             style={{
-              ...$messageBoxText,
+              ...$infoBoxTopWithMessage,
               borderColor: !safe ? colors.palette.angry500 : colors.palette.primary500,
             }}
           >
@@ -191,29 +167,52 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
             <Text weight="boldItalic" size="xxl" style={safe ? $safeText : $unsafeText}>
               {safe ? "Good To Go!" : "Caution!"}
             </Text>
-            <Text weight="mediumItalic" size="xs" style={$unsafeText}>
-              {!safe && "This QR code may be risky. Proceed at your own risk."}
-            </Text>
+
+            {!safe && (
+              <Text
+                weight="mediumItalic"
+                size="xs"
+                style={$unsafeText}
+                text="This QR code may be risky. Proceed at your own risk."
+              />
+            )}
           </View>
         </View>
       )}
-      <View style={$CTAinfoBoxContainer}>
-        <View style={styles.infoBox}>{renderCTAState()}</View>
+      <View style={$infoBoxPositioningContainer}>
+        <View
+          style={{
+            ...$infoBoxCustom,
+            borderColor: safe ? colors.palette.primary500 : colors.palette.angry500,
+          }}
+        >
+          {renderCTAState()}
+        </View>
+      </View>
+      <View style={{ ...$infoBoxPositioningContainer, bottom: -8 }}>
+        <View
+          style={{
+            ...$infoBoxCustom,
+            borderColor: safe ? colors.palette.primary500 : colors.palette.angry500,
+            paddingVertical: 4,
+          }}
+        >
+          {!safe && ProceedAnyway}
+        </View>
       </View>
     </>
   )
 })
 
 const $safeText = {
-  color: colors.palette.primary600,
+  color: colors.palette.primary500,
 }
 const $unsafeText = {
   color: colors.palette.angry100,
 }
+
 const screenHeight = Dimensions.get("window").height
-
-const messageBoxPosition = screenHeight * 0.09
-
+const messageBoxPosition = screenHeight * 0.05
 const $messageBoxContainer: ViewStyle = {
   zIndex: 99,
   marginTop: messageBoxPosition,
@@ -232,25 +231,37 @@ const $messageBoxIcon: ImageStyle = {
   transform: [{ scale: 1.2 }],
 }
 
-const $messageBoxText: TextStyle = {
-  minWidth: 200,
-  maxWidth: "100%",
-  paddingHorizontal: 32,
-  paddingVertical: spacing.md,
-  backgroundColor: colors.scannerInfoBox,
-  borderRadius: 28,
-  borderWidth: 1,
+const $standardShadow: any = {
   shadowColor: "#000",
   shadowOffset: { width: 2, height: 5 },
   shadowOpacity: 0.3,
   shadowRadius: 3,
   elevation: 5,
+}
+const $infoBoxCustomBg: TextStyle = {
+  backgroundColor: colors.scannerInfoBox,
+  borderRadius: 28,
+  borderWidth: 2,
+}
+const $infoBoxCustom: TextStyle = {
+  minWidth: 200,
+  maxWidth: "100%",
+  paddingHorizontal: 32,
+  paddingVertical: spacing.md,
+  ...$standardShadow,
+  borderRadius: 28,
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
   color: colors.palette.angry500,
 }
-const $CTAinfoBoxContainer: ViewStyle = {
+
+const $infoBoxTopWithMessage: TextStyle = {
+  ...$infoBoxCustomBg,
+  ...$infoBoxCustom,
+}
+
+const $infoBoxPositioningContainer: ViewStyle = {
   zIndex: 99,
   position: "absolute",
   bottom: spacing.xxxl,
@@ -259,38 +270,6 @@ const $CTAinfoBoxContainer: ViewStyle = {
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
-}
-
-const styles = StyleSheet.create({
-  infoBox: {
-    height: 100,
-    minWidth: 200,
-    maxWidth: "80%",
-    paddingHorizontal: 32,
-    backgroundColor: colors.scannerInfoBox,
-    borderRadius: 28,
-    borderColor: "white",
-    borderWidth: 1,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 1 },
-    // shadowOpacity: 0.22,
-    // shadowRadius: 2.22,
-    // elevation: 3,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    color: colors.palette.angry500,
-  },
-  infoText: {
-    fontFamily: typography.Poppins.boldItalic,
-  },
-  textAndButton: {},
-})
-
-const $unsafeScanButtons: ViewStyle = {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  width: "100%",
 }
 
 const $errorMessageStyle: ViewStyle = {

@@ -44,17 +44,24 @@ export const Reticule = observer(function Reticule(props: ReticuleProps) {
   }, [scanning, rotation])
 
   return (
-    <Animated.View style={[$styles, rotateStyle]}>
-      <ReticuleCorner scanState={scanState} position="TopLeft" scanning={scanning} safe={safe} />
-      <ReticuleCorner scanState={scanState} position="TopRight" scanning={scanning} safe={safe} />
-      <ReticuleCorner scanState={scanState} position="BottomLeft" scanning={scanning} safe={safe} />
-      <ReticuleCorner
-        scanState={scanState}
-        position="BottomRight"
-        scanning={scanning}
-        safe={safe}
-      />
-    </Animated.View>
+    <>
+      <Animated.View style={[$styles, rotateStyle]}>
+        <ReticuleCorner scanState={scanState} position="TopLeft" scanning={scanning} safe={safe} />
+        <ReticuleCorner scanState={scanState} position="TopRight" scanning={scanning} safe={safe} />
+        <ReticuleCorner
+          scanState={scanState}
+          position="BottomLeft"
+          scanning={scanning}
+          safe={safe}
+        />
+        <ReticuleCorner
+          scanState={scanState}
+          position="BottomRight"
+          scanning={scanning}
+          safe={safe}
+        />
+      </Animated.View>
+    </>
   )
 })
 

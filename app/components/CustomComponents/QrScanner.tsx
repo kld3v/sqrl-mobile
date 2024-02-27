@@ -1,6 +1,6 @@
 import { Pressable, StyleProp, TextStyle, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, spacing, typography } from "app/theme"
+import { colors, spacing } from "app/theme"
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
 import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
@@ -15,7 +15,7 @@ import { qrScannerService } from "app/services/QrScanner"
 import { useStores } from "app/models"
 import { AutoImage } from "../AutoImage"
 import { quintonTheCybear } from "app/utils/QuintonTheCybear"
-
+import Refresh from "../Svg/Refresh"
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -31,12 +31,12 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const { style } = props
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
-  const [scanState, setScanState] = useState<ScanStateOptions>("scanned")
+  const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
   const [url, setUrl] = useState<string>("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [trustScore, setTrustScore] = useState<number | null>(null)
 
-  const [safe, setSafe] = useState<boolean>(false)
+  const [safe, setSafe] = useState<boolean>(true)
 
   const [showCamera, setShowCamera] = useState(false)
 
@@ -111,7 +111,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     // Camera permissions are not granted yet
     return (
       <View style={$container}>
-        <Text style={$text}>We need your permission to show the camera</Text>
+        <Text>We need your permission to show the camera</Text>
         <Button onPress={requestPermission} text="requestPermission" />
       </View>
     )
@@ -121,8 +121,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     <View style={$styles}>
       <AutoImage
         style={{
-          height: 80,
-          width: 80,
+          height: 56,
+          width: 56,
           margin: spacing.md,
           zIndex: 99,
           position: "absolute",
@@ -148,6 +148,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         safe={safe}
         scanning={scanState === "scanning"}
       />
+      {url && (
+        <Text style={$subReticuleUrlStyle}>{`"${qrScannerService.getPrimaryDomainName(
+          url,
+        )}"`}</Text>
+      )}
 
       {scanState !== "notScanned" && (
         <ScanResponseCard
@@ -167,10 +172,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       {safe && scanState === "scanned" && (
         <View style={$refresh}>
           <Pressable onPress={scanAgain()}>
-            <AutoImage
-              source={require("../../../assets/images/refreshButton.png")}
-              style={{ width: 48, height: 48 }}
-            />
+            <Refresh />
           </Pressable>
         </View>
       )}
@@ -189,23 +191,6 @@ const $camera: ViewStyle = {
   zIndex: 1,
 }
 
-const $image: ViewStyle = {
-  width: 200,
-  height: 200,
-  position: "absolute",
-  left: "50%",
-  top: "50%",
-  marginLeft: -100, // half of width to center
-  marginTop: -100, // half of height to center
-  zIndex: 3,
-}
-
-const $text: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 14,
-  color: colors.palette.primary500,
-}
-
 const $reticule: ViewStyle = {
   position: "absolute",
   left: "50%",
@@ -217,28 +202,25 @@ const $reticule: ViewStyle = {
   zIndex: 3,
 }
 
+const $subReticuleUrlStyle: TextStyle = {
+  position: "absolute",
+  left: 0,
+  right: 0,
+  top: "68%",
+  zIndex: 3,
+  textAlign: "center",
+}
+
 const $refresh: ViewStyle = {
   position: "absolute",
-  bottom: 10,
-  right: 10,
-  backgroundColor: colors.palette.neutral200,
-  width: 48,
-  height: 48,
-  borderRadius: 50,
-
+  bottom: 16,
+  right: 16,
   zIndex: 999,
-
-  transform: [{ rotate: "120deg" }],
-
   shadowColor: "#000",
-  shadowOffset: {
-    width: 0,
-    height: 2,
-  },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.84,
-
-  elevation: 5, // for Android
+  shadowOffset: { width: 2, height: 5 },
+  shadowOpacity: 0.3,
+  shadowRadius: 3,
+  elevation: 5,
 }
 
 const $card: TextStyle = {
