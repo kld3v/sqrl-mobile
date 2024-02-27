@@ -1,16 +1,15 @@
 import { Pressable, StyleProp, TextStyle, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
+import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
 import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
 import { ScanStateOptions } from "types"
 import { useEffect, useState } from "react"
-import { StatusBar } from "expo-status-bar"
+
 import { ApiResponse } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
-import { Entypo } from "@expo/vector-icons"
 import { qrScannerService } from "app/services/QrScanner"
 
 import { useStores } from "app/models"
@@ -32,7 +31,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const { style } = props
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
-  const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
+  const [scanState, setScanState] = useState<ScanStateOptions>("scanned")
   const [url, setUrl] = useState<string>("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [trustScore, setTrustScore] = useState<number | null>(null)
@@ -120,7 +119,20 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   return (
     <View style={$styles}>
-      <StatusBar style="light" />
+      <AutoImage
+        style={{
+          height: 80,
+          width: 80,
+          margin: spacing.md,
+          zIndex: 99,
+          position: "absolute",
+          top: 0,
+          right: 0,
+        }}
+        source={require("../../../assets/images/winkface.png")}
+        resizeMode="contain"
+      />
+
       {showCamera && (
         <Camera
           style={$camera}
@@ -168,12 +180,24 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
 const $container: ViewStyle = {
   flex: 1,
-  justifyContent: "center",
-  alignItems: "stretch",
 }
 const $camera: ViewStyle = {
   flex: 1,
+  position: "absolute",
+  width: "100%",
   height: "100%",
+  zIndex: 1,
+}
+
+const $image: ViewStyle = {
+  width: 200,
+  height: 200,
+  position: "absolute",
+  left: "50%",
+  top: "50%",
+  marginLeft: -100, // half of width to center
+  marginTop: -100, // half of height to center
+  zIndex: 3,
 }
 
 const $text: TextStyle = {
@@ -190,6 +214,7 @@ const $reticule: ViewStyle = {
   height: 200,
   marginLeft: -100, // half of width to center
   marginTop: -100, // half of height to center
+  zIndex: 3,
 }
 
 const $refresh: ViewStyle = {

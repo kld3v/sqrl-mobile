@@ -3,7 +3,6 @@ import { ImageStyle, TextStyle, TouchableOpacity, ViewStyle } from "react-native
 import { AutoImage, IsThisSomethingYouWouldUse, Screen, Text } from "../components"
 import { colors, spacing } from "../theme"
 // import { isRTL } from "../i18n"
-import { StatusBar } from "expo-status-bar"
 import { observer } from "mobx-react-lite"
 import { AppStackScreenProps } from "app/navigators"
 
@@ -15,7 +14,6 @@ export const MarketPlaceScreen: FC<MarketPlaceScreenProps> = observer(function M
 
   return (
     <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top"]}>
-      <StatusBar style="light" />
       <Text preset="heading" tx="marketPlaceScreen.title" style={$title} />
       <Text tx="marketPlaceScreen.tagLine" style={$tagline} />
       <Text preset="subheading" text="Scan, Earn, Spend" style={$sectionTitle} />

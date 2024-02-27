@@ -5,7 +5,6 @@ import { TabScreenProps } from "../navigators/Navigator"
 import { colors, spacing, typography } from "../theme"
 
 // import { isRTL } from "../i18n"
-import { StatusBar } from "expo-status-bar"
 
 export const CommunityScreen: FC<TabScreenProps<"Community">> = function CommunityScreen(_props) {
   const [Roger, setRoger] = useState(false)
@@ -13,7 +12,6 @@ export const CommunityScreen: FC<TabScreenProps<"Community">> = function Communi
 
   return (
     <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top"]}>
-      <StatusBar style="light" />
       <Text preset="heading" tx="communityScreen.title" style={$title} />
       <Text tx="communityScreen.tagLine" style={$tagline} />
       <Text preset="subheading" text="Scan and Compete" style={$sectionTitle} />

@@ -89,4 +89,6 @@ export const colors = {
    * The default color of the icons
    */
   icon: palette.primary500,
+
+  scannerInfoBox: "rgba(44, 62, 80, 0.5)",
 }

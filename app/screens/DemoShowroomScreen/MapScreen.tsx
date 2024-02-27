@@ -4,7 +4,7 @@ import { ImageStyle, TextStyle, ViewStyle } from "react-native"
 import { Icon, ListItem, Screen, Text } from "../../components"
 
 import { TabScreenProps } from "../../navigators/Navigator"
-import { StatusBar } from "expo-status-bar"
+
 import { colors, spacing } from "app/theme"
 import { openLinkInBrowser } from "app/utils/openLinkInBrowser"
 import { isRTL } from "app/i18n"
@@ -12,7 +12,6 @@ import { isRTL } from "app/i18n"
 export const MapScreen: FC<TabScreenProps<"Map">> = function MapScreen(_props) {
   return (
     <>
-      <StatusBar style="light" />
       <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
         <Text preset="heading" tx="mapScreen.title" style={$title} />
         <Text tx="mapScreen.tagLine" style={$tagline} />
