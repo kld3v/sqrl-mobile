@@ -22,6 +22,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { locationService } from "app/services/Location/LocationService"
 import * as Screens from "app/screens"
+import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -70,23 +71,12 @@ const AppStack = observer(function AppStack() {
     } catch (error) {
       console.error(`Failed to get location: ${error}`)
     }
-    // console.log(locationStore.latitude, locationStore.longitude)
   }
 
   useEffect(() => {
-    ;(async () => {
-      try {
-        await locationService.requestPermission()
-        locationStore.setPermission()
-        await locationStore.getAndSetCurrentPosition()
-        setInterval(recurringlyUpdateLocation, 10000)
-        // await termsAndConditionsStore.checkIfUserHasSignedUpToDateContract()
-        termsAndConditionsStore.addDummyDocumentToSign()
-        console.log(termsAndConditionsStore.termsIds)
-      } catch (error) {
-        console.error(`Failed to get location: ${error}`)
-      }
-    })()
+    let locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
+    // cleanup function
+    return () => clearInterval(locationIntervalId)
   }, [])
 
   return (

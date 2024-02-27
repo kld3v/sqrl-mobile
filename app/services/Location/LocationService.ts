@@ -20,32 +20,13 @@ export class LocationService {
       accuracy: Location.Accuracy.BestForNavigation,
       distanceInterval: distance || 0,
     })
-    // console.log("currentPosition", currentPosition)
     return currentPosition
   }
 
   async getLastKnownPosition(): Promise<Location.LocationObject | null> {
     let lastKnownPosition = await Location.getLastKnownPositionAsync()
-    // console.log("lastKnownPosition", lastKnownPosition)
     return lastKnownPosition
   }
-
-  // Need to revisit this
-  // activateLocationWatch = (): Promise<Location.LocationObject> => {
-  //   return new Promise((resolve, reject) => {
-  //     Location.watchPositionAsync(
-  //       {
-  //         accuracy: Location.Accuracy.BestForNavigation,
-  //         distanceInterval: 10,
-  //       },
-  //       (location) => {
-  //         resolve(location)
-  //       },
-  //     ).catch((error) => {
-  //       reject(error)
-  //     })
-  //   })
-  // }
 }
 
 export const locationService = new LocationService()

@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { View } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
@@ -45,13 +45,15 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
               weight="mediumItalic"
               text="Wait a minute! Before you dive into scanning, please take a quick moment to review our "
             />
+
             <Text
               style={$hyperlink}
-              text="Terms and Conditions"
+              text={"Terms and Conditions"}
               onPress={() => WebBrowser.openBrowserAsync("https://qrla.io")}
             />
             <Text weight="mediumItalic" text=" and " />
             <Text
+              text="Privacy Policy"
               style={$hyperlink}
               onPress={() => WebBrowser.openBrowserAsync("https://qrla.io")}
             />
@@ -76,6 +78,11 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
               koalify
             />
             <Button
+              onPress={async () => {
+                setLoading(true)
+                await termsAndConditionsStore.signUserAgreements()
+                setLoading(false)
+              }}
               text={loading ? "Loading..." : "Continue"}
               style={{ flex: 1 }}
               disabled={!value}
