@@ -13,7 +13,6 @@ import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { useState } from "react"
 import SafeScannedPing from "../Audio/SafeScannedPing"
-import { Feather } from "@expo/vector-icons"
 
 import OnScanHaptic from "../Haptics/OnScanHaptic"
 import * as WebBrowser from "expo-web-browser"
@@ -21,6 +20,8 @@ import { Button } from "../Button"
 
 import Cancel from "../Svg/Cancel"
 import Tick from "../Svg/Tick"
+import { AutoImage } from "../AutoImage"
+
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
 export interface ScanResponseCardProps {
@@ -44,12 +45,11 @@ export interface ScanResponseCardProps {
  * Describe your component here
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
-  const iconSize = 220
   const { safe, setSafe, scanState, setScanState, url, setUrl, errorMessage, setErrorMessage } =
     props
 
-  const [leaving, setLeaving] = useState(false)
-
+  const [leaving, setLeaving] = useState(true)
+  const [pressed, setpressed] = useState(false)
   const setDelayedLeaving = (): (() => void) => () => {
     setLeaving(true)
     setTimeout(async () => {
@@ -72,25 +72,39 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     }
   }
 
-  const scannedState = (
+  const scanCompleteContent = (
     <>
       {safe ? (
-        <Button
-          tx="scannerScreen.proceedButton"
-          onPress={setDelayedLeaving()}
-          style={{
-            backgroundColor: colors.palette.primary600,
-            borderRadius: 25, // Half of the height
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 30,
-          }}
-          textStyle={{
-            color: colors.palette.neutral200,
-            fontSize: 16,
-            fontFamily: typography.primary.bold,
-          }}
-        />
+        <>
+          <Button
+            tx="scannerScreen.proceedButton"
+            onPress={setDelayedLeaving()}
+            style={{
+              backgroundColor: colors.palette.primary600,
+              borderRadius: 25, // Half of the height
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: 30,
+            }}
+            onPressIn={() => setpressed(true)}
+            onPressOut={() => setpressed(false)}
+            pressedStyle={{
+              backgroundColor: colors.palette.neutral200,
+              borderColor: colors.palette.neutral500,
+            }}
+            pressedTextStyle={{
+              color: colors.palette.neutral100,
+            }}
+            textStyle={{
+              color: colors.palette.neutral200,
+              fontSize: 22,
+              fontFamily: typography.primary.bold,
+              paddingTop: 8,
+            }}
+          />
+          <SafeScannedPing />
+          <OnScanHaptic scanState={scanState} safe={safe} />
+        </>
       ) : (
         <Button
           text="Cancel"
@@ -98,44 +112,88 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
           style={{
             backgroundColor: colors.palette.angry500,
             borderRadius: 25, // Half of the height
+            display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            paddingTop: 16,
             paddingHorizontal: 30,
           }}
-          onPress={resetScanState()}
+          // onPress={resetScanState()}
+          onPressIn={() => setpressed(true)}
+          onPressOut={() => setpressed(false)}
+          pressedStyle={{
+            backgroundColor: colors.palette.neutral200,
+            borderColor: colors.palette.neutral500,
+          }}
+          textStyle={{ fontFamily: typography.primary.bold }}
         />
       )}
-
-      <SafeScannedPing />
-      <OnScanHaptic scanState={scanState} safe={safe} />
     </>
   )
-  const scanningState = (
+
+  const scanningContent = (
     <>
       <OnScanHaptic scanState={scanState} />
-      <Text>Checking your QR code...</Text>
+      <Text weight="mediumItalic">Checking your QR code...</Text>
+    </>
+  )
+  const koalaGif = require("../../../assets/images/koala.gif")
+
+  const leavingContent = (
+    <>
+      <View style={$infoBoxPositioningContainer}>
+        <View
+          style={{
+            ...$infoBoxCustom,
+            ...$infoBoxCustomBg,
+            borderColor: colors.palette.neutral100,
+          }}
+        >
+          <Text weight="boldItalic" text="See you soon!" />
+          <AutoImage
+            source={koalaGif}
+            // to resize gif correctly. Do not mess with lest you feel my wrath.
+            style={$koalaGif}
+          />
+        </View>
+      </View>
     </>
   )
 
-  const errorState = (
+  const errorContent = (
     <>
       <OnScanHaptic scanState={scanState} safe={false} />
-      <View style={$errorMessageStyle}>
-        <Text>{errorMessage}</Text>
-        <Button text="Try Again" preset="filled" onPress={resetScanState()} style={{ margin: 2 }} />
-      </View>
-      <Feather name="alert-circle" size={iconSize} color={colors.palette.angry500} />
+      <Button
+        text="Try Again"
+        style={{
+          backgroundColor: colors.palette.neutral300,
+          borderRadius: 25, // Half of the height
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: 30,
+        }}
+        onPress={resetScanState()}
+        onPressIn={() => setpressed(true)}
+        onPressOut={() => setpressed(false)}
+        pressedStyle={{
+          backgroundColor: colors.palette.neutral200,
+          borderColor: colors.palette.neutral500,
+        }}
+        textStyle={{ fontFamily: typography.primary.bold }}
+      />
     </>
   )
 
   const renderCTAState = (): React.JSX.Element | null => {
     switch (true) {
       case !!errorMessage:
-        return errorState
+        return errorContent
       case scanState === "scanning":
-        return scanningState
+        return scanningContent
       case scanState === "scanned" && !leaving:
-        return scannedState
+        return scanCompleteContent
+      case leaving:
+        return leavingContent
       default:
         return null
     }
@@ -153,6 +211,8 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       />
     </TouchableOpacity>
   )
+  if (leaving) return leavingContent
+
   return (
     <>
       {scanState === "scanned" && (
@@ -165,16 +225,15 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
           >
             {safe ? <Tick style={$messageBoxIcon} /> : <Cancel style={$messageBoxIcon} />}
             <Text weight="boldItalic" size="xxl" style={safe ? $safeText : $unsafeText}>
-              {safe ? "Good To Go!" : "Caution!"}
+              {errorMessage ? "Oops!" : safe ? "Good To Go!" : "Caution!"}
             </Text>
 
             {!safe && (
-              <Text
-                weight="mediumItalic"
-                size="xs"
-                style={$unsafeText}
-                text="This QR code may be risky. Proceed at your own risk."
-              />
+              <Text weight="mediumItalic" size="xs" style={$unsafeText}>
+                {errorMessage
+                  ? errorMessage
+                  : "This QR code looks risky.\nProceed at your own risk."}
+              </Text>
             )}
           </View>
         </View>
@@ -183,7 +242,20 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
         <View
           style={{
             ...$infoBoxCustom,
-            borderColor: safe ? colors.palette.primary500 : colors.palette.angry500,
+            borderColor:
+              scanState === "scanning"
+                ? colors.palette.neutral100
+                : safe
+                ? colors.palette.primary500
+                : colors.palette.angry500,
+            shadowColor: pressed ? "transparent" : "#000",
+            shadowOffset: pressed ? { width: 0, height: 0 } : { width: 0, height: 2 },
+            elevation: pressed ? 0 : 5,
+            backgroundColor:
+              scanState === "scanning" || (scanState === "scanned" && leaving)
+                ? colors.scannerInfoBox
+                : "transparent",
+            borderWidth: scanState === "scanning" || (scanState === "scanned" && leaving) ? 4 : 0,
           }}
         >
           {renderCTAState()}
@@ -197,7 +269,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
             paddingVertical: 4,
           }}
         >
-          {!safe && ProceedAnyway}
+          {!safe && !errorMessage && scanState === "scanned" && ProceedAnyway}
         </View>
       </View>
     </>
@@ -240,8 +312,7 @@ const $standardShadow: any = {
 }
 const $infoBoxCustomBg: TextStyle = {
   backgroundColor: colors.scannerInfoBox,
-  borderRadius: 28,
-  borderWidth: 2,
+  borderWidth: 4,
 }
 const $infoBoxCustom: TextStyle = {
   minWidth: 200,
@@ -253,12 +324,13 @@ const $infoBoxCustom: TextStyle = {
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  color: colors.palette.angry500,
 }
 
 const $infoBoxTopWithMessage: TextStyle = {
   ...$infoBoxCustomBg,
   ...$infoBoxCustom,
+  paddingHorizontal: spacing.xxxl,
+  paddingVertical: spacing.lg,
 }
 
 const $infoBoxPositioningContainer: ViewStyle = {
@@ -272,9 +344,8 @@ const $infoBoxPositioningContainer: ViewStyle = {
   alignItems: "center",
 }
 
-const $errorMessageStyle: ViewStyle = {
-  flex: 2,
-  alignItems: "flex-start",
-  justifyContent: "space-between",
-  flexDirection: "column",
+const $koalaGif: ImageStyle = {
+  width: 60,
+  height: 40,
+  transform: [{ scale: 0.8 }],
 }

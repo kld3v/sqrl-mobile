@@ -31,12 +31,12 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const { style } = props
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
-  const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
+  const [scanState, setScanState] = useState<ScanStateOptions>("scanned")
   const [url, setUrl] = useState<string>("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [trustScore, setTrustScore] = useState<number | null>(null)
 
-  const [safe, setSafe] = useState<boolean>(true)
+  const [safe, setSafe] = useState<boolean>(false)
 
   const [showCamera, setShowCamera] = useState(false)
 
@@ -120,6 +120,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   return (
     <View style={$styles}>
       <AutoImage
+        onMagicTap={() => quintonTheCybear.log("Winkface tapped")}
         style={{
           height: 56,
           width: 56,
@@ -148,10 +149,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         safe={safe}
         scanning={scanState === "scanning"}
       />
-      {url && (
-        <Text style={$subReticuleUrlStyle}>{`"${qrScannerService.getPrimaryDomainName(
-          url,
-        )}"`}</Text>
+      {url && scanState === "scanned" && (
+        <Text
+          weight="boldItalic"
+          style={$subReticuleUrlStyle}
+        >{`"${qrScannerService.getPrimaryDomainName(url)}"`}</Text>
       )}
 
       {scanState !== "notScanned" && (
