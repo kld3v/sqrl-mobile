@@ -118,7 +118,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
             paddingTop: 16,
             paddingHorizontal: 30,
           }}
-          // onPress={resetScanState()}
+          onPress={resetScanState()}
           onPressIn={() => setpressed(true)}
           onPressOut={() => setpressed(false)}
           pressedStyle={{
