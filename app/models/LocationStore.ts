@@ -15,7 +15,7 @@ export const LocationStoreModel = types
   .actions(withSetPropAction)
   .views((self) => ({})) // eslint-disable-line @typescript-eslint/no-unused-vars
   .actions((self) => ({
-    async setLocation() {
+    async getAndSetCurrentPosition() {
       // call locationService to get current location]
       const { coords } = await locationService.getCurrentPosition()
       self.setProp("latitude", coords.latitude)

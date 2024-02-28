@@ -5,6 +5,9 @@ const en = {
     back: "Back",
     logOut: "Log Out",
   },
+  termsScreen: {
+    title: "Welcome Aboard!",
+  },
   welcomeScreen: {
     postscript:
       "psst  — This probably isn't what your app looks like. (Unless your designer handed you these screens, and in that case, ship it!)",
@@ -47,13 +50,22 @@ const en = {
     communityTab: "Community",
     debugTab: "Me",
     pushTab: "Push",
+    marketPlaceTab: "Rewards",
   },
   communityScreen: {
-    title: "A koala-ty community",
-    tagLine: "We're a group of Koalas looking to find the best leaves.",
+    title: "JOIN OUR COMMUNITY",
+    tagLine: "Coming Soon...",
+    description:
+      "Challenge your friends, family, and local community to ramp up your scan game and unlock even greater rewards.",
     thisIsRoger: "This is Roger.",
     hireUs: "He likes leaves.",
     interweb: "get sneak peaks on our page on the interweb-net",
+  },
+  marketPlaceScreen: {
+    title: "Rewards",
+    tagLine: "Coming Soon...",
+    description:
+      "Earn in-app tokens effortlessly as you scan, for exclusive perks from top brands in our marketplace.",
   },
   mapScreen: {
     title: "Maps",

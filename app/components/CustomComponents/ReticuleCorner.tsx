@@ -48,6 +48,7 @@ export const ReticuleCorner = observer(function ReticuleCorner(props: ReticuleCo
         styles[`corner${position}`],
         scanning && $scanningCorner,
         scanState === "scanned" ? (safe ? $scannedSafe : $scannedUnsafe) : null,
+        scanning ? styles[`corner${position}Animating`] : {},
       ]}
     ></Animated.View>
   )
@@ -76,6 +77,18 @@ const styles = StyleSheet.create({
     borderLeftWidth: 8,
     borderColor: "white",
     borderTopLeftRadius: 10,
+  },
+  cornerTopLeftAnimating: {
+    borderColor: colors.palette.neutral600,
+  },
+  cornerTopRightAnimating: {
+    borderColor: colors.palette.neutral600,
+  },
+  cornerBottomLeftAnimating: {
+    borderColor: colors.palette.neutral600,
+  },
+  cornerBottomRightAnimating: {
+    borderColor: colors.palette.neutral600,
   },
   cornerTopRight: {
     position: "absolute",

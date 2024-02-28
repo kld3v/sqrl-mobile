@@ -10,11 +10,22 @@ export class LocationService {
       canAskAgain: true,
     }
   }
+
   async requestPermission() {
     this.permission = await Location.requestForegroundPermissionsAsync()
   }
-  async getCurrentPosition(): Promise<Location.LocationObject> {
-    return await Location.getCurrentPositionAsync()
+
+  async getCurrentPosition(distance?: number): Promise<Location.LocationObject> {
+    let currentPosition = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.BestForNavigation,
+      distanceInterval: distance || 0,
+    })
+    return currentPosition
+  }
+
+  async getLastKnownPosition(): Promise<Location.LocationObject | null> {
+    let lastKnownPosition = await Location.getLastKnownPositionAsync()
+    return lastKnownPosition
   }
 }
 

@@ -48,10 +48,13 @@ export const colors = {
    * A helper for making something see-thru.
    */
   transparent: "rgba(0, 0, 0, 0)",
+
+  textGreen: palette.primary600,
   /**
    * The default text color in many components.
    */
   text: palette.neutral100,
+
   /**
    * Secondary text information.
    */
@@ -86,4 +89,6 @@ export const colors = {
    * The default color of the icons
    */
   icon: palette.primary500,
+
+  scannerInfoBox: "rgba(44, 62, 80, 0.5)",
 }

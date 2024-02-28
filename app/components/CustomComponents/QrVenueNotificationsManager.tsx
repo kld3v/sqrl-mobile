@@ -58,7 +58,7 @@ export const QrVenueNotificationsManager = observer(function QrVenueNotification
         }
       } else {
         console.warn(
-          `Error in QrVenueNotificationManager: qrVenueApiResponse: ${qrVenueApiResponse} expoPushToken: ${expoPushToken}`,
+          `False response or no push token in QrVenueNotificationManager: qrVenueApiResponse: ${qrVenueApiResponse} expoPushToken: ${expoPushToken}`,
         )
       }
     })()

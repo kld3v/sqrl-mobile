@@ -1,7 +1,10 @@
-import { ApisauceInstance, create } from "apisauce"
+import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { LocationObject } from "expo-location"
 import * as Location from "expo-location"
-import { QrVenueNotificationsConfig } from "./QrVenueNotificationService.types"
+import {
+  QrVenueNotificationApiResponse,
+  QrVenueNotificationsConfig,
+} from "./QrVenueNotificationService.types"
 
 export class QrVenueNotificationService {
   currentLocation: LocationObject | null = null
@@ -48,16 +51,20 @@ export class QrVenueNotificationService {
     latitude: number,
     longitude: number,
   ): Promise<false | { url: string; company: string }> {
-    const response = await this.apisauce_locationEndPoint.get("", { latitude, longitude })
+    const response: ApiResponse<
+      QrVenueNotificationApiResponse[],
+      QrVenueNotificationApiResponse[]
+    > = await this.apisauce_locationEndPoint.get("", { latitude, longitude })
 
-    if (response.ok) {
-      //@ts-ignore
-      // TODO - Sort typing
-      console.log(response.data[0])
+    if (response.data && response.status === 200 && response.data.length > 0) {
+      __DEV__ &&
+        console.log(`Response from /location Qr Venue API ----> ${response.data[0].url.url}`)
 
       return { url: response.data[0].url.url, company: response.data[0].company }
     } else {
-      console.error(`Failed at get request to API -> ${response.data}, ${response.problem}`)
+      console.log(
+        `No QrVenue match to user coordinates of lon: ${longitude}, lat: ${latitude} -> res.data: ${response.data}, res.problem: ${response.problem}`,
+      )
       return false
     }
   }

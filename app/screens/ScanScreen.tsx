@@ -5,12 +5,10 @@ import { ViewStyle } from "react-native"
 import { QrVenueNotificationsManager, QrScanner, Screen } from "../components"
 
 import { TabScreenProps } from "../navigators/Navigator"
-import { StatusBar } from "expo-status-bar"
 
 export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScreen(_props) {
   return (
-    <Screen preset="auto" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      <StatusBar style="light" />
+    <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
       <QrScanner />
       <QrVenueNotificationsManager />
     </Screen>

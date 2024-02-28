@@ -108,6 +108,7 @@ interface BaseToggleProps extends Omit<TouchableOpacityProps, "style"> {
 
 interface CheckboxToggleProps extends BaseToggleProps {
   variant?: "checkbox"
+  koalify?: boolean
   /**
    * Optional style prop that affects the Image component.
    */
@@ -178,7 +179,7 @@ export function Toggle(props: ToggleProps) {
 
   const { switchAccessibilityMode } = props as SwitchToggleProps
   const { checkboxIcon } = props as CheckboxToggleProps
-
+  const { koalify } = props as CheckboxToggleProps
   const disabled = editable === false || status === "disabled" || props.disabled
 
   const Wrapper = useMemo(
@@ -221,7 +222,7 @@ export function Toggle(props: ToggleProps) {
           innerStyle={props.inputInnerStyle ?? {}}
           detailStyle={props.inputDetailStyle ?? {}}
           switchAccessibilityMode={switchAccessibilityMode}
-          checkboxIcon={checkboxIcon}
+          checkboxIcon={koalify ? "face" : checkboxIcon}
         />
 
         {labelPosition === "right" && <FieldLabel {...props} labelPosition={labelPosition} />}
@@ -268,19 +269,19 @@ function Checkbox(props: ToggleInputProps) {
     disabled && colors.palette.neutral400,
     status === "error" && colors.error,
     !on && colors.palette.neutral800,
-    colors.palette.secondary500,
+    colors.palette.primary600,
   ].filter(Boolean)[0]
 
   const onBackgroundColor = [
     disabled && colors.transparent,
     status === "error" && colors.errorBackground,
-    colors.palette.secondary500,
+    colors.palette.primary100,
   ].filter(Boolean)[0]
 
   const iconTintColor = [
     disabled && colors.palette.neutral600,
     status === "error" && colors.error,
-    colors.palette.accent100,
+    colors.palette.neutral200,
   ].filter(Boolean)[0]
 
   return (

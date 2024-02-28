@@ -1,11 +1,12 @@
 {
-  "name": "qrlaApp",
-  "displayName": "qrlaApp",
+  "name": "QRLA",
+  "displayName": "QRLA",
   "expo": {
-    "name": "qrlaApp",
+    "owner": "qrlalabs",
+    "name": "QRLA",
     "slug": "qrlaApp",
     "scheme": "qrlaapp",
-    "version": "2.0.1",
+    "version": "2.1.2",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
     "extra": {
@@ -28,7 +29,7 @@
     "jsEngine": "hermes",
     "assetBundlePatterns": ["**/*"],
     "android": {
-      "versionCode": 3,
+      "versionCode": 7,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/images/app-icon-android-legacy.png",
       "package": "com.qrlaapp",
@@ -43,10 +44,13 @@
       }
     },
     "ios": {
-      "buildNumber": "2.0.1",
+      "buildNumber": "7",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "splash": {
         "image": "./assets/images/splash-logo-ios-mobile.png",
         "tabletImage": "./assets/images/splash-logo-ios-tablet.png",

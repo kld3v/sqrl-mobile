@@ -1,20 +1,22 @@
-import { Pressable, StyleProp, TextStyle, View, ViewStyle } from "react-native"
+import { Pressable, StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
+import { colors, spacing } from "app/theme"
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
 import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
 import { ScanStateOptions } from "types"
 import { useEffect, useState } from "react"
-import { StatusBar } from "expo-status-bar"
+
 import { ApiResponse } from "apisauce"
 import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
-import { Entypo } from "@expo/vector-icons"
 import { qrScannerService } from "app/services/QrScanner"
-import { locationService } from "app/services/Location/LocationService"
-import { useStores } from "app/models"
 
+import { useStores } from "app/models"
+import { AutoImage } from "../AutoImage"
+import { quintonTheCybear } from "app/utils/QuintonTheCybear"
+import Refresh from "../Svg/Refresh"
+import { openBrowserAsync } from "expo-web-browser"
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -41,66 +43,61 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   useEffect(() => {
     setShowCamera(true)
-    ;(async () => {
-      try {
-        await locationService.requestPermission()
-        locationStore.setPermission()
-        await locationStore.setLocation()
-      } catch (error) {
-        console.error(`Failed to get location: ${error}`)
-      }
-    })()
-
     // Need to force clean up of the camera component when the user navigates away from the screen.
     return () => {
       setShowCamera(false)
     }
   }, [])
 
-  const handleTrustScore = (trustScore: any) => {
-    console.log("trustScore", trustScore)
-    let sanitisedTrustScore = Number(trustScore)
+  const handleTrustScore = (trustScore: number | null) => {
+    if (typeof trustScore !== "number") {
+      setErrorMsg("Oops! Didn't get a trust score back from the server. Try again I guess.")
+      return
+    }
+    const sanitisedTrustScore = Math.round(trustScore / 100)
+
     setTrustScore(sanitisedTrustScore)
-    setSafe(sanitisedTrustScore && sanitisedTrustScore > 500 ? true : false)
+    setSafe(sanitisedTrustScore && sanitisedTrustScore > 5 ? true : false)
   }
 
   const scanAgain = (): (() => void) => (): void => {
     setErrorMsg(null)
+    setUrl("")
+    setTrustScore(null)
+    setSafe(false)
     setScanState("notScanned")
+    setShowCamera(false)
+    setShowCamera(true)
   }
 
   const onScan = async (qrCodeScan: BarCodeScanningResult): Promise<void> => {
     setScanState("scanning")
-
-    // if (!qrScannerService.isUrlSafeForKoalasToSendToBackEnd(qrCodeScan.data)) {
-    //   setErrorMsg("Don't like the look of that URL! Please try again with a different QR code.")
-    //   setScanState("scanned")
-    //   setSafe(false)
-    //   return
-    // }
+    if (!qrScannerService.isUrl(qrCodeScan.data)) {
+      setErrorMsg("Oops! That doesn't look like a valid URL.")
+      setScanState("scanned")
+      return
+    }
     setUrl(qrCodeScan.data)
-
     try {
-      const userID = 123
       let response: ApiResponse<any, any> = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
-        userID,
         locationStore.latitude,
         locationStore.longitude,
       )
 
-      __DEV__ &&
-        console.info(
-          `Response: ${JSON.stringify(response.data)}`,
-          `Status: ${response.status}`,
-          `qrCodeScan: ${qrCodeScan.data}`,
-        )
+      quintonTheCybear.log("response from the outback...", [
+        `${JSON.stringify(response.data)} \n`,
+        `Trust Score: ${JSON.stringify(response.data.trust_score)}\n`,
+        `Status: ${response.status}\n`,
+        `qrCodeScan: ${qrCodeScan.data}\n`,
+        `latitude: ${locationStore.latitude}\n`,
+        `longitude: ${locationStore.longitude}\n`,
+      ])
 
       handleTrustScore(response.data.trust_score)
-      console.log("scan response", response.data)
     } catch (error) {
-      console.error(`Error with sendUrlAndLocationDatafunction: ${error}`)
-      setErrorMsg("Oops - Something went wrong :( Please try again")
+      console.error(`Error with sendUrlAndLocationDataFunction: ${error}`)
+      setErrorMsg("Oops! Failed to send scan data to the bush. Please try again.")
     }
 
     setScanState("scanned")
@@ -115,7 +112,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     // Camera permissions are not granted yet
     return (
       <View style={$container}>
-        <Text style={$text}>We need your permission to show the camera</Text>
+        <Text>We need your permission to show the camera</Text>
         <Button onPress={requestPermission} text="requestPermission" />
       </View>
     )
@@ -123,7 +120,26 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   return (
     <View style={$styles}>
-      <StatusBar style="light" />
+      <TouchableOpacity
+        style={{
+          margin: spacing.md,
+          zIndex: 99,
+          position: "absolute",
+          top: 0,
+          right: 0,
+        }}
+        onPress={() => openBrowserAsync("https://www.qrla.io")}
+      >
+        <AutoImage
+          style={{
+            height: 56,
+            width: 56,
+          }}
+          source={require("../../../assets/images/winkface.png")}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+
       {showCamera && (
         <Camera
           style={$camera}
@@ -139,14 +155,22 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         safe={safe}
         scanning={scanState === "scanning"}
       />
+      {url && scanState === "scanned" && (
+        <Text
+          weight="boldItalic"
+          style={$subReticuleUrlStyle}
+        >{`"${qrScannerService.getPrimaryDomainName(url)}"`}</Text>
+      )}
 
       {scanState !== "notScanned" && (
         <ScanResponseCard
           style={$card}
           trustScore={trustScore}
           url={url}
+          setUrl={setUrl}
           scanState={scanState}
           safe={safe}
+          setSafe={setSafe}
           setScanState={setScanState}
           setErrorMessage={setErrorMsg}
           errorMessage={errorMsg}
@@ -156,28 +180,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       {safe && scanState === "scanned" && (
         <View style={$refresh}>
           <Pressable onPress={scanAgain()}>
-            <Entypo
-              name="leaf"
-              size={16}
-              color={colors.palette.neutral100}
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: [{ translateX: -16 }, { translateY: 16 }, { rotate: "-45deg" }],
-              }}
-            />
-            <Entypo
-              name="leaf"
-              size={16}
-              color={colors.palette.neutral100}
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: [{ translateX: -4 }, { translateY: 16 }, { rotate: "135deg" }],
-              }}
-            />
+            <Refresh />
           </Pressable>
         </View>
       )}
@@ -187,18 +190,13 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
 const $container: ViewStyle = {
   flex: 1,
-  justifyContent: "center",
-  alignItems: "stretch",
 }
 const $camera: ViewStyle = {
   flex: 1,
+  position: "absolute",
+  width: "100%",
   height: "100%",
-}
-
-const $text: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 14,
-  color: colors.palette.primary500,
+  zIndex: 1,
 }
 
 const $reticule: ViewStyle = {
@@ -209,30 +207,28 @@ const $reticule: ViewStyle = {
   height: 200,
   marginLeft: -100, // half of width to center
   marginTop: -100, // half of height to center
+  zIndex: 3,
+}
+
+const $subReticuleUrlStyle: TextStyle = {
+  position: "absolute",
+  left: 0,
+  right: 0,
+  top: "68%",
+  zIndex: 3,
+  textAlign: "center",
 }
 
 const $refresh: ViewStyle = {
   position: "absolute",
-  bottom: 10,
-  right: 10,
-  backgroundColor: colors.palette.neutral200,
-  width: 48,
-  height: 48,
-  borderRadius: 50,
-
+  bottom: 16,
+  right: 16,
   zIndex: 999,
-
-  transform: [{ rotate: "120deg" }],
-
   shadowColor: "#000",
-  shadowOffset: {
-    width: 0,
-    height: 2,
-  },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.84,
-
-  elevation: 5, // for Android
+  shadowOffset: { width: 2, height: 5 },
+  shadowOpacity: 0.3,
+  shadowRadius: 3,
+  elevation: 5,
 }
 
 const $card: TextStyle = {

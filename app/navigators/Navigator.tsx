@@ -1,11 +1,11 @@
 import { BottomTabScreenProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { CompositeScreenProps } from "@react-navigation/native"
-import React from "react"
+import { CompositeScreenProps, useNavigation } from "@react-navigation/native"
+import React, { useEffect } from "react"
 import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "../components"
 import { translate } from "../i18n"
-import { CommunityScreen, MapScreen, DebugScreen, TestingScreen } from "../screens"
+import { CommunityScreen, DebugScreen, MarketPlaceScreen } from "../screens"
 import { ScanScreen } from "../screens/ScanScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
@@ -13,6 +13,7 @@ import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 export type TabParamList = {
   Community: undefined
   Map: { queryIndex?: string; itemIndex?: string }
+  MarketPlace: undefined
   Scan: undefined
   Debug: undefined
   Testing: undefined
@@ -32,9 +33,11 @@ const Tab = createBottomTabNavigator<TabParamList>()
 
 export function Navigator() {
   const { bottom } = useSafeAreaInsets()
+  const iconSize = 42
 
   return (
     <Tab.Navigator
+      initialRouteName="Scan"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -46,66 +49,46 @@ export function Navigator() {
       }}
     >
       <Tab.Screen
-        name="Scan"
-        component={ScanScreen}
-        options={{
-          tabBarAccessibilityLabel: translate("navigator.scannerTab"),
-          tabBarLabel: translate("navigator.scannerTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={30} />
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="Map"
-        component={MapScreen}
-        options={{
-          tabBarLabel: translate("navigator.mapTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="pin" color={focused ? colors.tint : colors.text} size={30} />
-          ),
-        }}
-      />
-
-      <Tab.Screen
         name="Community"
         component={CommunityScreen}
         options={{
-          tabBarLabel: translate("navigator.communityTab"),
+          tabBarLabel: "",
+          tabBarAccessibilityLabel: translate("navigator.communityTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="community" color={focused ? colors.tint : colors.text} size={30} />
+            <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
       />
 
       <Tab.Screen
-        name="Debug"
-        component={DebugScreen}
+        name="Scan"
+        component={ScanScreen}
         options={{
-          tabBarLabel: translate("navigator.debugTab"),
+          tabBarLabel: "",
+          tabBarAccessibilityLabel: translate("navigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="face" color={focused ? colors.tint : colors.text} size={30} />
+            <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
       />
-      {/* {__DEV__ && (
-        <Tab.Screen
-          name="Testing"
-          component={TestingScreen}
-          options={{
-            tabBarLabel: translate("navigator.pushTab"),
-            tabBarIcon: ({ focused }) => (
-              <Icon icon="lock" color={focused ? colors.tint : colors.text} size={30} />
-            ),
-          }}
-        />
-      )} */}
+
+      <Tab.Screen
+        name="MarketPlace"
+        component={MarketPlaceScreen}
+        options={{
+          tabBarLabel: "",
+          tabBarAccessibilityLabel: translate("navigator.marketPlaceTab"),
+          tabBarIcon: ({ focused }) => (
+            <Icon icon="shoppingCart" color={focused ? colors.tint : colors.text} size={iconSize} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   )
 }
 
 const $tabBar: ViewStyle = {
+  display: "none",
   backgroundColor: colors.background,
   borderTopColor: colors.transparent,
 }

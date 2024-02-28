@@ -1,5 +1,6 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { QrScannerServiceConfig } from "./QrScannerService.types"
+import { secureStoreInstance } from "../SecureStore/SecureStorageService"
 
 export class QrScannerService {
   config: QrScannerServiceConfig
@@ -7,7 +8,7 @@ export class QrScannerService {
 
   constructor() {
     this.config = {
-      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan?",
+      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       timeout: 10000,
     }
@@ -17,33 +18,50 @@ export class QrScannerService {
       timeout: this.config.timeout,
     })
   }
-  isUrlSafeForKoalasToSendToBackEnd(url: string): boolean {
+  isUrl(url: string): boolean {
     const regex =
-      /[\w\-]+\.(com|net|org|edu|gov|co|int|eu|us|mil|io|app|dev|ai|biz|info|name|mobi|pro|xxx|asia|cat|coop|jobs|museum|tel|travel|arpa|pdf|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az)/
+      /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?(\?[=&\w]*)?(#[\/\w]*)?$/i
     return regex.test(url)
   }
 
-  getPrimaryDomainName(url: string): string | null {
+  getPrimaryDomainName(url: string): string {
     const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i)
-    if (match != null && match.length > 2 && typeof match[2] === "string" && match[2].length > 0) {
+    if (match && match[2]) {
       const parts = match[2].split(".")
-      return parts[parts.length - 2]
+      // Handling for known SLDs with ccTLDs like '.co.uk'
+      if (parts.length > 2) {
+        // Identify if the last two parts match known SLD + ccTLD patterns
+        const knownSLDs = ["co.uk", "org.uk", "com.au", "co.nz", "co.za", "com.sg"]
+        const lastTwo = parts.slice(-2).join(".")
+        if (knownSLDs.includes(lastTwo)) {
+          return parts.slice(-3, -2).join() // Return the part just before the SLD + ccTLD
+        } else {
+          return parts.slice(-2, -1).join() // Return the second level domain
+        }
+      } else {
+        return parts.slice(-2, -1).join() // Directly return the domain if there's no SLD + ccTLD pattern
+      }
     }
-    return null
+    return url // Return the original URL if no match is found
   }
 
   async sendUrlAndLocationData(
     url: string,
-    userId: number | null,
     latitude: number | undefined,
     longitude: number | undefined,
   ): Promise<ApiResponse<any, any>> {
-    return await this.apisauce_urlScanEndPoint.post("/", {
+    const device_uuid = await secureStoreInstance.getDeviceUUID()
+    console.log(
+      "\n device_uuid being sent off to backend: \n",
+      `------------> ${device_uuid} <------------`,
+    )
+    let res = await this.apisauce_urlScanEndPoint.post("/", {
       url,
-      user_id: userId,
+      device_uuid,
       latitude,
       longitude,
     })
+    return res
   }
 }
 

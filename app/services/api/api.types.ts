@@ -47,4 +47,10 @@ export interface ApiConfig {
    * Milliseconds before we timeout the request.
    */
   timeout: number
+
+  headers: {
+    Accept: string
+    "Accept-encoding": string
+    "Content-Type": string
+  }
 }

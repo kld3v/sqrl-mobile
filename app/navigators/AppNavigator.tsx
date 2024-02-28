@@ -12,14 +12,17 @@ import {
 } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import { observer } from "mobx-react-lite"
-import React from "react"
+import React, { useEffect } from "react"
 import { useColorScheme } from "react-native"
-import * as Screens from "app/screens"
+
 import Config from "../config"
 import { useStores } from "../models"
 import { Navigator, TabParamList } from "./Navigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
+import { locationService } from "app/services/Location/LocationService"
+import * as Screens from "app/screens"
+import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -40,6 +43,8 @@ export type AppStackParamList = {
   Demo: NavigatorScreenParams<TabParamList>
   // 🔥 Your screens go here
   PushNotifications: undefined
+  MarketPlace: undefined
+  TermsAndConditions: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -58,29 +63,40 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
-  const {
-    authenticationStore: { isAuthenticated },
-  } = useStores()
+  const { locationStore, termsAndConditionsStore } = useStores()
+
+  const recurringlyUpdateLocation = async () => {
+    try {
+      await locationStore.getAndSetCurrentPosition()
+    } catch (error) {
+      console.error(`Failed to get location: ${error}`)
+    }
+  }
+
+  useEffect(() => {
+    let locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
+    // cleanup function
+    return () => clearInterval(locationIntervalId)
+  }, [])
 
   return (
     <Stack.Navigator
-      screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
-      initialRouteName={isAuthenticated ? "Welcome" : "Login"}
+      screenOptions={{
+        headerShown: false,
+        navigationBarColor: colors.background,
+        navigationBarHidden: true,
+      }}
     >
-      {isAuthenticated ? (
-        <>
-          <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
-
-          <Stack.Screen name="Demo" component={Navigator} />
-        </>
+      {termsAndConditionsStore.userHasTermsToSign ? (
+        <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       ) : (
-        <>
-          <Stack.Screen name="Login" component={Screens.LoginScreen} />
-        </>
+        <Stack.Screen name="Demo" component={Navigator} />
       )}
 
       {/** 🔥 Your screens go here */}
       {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
+      {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
+
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
