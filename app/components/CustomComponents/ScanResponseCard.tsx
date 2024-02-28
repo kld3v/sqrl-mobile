@@ -48,7 +48,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   const { safe, setSafe, scanState, setScanState, url, setUrl, errorMessage, setErrorMessage } =
     props
 
-  const [leaving, setLeaving] = useState(true)
+  const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
   const setDelayedLeaving = (): (() => void) => () => {
     setLeaving(true)
@@ -147,9 +147,15 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
             ...$infoBoxCustom,
             ...$infoBoxCustomBg,
             borderColor: colors.palette.neutral100,
+            flexDirection: "row",
+            width: "50%",
           }}
         >
-          <Text weight="boldItalic" text="See you soon!" />
+          <Text
+            weight="boldItalic"
+            text="See you soon!"
+            style={{ fontSize: typography.fontSizes.h5 }}
+          />
           <AutoImage
             source={koalaGif}
             // to resize gif correctly. Do not mess with lest you feel my wrath.
