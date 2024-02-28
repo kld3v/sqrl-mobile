@@ -48,7 +48,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   const { safe, setSafe, scanState, setScanState, url, setUrl, errorMessage, setErrorMessage } =
     props
 
-  const [leaving, setLeaving] = useState(false)
+  const [leaving, setLeaving] = useState(true)
   const [pressed, setpressed] = useState(false)
   const setDelayedLeaving = (): (() => void) => () => {
     setLeaving(true)
@@ -353,5 +353,5 @@ const $infoBoxPositioningContainer: ViewStyle = {
 const $koalaGif: ImageStyle = {
   width: 60,
   height: 40,
-  transform: [{ scale: 0.8 }],
+  transform: [{ scale: 1.5 }],
 }

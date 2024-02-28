@@ -1,4 +1,4 @@
-import { Pressable, StyleProp, TextStyle, View, ViewStyle } from "react-native"
+import { Pressable, StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, spacing } from "app/theme"
 import { Text } from "app/components/Text"
@@ -16,6 +16,7 @@ import { useStores } from "app/models"
 import { AutoImage } from "../AutoImage"
 import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 import Refresh from "../Svg/Refresh"
+import { openBrowserAsync } from "expo-web-browser"
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -31,7 +32,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const { style } = props
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
-  const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
+  const [scanState, setScanState] = useState<ScanStateOptions>("scanned")
   const [url, setUrl] = useState<string>("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [trustScore, setTrustScore] = useState<number | null>(null)
@@ -119,20 +120,25 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   return (
     <View style={$styles}>
-      <AutoImage
-        onMagicTap={() => quintonTheCybear.log("Winkface tapped")}
+      <TouchableOpacity
         style={{
-          height: 56,
-          width: 56,
           margin: spacing.md,
           zIndex: 99,
           position: "absolute",
           top: 0,
           right: 0,
         }}
-        source={require("../../../assets/images/winkface.png")}
-        resizeMode="contain"
-      />
+        onPress={() => openBrowserAsync("https://www.qrla.io")}
+      >
+        <AutoImage
+          style={{
+            height: 56,
+            width: 56,
+          }}
+          source={require("../../../assets/images/winkface.png")}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
 
       {showCamera && (
         <Camera
