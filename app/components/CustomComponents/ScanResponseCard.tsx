@@ -48,7 +48,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   const { safe, setSafe, scanState, setScanState, url, setUrl, errorMessage, setErrorMessage } =
     props
 
-  const [leaving, setLeaving] = useState(true)
+  const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
   const setDelayedLeaving = (): (() => void) => () => {
     setLeaving(true)
