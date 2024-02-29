@@ -1,5 +1,5 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
-import { withSetPropAction } from "./helpers/withSetPropAction"
+import { withSetPropAction } from "../helpers/withSetPropAction"
 
 /**
  * Model description here for TypeScript hints.
@@ -46,4 +46,10 @@ export const MessageModel = types
 export interface Messages extends Instance<typeof MessageModel> {}
 export interface MessagesSnapshotOut extends SnapshotOut<typeof MessageModel> {}
 export interface MessagesSnapshotIn extends SnapshotIn<typeof MessageModel> {}
-export const createMessagesDefaultModel = () => types.optional(MessageModel, {})
+export const createMessagesDefaultModel = () =>
+  types.optional(MessageModel, {
+    title: "title",
+    body: "body",
+    sound: "default",
+    data: { url: "url" },
+  })
