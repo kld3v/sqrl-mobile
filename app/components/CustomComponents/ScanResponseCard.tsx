@@ -11,7 +11,7 @@ import {
 import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import SafeScannedPing from "../Audio/SafeScannedPing"
 
 import OnScanHaptic from "../Haptics/OnScanHaptic"
@@ -25,27 +25,18 @@ import { AutoImage } from "../AutoImage"
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
 export interface ScanResponseCardProps {
-  /**
-   * An optional style override useful for padding & margin.
-   */
-  trustScore: number | null
   url: string
-  setUrl: React.Dispatch<React.SetStateAction<string>>
   safe: boolean
-  setSafe: React.Dispatch<React.SetStateAction<boolean>>
   scanState: ScanStateOptions
   setScanState: React.Dispatch<React.SetStateAction<ScanStateOptions>>
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
   errorMessage: string | null
-
+  setReadyToScan: React.Dispatch<React.SetStateAction<boolean>>
   style?: StyleProp<ViewStyle>
 }
 
-/**
- * Describe your component here
- */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
-  const { safe, setSafe, scanState, setScanState, url, setUrl, errorMessage, setErrorMessage } =
+  const { safe, scanState, setScanState, url, errorMessage, setErrorMessage, setReadyToScan } =
     props
 
   const [leaving, setLeaving] = useState(false)
@@ -55,7 +46,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     setTimeout(async () => {
       try {
         await WebBrowser.openBrowserAsync(url!)
-        resetScanState()()
+        resetScanState()
       } catch (error) {
         console.error(error)
         setErrorMessage("Not a valid URL. Soz. Try again.")
@@ -63,14 +54,11 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     }, 2000)
   }
 
-  const resetScanState = (): (() => void) => {
-    return () => {
-      setScanState("notScanned")
-      setSafe(false)
-      setUrl("")
-      setErrorMessage(null)
-    }
-  }
+  const resetScanState = useCallback(() => {
+    setScanState("notScanned")
+    setErrorMessage(null)
+    setReadyToScan(true)
+  }, [])
 
   const scanCompleteContent = (
     <>
@@ -118,7 +106,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
             paddingTop: 16,
             paddingHorizontal: 30,
           }}
-          onPress={resetScanState()}
+          onPress={() => resetScanState()}
           onPressIn={() => setpressed(true)}
           onPressOut={() => setpressed(false)}
           pressedStyle={{
@@ -178,7 +166,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
           alignItems: "center",
           paddingHorizontal: 30,
         }}
-        onPress={resetScanState()}
+        onPress={() => resetScanState()}
         onPressIn={() => setpressed(true)}
         onPressOut={() => setpressed(false)}
         pressedStyle={{
@@ -229,7 +217,13 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
               borderColor: !safe ? colors.palette.angry500 : colors.palette.primary500,
             }}
           >
-            {safe ? <Tick style={$messageBoxIcon} /> : <Cancel style={$messageBoxIcon} />}
+            {safe ? (
+              <Tick style={$messageBoxIcon} />
+            ) : (
+              <TouchableOpacity onPress={() => resetScanState()} style={$messageBoxIcon}>
+                <Cancel />
+              </TouchableOpacity>
+            )}
             <Text weight="boldItalic" size="xxl" style={safe ? $safeText : $unsafeText}>
               {errorMessage ? "Oops!" : safe ? "Good To Go!" : "Caution!"}
             </Text>

@@ -1,6 +1,7 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { QrScannerServiceConfig } from "./QrScannerService.types"
 import { secureStoreInstance } from "../SecureStore/SecureStorageService"
+import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 export class QrScannerService {
   config: QrScannerServiceConfig
@@ -47,20 +48,33 @@ export class QrScannerService {
 
   async sendUrlAndLocationData(
     url: string,
-    latitude: number | undefined,
-    longitude: number | undefined,
+    latitude?: number,
+    longitude?: number,
   ): Promise<ApiResponse<any, any>> {
     const device_uuid = await secureStoreInstance.getDeviceUUID()
-    console.log(
-      "\n device_uuid being sent off to backend: \n",
-      `------------> ${device_uuid} <------------`,
-    )
-    let res = await this.apisauce_urlScanEndPoint.post("/", {
+    quintonTheCybear.log("device_uuid being sent off to backend: ", device_uuid)
+
+    if (!device_uuid) throw new Error("Wasn't able to get device uuid from secure store")
+    // Initialize the body with required properties
+    let requestBody: {
+      url: string
+      device_uuid: string
+      latitude?: number
+      longitude?: number
+    } = {
       url,
       device_uuid,
-      latitude,
-      longitude,
-    })
+    }
+
+    // Conditionally add latitude and longitude if they are not undefined
+    if (typeof latitude !== "undefined") {
+      requestBody.latitude = latitude
+    }
+    if (typeof longitude !== "undefined") {
+      requestBody.longitude = longitude
+    }
+
+    let res = await this.apisauce_urlScanEndPoint.post("/", requestBody)
     return res
   }
 }

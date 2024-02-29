@@ -1,9 +1,9 @@
 import { types } from "mobx-state-tree"
-import { withSetPropAction } from "./helpers/withSetPropAction"
-import { pushNotificationService } from "../services/PushNotifications"
+import { withSetPropAction } from "../helpers/withSetPropAction"
+import { pushNotificationService } from "../../services/PushNotifications"
 
-export const PushNotificationsStoreModel = types
-  .model("PushNotificationsStore")
+export const PushNotificationStoreModel = types
+  .model("PushNotificationStore")
   .props({
     expoPushToken: types.maybe(types.string),
     pushNotificationsError: types.maybe(types.string),

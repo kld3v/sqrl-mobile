@@ -5,9 +5,7 @@ import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
 import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
 import { ScanStateOptions } from "types"
-import { useEffect, useState } from "react"
-
-import { ApiResponse } from "apisauce"
+import { useCallback, useEffect, useState } from "react"
 import { ScanResponseCard } from "./ScanResponseCard"
 import { Reticule } from "./Reticule"
 import { qrScannerService } from "app/services/QrScanner"
@@ -17,6 +15,7 @@ import { AutoImage } from "../AutoImage"
 import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 import Refresh from "../Svg/Refresh"
 import { openBrowserAsync } from "expo-web-browser"
+import { useDebouncedCallback } from "app/utils/useDebouncedCallback"
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -35,11 +34,13 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
   const [url, setUrl] = useState<string>("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [trustScore, setTrustScore] = useState<number | null>(null)
+  // do not rid this comma majeed I'm watching you. - quinton 🐨
+  const [, setTrustScore] = useState<number | null>(null)
 
   const [safe, setSafe] = useState<boolean>(false)
 
   const [showCamera, setShowCamera] = useState(false)
+  const [readyToScan, setReadyToScan] = useState(true)
 
   useEffect(() => {
     setShowCamera(true)
@@ -49,18 +50,19 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     }
   }, [])
 
-  const handleTrustScore = (trustScore: number | null) => {
-    if (typeof trustScore !== "number") {
-      setErrorMsg("Oops! Didn't get a trust score back from the server. Try again I guess.")
-      return
-    }
-    const sanitisedTrustScore = Math.round(trustScore / 100)
+  const handleTrustScore = useCallback(
+    (trustScore: number | null) => {
+      if (typeof trustScore !== "number") {
+        setErrorMsg("Oops! Didn't get a trust score back from the server. Try again I guess.")
+        return
+      }
+      const sanitisedTrustScore = Math.round(trustScore / 100)
+      setSafe(sanitisedTrustScore && sanitisedTrustScore > 5 ? true : false)
+    },
+    [setErrorMsg, setTrustScore, setSafe],
+  )
 
-    setTrustScore(sanitisedTrustScore)
-    setSafe(sanitisedTrustScore && sanitisedTrustScore > 5 ? true : false)
-  }
-
-  const scanAgain = (): (() => void) => (): void => {
+  const scanAgain = (): (() => void) => () => {
     setErrorMsg(null)
     setUrl("")
     setTrustScore(null)
@@ -68,9 +70,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     setScanState("notScanned")
     setShowCamera(false)
     setShowCamera(true)
+    setReadyToScan(true)
   }
 
-  const onScan = async (qrCodeScan: BarCodeScanningResult): Promise<void> => {
+  const onScan = useCallback(async (qrCodeScan: BarCodeScanningResult) => {
+    setReadyToScan(false)
     setScanState("scanning")
     if (!qrScannerService.isUrl(qrCodeScan.data)) {
       setErrorMsg("Oops! That doesn't look like a valid URL.")
@@ -79,12 +83,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     }
     setUrl(qrCodeScan.data)
     try {
-      let response: ApiResponse<any, any> = await qrScannerService.sendUrlAndLocationData(
+      const response = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
         locationStore.latitude,
         locationStore.longitude,
       )
-
       quintonTheCybear.log("response from the outback...", [
         `${JSON.stringify(response.data)} \n`,
         `Trust Score: ${JSON.stringify(response.data.trust_score)}\n`,
@@ -95,13 +98,15 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       ])
 
       handleTrustScore(response.data.trust_score)
+      setScanState("scanned")
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDataFunction: ${error}`)
       setErrorMsg("Oops! Failed to send scan data to the bush. Please try again.")
+      setScanState("scanned")
     }
+  }, [])
 
-    setScanState("scanned")
-  }
+  const onScanModified = useDebouncedCallback<BarCodeScanningResult[]>(onScan, 100)
 
   if (!permission) {
     // Camera permissions are still loading
@@ -145,7 +150,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           style={$camera}
           type={CameraType.back}
           ratio="16:9"
-          onBarCodeScanned={scanState === "notScanned" ? onScan : undefined}
+          onBarCodeScanned={readyToScan ? onScanModified : undefined}
         />
       )}
 
@@ -165,15 +170,13 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       {scanState !== "notScanned" && (
         <ScanResponseCard
           style={$card}
-          trustScore={trustScore}
           url={url}
-          setUrl={setUrl}
           scanState={scanState}
           safe={safe}
-          setSafe={setSafe}
           setScanState={setScanState}
           setErrorMessage={setErrorMsg}
           errorMessage={errorMsg}
+          setReadyToScan={setReadyToScan}
         />
       )}
 
