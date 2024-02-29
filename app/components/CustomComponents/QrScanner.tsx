@@ -15,6 +15,7 @@ import { AutoImage } from "../AutoImage"
 import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 import Refresh from "../Svg/Refresh"
 import { openBrowserAsync } from "expo-web-browser"
+import { useDebouncedCallback } from "app/utils/useDebouncedCallback"
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -33,7 +34,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
   const [url, setUrl] = useState<string>("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [trustScore, setTrustScore] = useState<number | null>(null)
+  // do not rid this comma majeed I'm watching you. - quinton 🐨
+  const [, setTrustScore] = useState<number | null>(null)
 
   const [safe, setSafe] = useState<boolean>(false)
 
@@ -55,8 +57,6 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         return
       }
       const sanitisedTrustScore = Math.round(trustScore / 100)
-
-      setTrustScore(sanitisedTrustScore)
       setSafe(sanitisedTrustScore && sanitisedTrustScore > 5 ? true : false)
     },
     [setErrorMsg, setTrustScore, setSafe],
@@ -106,6 +106,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     }
   }, [])
 
+  const onScanModified = useDebouncedCallback<BarCodeScanningResult[]>(onScan, 100)
+
   if (!permission) {
     // Camera permissions are still loading
     return <View />
@@ -148,7 +150,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           style={$camera}
           type={CameraType.back}
           ratio="16:9"
-          onBarCodeScanned={readyToScan ? onScan : undefined}
+          onBarCodeScanned={readyToScan ? onScanModified : undefined}
         />
       )}
 
@@ -168,12 +170,9 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       {scanState !== "notScanned" && (
         <ScanResponseCard
           style={$card}
-          trustScore={trustScore}
           url={url}
-          setUrl={setUrl}
           scanState={scanState}
           safe={safe}
-          setSafe={setSafe}
           setScanState={setScanState}
           setErrorMessage={setErrorMsg}
           errorMessage={errorMsg}
