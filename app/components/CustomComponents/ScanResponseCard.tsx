@@ -25,14 +25,8 @@ import { AutoImage } from "../AutoImage"
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
 export interface ScanResponseCardProps {
-  /**
-   * An optional style override useful for padding & margin.
-   */
-  trustScore: number | null
   url: string
-  setUrl: React.Dispatch<React.SetStateAction<string>>
   safe: boolean
-  setSafe: React.Dispatch<React.SetStateAction<boolean>>
   scanState: ScanStateOptions
   setScanState: React.Dispatch<React.SetStateAction<ScanStateOptions>>
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
@@ -41,21 +35,9 @@ export interface ScanResponseCardProps {
   style?: StyleProp<ViewStyle>
 }
 
-/**
- * Describe your component here
- */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
-  const {
-    safe,
-    setSafe,
-    scanState,
-    setScanState,
-    url,
-    setUrl,
-    errorMessage,
-    setErrorMessage,
-    setReadyToScan,
-  } = props
+  const { safe, scanState, setScanState, url, errorMessage, setErrorMessage, setReadyToScan } =
+    props
 
   const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
@@ -74,8 +56,6 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
 
   const resetScanState = useCallback(() => {
     setScanState("notScanned")
-    setSafe(false)
-    setUrl("")
     setErrorMessage(null)
     setReadyToScan(true)
   }, [])
