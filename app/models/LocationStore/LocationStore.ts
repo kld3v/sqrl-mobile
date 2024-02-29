@@ -1,6 +1,6 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
-import { withSetPropAction } from "./helpers/withSetPropAction"
-import { locationService } from "app/services/Location/LocationService"
+import { withSetPropAction } from "../helpers/withSetPropAction"
+import { locationService } from "app/services/Location"
 
 /**
  * Model description here for TypeScript hints.
