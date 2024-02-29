@@ -229,7 +229,13 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
               borderColor: !safe ? colors.palette.angry500 : colors.palette.primary500,
             }}
           >
-            {safe ? <Tick style={$messageBoxIcon} /> : <Cancel style={$messageBoxIcon} />}
+            {safe ? (
+              <Tick style={$messageBoxIcon} />
+            ) : (
+              <TouchableOpacity onPress={resetScanState()} style={$messageBoxIcon}>
+                <Cancel />
+              </TouchableOpacity>
+            )}
             <Text weight="boldItalic" size="xxl" style={safe ? $safeText : $unsafeText}>
               {errorMessage ? "Oops!" : safe ? "Good To Go!" : "Caution!"}
             </Text>
