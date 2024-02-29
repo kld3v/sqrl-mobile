@@ -2,7 +2,7 @@ import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { DocumentResponseObject, termsService } from "../../services/Terms"
 import { TermsModel } from "./Terms"
-import { quintonTheCybear } from "app/utils/QuintonTheCybear"
+import { quintonTheCybear } from "../../utils/QuintonTheCybear"
 
 /**
  * Model description here for TypeScript hints.
