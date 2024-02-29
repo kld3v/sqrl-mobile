@@ -11,7 +11,7 @@ import {
 import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import SafeScannedPing from "../Audio/SafeScannedPing"
 
 import OnScanHaptic from "../Haptics/OnScanHaptic"
@@ -37,7 +37,7 @@ export interface ScanResponseCardProps {
   setScanState: React.Dispatch<React.SetStateAction<ScanStateOptions>>
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
   errorMessage: string | null
-
+  setReadyToScan: React.Dispatch<React.SetStateAction<boolean>>
   style?: StyleProp<ViewStyle>
 }
 
@@ -45,8 +45,17 @@ export interface ScanResponseCardProps {
  * Describe your component here
  */
 export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
-  const { safe, setSafe, scanState, setScanState, url, setUrl, errorMessage, setErrorMessage } =
-    props
+  const {
+    safe,
+    setSafe,
+    scanState,
+    setScanState,
+    url,
+    setUrl,
+    errorMessage,
+    setErrorMessage,
+    setReadyToScan,
+  } = props
 
   const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
@@ -55,7 +64,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     setTimeout(async () => {
       try {
         await WebBrowser.openBrowserAsync(url!)
-        resetScanState()()
+        resetScanState()
       } catch (error) {
         console.error(error)
         setErrorMessage("Not a valid URL. Soz. Try again.")
@@ -63,14 +72,13 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     }, 2000)
   }
 
-  const resetScanState = (): (() => void) => {
-    return () => {
-      setScanState("notScanned")
-      setSafe(false)
-      setUrl("")
-      setErrorMessage(null)
-    }
-  }
+  const resetScanState = useCallback(() => {
+    setScanState("notScanned")
+    setSafe(false)
+    setUrl("")
+    setErrorMessage(null)
+    setReadyToScan(true)
+  }, [])
 
   const scanCompleteContent = (
     <>
@@ -118,7 +126,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
             paddingTop: 16,
             paddingHorizontal: 30,
           }}
-          onPress={resetScanState()}
+          onPress={() => resetScanState()}
           onPressIn={() => setpressed(true)}
           onPressOut={() => setpressed(false)}
           pressedStyle={{
@@ -178,7 +186,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
           alignItems: "center",
           paddingHorizontal: 30,
         }}
-        onPress={resetScanState()}
+        onPress={() => resetScanState()}
         onPressIn={() => setpressed(true)}
         onPressOut={() => setpressed(false)}
         pressedStyle={{
@@ -232,7 +240,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
             {safe ? (
               <Tick style={$messageBoxIcon} />
             ) : (
-              <TouchableOpacity onPress={resetScanState()} style={$messageBoxIcon}>
+              <TouchableOpacity onPress={() => resetScanState()} style={$messageBoxIcon}>
                 <Cancel />
               </TouchableOpacity>
             )}
