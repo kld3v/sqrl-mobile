@@ -49,18 +49,6 @@ export function Navigator() {
       }}
     >
       <Tab.Screen
-        name="Community"
-        component={CommunityScreen}
-        options={{
-          tabBarLabel: "",
-          tabBarAccessibilityLabel: translate("navigator.communityTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
-          ),
-        }}
-      />
-
-      <Tab.Screen
         name="Scan"
         component={ScanScreen}
         options={{
@@ -68,18 +56,6 @@ export function Navigator() {
           tabBarAccessibilityLabel: translate("navigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={iconSize} />
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="MarketPlace"
-        component={MarketPlaceScreen}
-        options={{
-          tabBarLabel: "",
-          tabBarAccessibilityLabel: translate("navigator.marketPlaceTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="shoppingCart" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
       />
