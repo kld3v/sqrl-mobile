@@ -9,6 +9,8 @@ import { CommunityScreen, DebugScreen, MarketPlaceScreen } from "../screens"
 import { ScanScreen } from "../screens/ScanScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
+import { locationService } from "app/services/Location"
+import { useStores } from "app/models"
 
 export type TabParamList = {
   Community: undefined
@@ -34,6 +36,15 @@ const Tab = createBottomTabNavigator<TabParamList>()
 export function Navigator() {
   const { bottom } = useSafeAreaInsets()
   const iconSize = 42
+  const { locationStore } = useStores()
+
+  useEffect(() => {
+    ;(async () => {
+      await locationService.requestPermission()
+      locationStore.setPermission()
+      await locationStore.getAndSetCurrentPosition()
+    })()
+  }, [])
 
   return (
     <Tab.Navigator
