@@ -1,11 +1,9 @@
-import React, { FC, useEffect, useState } from "react"
+import React, { FC, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { View } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { AutoImage, Screen, Text, Toggle, Button } from "app/components"
 import { colors, typography } from "app/theme"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
 import * as WebBrowser from "expo-web-browser"
 import { $hyperlink, $rootScreen, $title } from "app/theme/styles"
 import {
@@ -45,17 +43,40 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
               weight="mediumItalic"
               text="Wait a minute! Before you dive into scanning, please take a quick moment to review our "
             />
-
             <Text
               style={$hyperlink}
-              text={"Terms and Conditions"}
-              onPress={() => WebBrowser.openBrowserAsync("https://qrla.io")}
+              text={
+                (termsAndConditionsStore.terms &&
+                  termsAndConditionsStore.terms[0] &&
+                  termsAndConditionsStore.terms[0].term_name) ||
+                ""
+              }
+              onPress={() =>
+                WebBrowser.openBrowserAsync(
+                  (termsAndConditionsStore.terms &&
+                    termsAndConditionsStore.terms[0] &&
+                    termsAndConditionsStore.terms[0].term_url) ||
+                    "",
+                )
+              }
             />
             <Text weight="mediumItalic" text=" and " />
             <Text
-              text="Privacy Policy"
+              text={
+                (termsAndConditionsStore.terms &&
+                  termsAndConditionsStore.terms[1] &&
+                  termsAndConditionsStore.terms[1].term_name) ||
+                ""
+              }
               style={$hyperlink}
-              onPress={() => WebBrowser.openBrowserAsync("https://qrla.io")}
+              onPress={() =>
+                WebBrowser.openBrowserAsync(
+                  (termsAndConditionsStore.terms &&
+                    termsAndConditionsStore.terms[1] &&
+                    termsAndConditionsStore.terms[1].term_url) ||
+                    "",
+                )
+              }
             />
             <Text
               weight="mediumItalic"
