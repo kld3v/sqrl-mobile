@@ -7,6 +7,7 @@ import {
   Dimensions,
   TextStyle,
   TouchableOpacity,
+  Platform,
 } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
@@ -60,6 +61,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     setReadyToScan(true)
   }, [])
 
+  const deviceIsAndroid = Platform.OS === "android"
   const scanCompleteContent = (
     <>
       {safe ? (
@@ -248,7 +250,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
                 : safe
                 ? colors.palette.primary500
                 : colors.palette.angry500,
-            shadowColor: pressed ? "transparent" : "#000",
+            shadowColor: pressed || deviceIsAndroid ? "transparent" : "#000",
             shadowOffset: pressed ? { width: 0, height: 0 } : { width: 0, height: 2 },
             elevation: pressed ? 0 : 5,
             backgroundColor:
@@ -319,7 +321,6 @@ const $infoBoxCustom: TextStyle = {
   maxWidth: "100%",
   paddingHorizontal: 32,
   paddingVertical: spacing.md,
-  ...$standardShadow,
   borderRadius: 28,
   flexDirection: "column",
   justifyContent: "center",

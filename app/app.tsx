@@ -22,8 +22,6 @@ import { customFontsToLoad } from "./theme"
 import Config from "./config"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { ViewStyle } from "react-native"
-
-import { locationService } from "./services/Location/LocationService"
 import { quintonTheCybear } from "./utils/QuintonTheCybear"
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -64,7 +62,7 @@ function App(props: AppProps) {
   } = useNavigationPersistence(storage, NAVIGATION_PERSISTENCE_KEY)
 
   const [areFontsLoaded] = useFonts(customFontsToLoad)
-  const { termsAndConditionsStore, locationStore } = useStores()
+  const { termsAndConditionsStore } = useStores()
 
   const { rehydrated } = useInitialRootStore(async () => {
     // This runs after the root store has been initialized and rehydrated.
@@ -76,9 +74,6 @@ function App(props: AppProps) {
 
     // APP SETUP ----------->
     try {
-      await locationService.requestPermission()
-      locationStore.setPermission()
-      await locationStore.getAndSetCurrentPosition()
       await termsAndConditionsStore.checkIfUserHasSignedUpToDateContract()
       quintonTheCybear.log(
         "What's in the terms and conditions store?",

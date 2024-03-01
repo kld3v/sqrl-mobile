@@ -20,9 +20,7 @@ import { useStores } from "../models"
 import { Navigator, TabParamList } from "./Navigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
-import { locationService } from "app/services/Location/LocationService"
 import * as Screens from "app/screens"
-import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator

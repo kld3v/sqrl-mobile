@@ -9,6 +9,8 @@ import { CommunityScreen, DebugScreen, MarketPlaceScreen } from "../screens"
 import { ScanScreen } from "../screens/ScanScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
+import { locationService } from "app/services/Location"
+import { useStores } from "app/models"
 
 export type TabParamList = {
   Community: undefined
@@ -34,6 +36,15 @@ const Tab = createBottomTabNavigator<TabParamList>()
 export function Navigator() {
   const { bottom } = useSafeAreaInsets()
   const iconSize = 42
+  const { locationStore } = useStores()
+
+  useEffect(() => {
+    ;(async () => {
+      await locationService.requestPermission()
+      locationStore.setPermission()
+      await locationStore.getAndSetCurrentPosition()
+    })()
+  }, [])
 
   return (
     <Tab.Navigator
@@ -49,18 +60,6 @@ export function Navigator() {
       }}
     >
       <Tab.Screen
-        name="Community"
-        component={CommunityScreen}
-        options={{
-          tabBarLabel: "",
-          tabBarAccessibilityLabel: translate("navigator.communityTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
-          ),
-        }}
-      />
-
-      <Tab.Screen
         name="Scan"
         component={ScanScreen}
         options={{
@@ -68,18 +67,6 @@ export function Navigator() {
           tabBarAccessibilityLabel: translate("navigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={iconSize} />
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="MarketPlace"
-        component={MarketPlaceScreen}
-        options={{
-          tabBarLabel: "",
-          tabBarAccessibilityLabel: translate("navigator.marketPlaceTab"),
-          tabBarIcon: ({ focused }) => (
-            <Icon icon="shoppingCart" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
       />
