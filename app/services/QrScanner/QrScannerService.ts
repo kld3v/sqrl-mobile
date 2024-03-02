@@ -5,19 +5,13 @@ import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 import { DEFAULT_API_CONFIG } from "../api"
 
 export class QrScannerService {
-  config: QrScannerServiceConfig
-  apisauce_urlScanEndPoint: ApisauceInstance
+  apisauce: ApisauceInstance
 
   constructor() {
-    this.config = {
+    this.apisauce = create({
       baseURL: DEFAULT_API_CONFIG.url,
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      timeout: 10000,
-    }
-    this.apisauce_urlScanEndPoint = create({
-      baseURL: this.config.baseURL,
-      headers: this.config.headers,
-      timeout: this.config.timeout,
+      timeout: DEFAULT_API_CONFIG.timeout,
+      headers: DEFAULT_API_CONFIG.headers,
     })
   }
   isUrl(url: string): boolean {
@@ -75,7 +69,7 @@ export class QrScannerService {
       requestBody.longitude = longitude
     }
 
-    let res = await this.apisauce_urlScanEndPoint.post("/scan", requestBody)
+    let res = await this.apisauce.post("/scan", requestBody)
     return res
   }
 }

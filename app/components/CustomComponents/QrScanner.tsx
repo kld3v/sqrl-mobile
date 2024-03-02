@@ -52,17 +52,19 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     }
   }, [])
 
-  const handleTrustScore = useCallback(
-    (trustScore: number | null) => {
-      if (typeof trustScore !== "number") {
-        setErrorMsg("Oops! Didn't get a trust score back from the server. Try again I guess.")
-        return
-      }
-      const sanitisedTrustScore = Math.round(trustScore / 100)
-      setSafe(sanitisedTrustScore && sanitisedTrustScore > 5 ? true : false)
-    },
-    [setErrorMsg, setTrustScore, setSafe],
-  )
+  const handleTrustScore = useCallback((trustScore: number | null) => {
+    console.log("trustScore:", trustScore, typeof trustScore)
+    debugStore.addInfoMessage(`entered handleTrustScore: ${trustScore}, ${typeof trustScore}`)
+    if (typeof trustScore !== "number") {
+      setErrorMsg("Oops! Didn't get a trust score back from the server. Try again I guess.")
+      return
+    }
+    debugStore.addInfoMessage(`trust score is number.`)
+    const sanitisedTrustScore = Math.round(trustScore / 100)
+    debugStore.addInfoMessage(`Rounding complete`)
+    setSafe(sanitisedTrustScore && sanitisedTrustScore > 5 ? true : false)
+    debugStore.addInfoMessage(`Set safe complete`)
+  }, [])
 
   const scanAgain = (): (() => void) => () => {
     setErrorMsg(null)
@@ -85,20 +87,28 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
     }
     setUrl(qrCodeScan.data)
     try {
+      debugStore.addInfoMessage(
+        `sending url and location data to api: ${qrCodeScan.data}, ${locationStore.latitude}, ${locationStore.longitude}`,
+      )
       const response = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
         locationStore.latitude,
         locationStore.longitude,
       )
-      __DEV__ &&
-        quintonTheCybear.log("response from the outback...", [
-          `${JSON.stringify(response.data)} \n`,
-          `Trust Score: ${JSON.stringify(response.data.trust_score)}\n`,
-          `Status: ${response.status}\n`,
-          `qrCodeScan: ${qrCodeScan.data}\n`,
-          `latitude: ${locationStore.latitude}\n`,
-          `longitude: ${locationStore.longitude}\n`,
-        ])
+      debugStore.addInfoMessage(
+        `response from api: ${JSON.stringify(response)}, ${JSON.stringify(response.data)}`,
+      )
+
+      // __DEV__ &&
+      //   quintonTheCybear.log(
+      //     "response from the outback...",
+      //     `${JSON.stringify(response.data)} \n
+      //     Trust Score: ${JSON.stringify(response.data.trust_score)}\n
+      //     Status: ${response.status}\n
+      //     qrCodeScan: ${qrCodeScan.data}\n
+      //     latitude: ${locationStore.latitude}\n
+      //     longitude: ${locationStore.longitude}\n`,
+      //   )
 
       handleTrustScore(response.data.trust_score)
     } catch (error) {
