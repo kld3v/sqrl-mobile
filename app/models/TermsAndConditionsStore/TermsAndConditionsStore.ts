@@ -64,13 +64,21 @@ export const TermsAndConditionsStoreModel = types
         console.log("Docs to sign")
       }
     },
-    addDummyDocumentToSign(): void {
-      store.terms.push({
-        guid: Math.random().toString(),
-        id: Math.random() * 1000,
-        term_name: "Dummy Document",
-        term_url: "https://qrla.io",
-      })
+    addDummyDocumentsToSign(): void {
+      store.setProp("terms", [
+        {
+          guid: Math.random().toString(),
+          id: Math.random() * 1000,
+          term_name: "Dummy Document1",
+          term_url: "https://qrla.io",
+        },
+        {
+          guid: Math.random().toString(),
+          id: Math.random() * 1000,
+          term_name: "Dummy Document2",
+          term_url: "https://qrla.io/terms-and-conditions",
+        },
+      ])
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
 

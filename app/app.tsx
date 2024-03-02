@@ -83,7 +83,7 @@ function App(props: AppProps) {
       console.error(`Failed to init some app functions: ${error}`)
     }
     // <----------------- APP SETUP
-    setTimeout(hideSplashScreen, 500)
+    hideSplashScreen()
   })
 
   // Before we show the app, we have to wait for our state to be ready.
