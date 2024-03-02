@@ -17,8 +17,9 @@ export class TermsService {
   async checkUserAgreements(): Promise<DocumentResponseObject[] | false | Error> {
     let res: ApiResponse<DocumentsToSignResponseObject>
     try {
+      let device_uuid = await secureStoreInstance.getDeviceUUID()
       res = await this.apisauce.get("/agreements/check", {
-        device_uuid: await secureStoreInstance.getDeviceUUID(),
+        device_uuid,
       })
     } catch (error) {
       // Needs to handle error so that user cannot use app without signing t/c's.
