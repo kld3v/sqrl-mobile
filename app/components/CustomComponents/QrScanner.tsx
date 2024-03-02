@@ -88,14 +88,15 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         locationStore.latitude,
         locationStore.longitude,
       )
-      quintonTheCybear.log("response from the outback...", [
-        `${JSON.stringify(response.data)} \n`,
-        `Trust Score: ${JSON.stringify(response.data.trust_score)}\n`,
-        `Status: ${response.status}\n`,
-        `qrCodeScan: ${qrCodeScan.data}\n`,
-        `latitude: ${locationStore.latitude}\n`,
-        `longitude: ${locationStore.longitude}\n`,
-      ])
+      __DEV__ &&
+        quintonTheCybear.log("response from the outback...", [
+          `${JSON.stringify(response.data)} \n`,
+          `Trust Score: ${JSON.stringify(response.data.trust_score)}\n`,
+          `Status: ${response.status}\n`,
+          `qrCodeScan: ${qrCodeScan.data}\n`,
+          `latitude: ${locationStore.latitude}\n`,
+          `longitude: ${locationStore.longitude}\n`,
+        ])
 
       handleTrustScore(response.data.trust_score)
       setScanState("scanned")

@@ -17,7 +17,7 @@ export class TermsService {
   async checkUserAgreements(): Promise<DocumentResponseObject[] | false | Error> {
     let res: ApiResponse<DocumentsToSignResponseObject>
     try {
-      res = await this.apisauce.get("agreements/check", {
+      res = await this.apisauce.get("/agreements/check", {
         device_uuid: await secureStoreInstance.getDeviceUUID(),
       })
     } catch (error) {
@@ -35,7 +35,7 @@ export class TermsService {
 
   async signUserAgreements(signedDocIds: number[]): Promise<void> {
     try {
-      await this.apisauce.post("agreements/sign", {
+      await this.apisauce.post("/agreements/sign", {
         device_uuid: await secureStoreInstance.getDeviceUUID(),
         document_version_ids: signedDocIds,
       })

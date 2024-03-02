@@ -21,7 +21,7 @@ export default class UserFeedbackService {
     })
   }
   public async sendFeedback(questionID: number, responseAnswer?: string, responseText?: string) {
-    const response = await this.apisauce.post("question-responses", {
+    const response = await this.apisauce.post("/question-responses", {
       questionID,
       device_uuid: secureStoreInstance.getDeviceUUID(),
       responseAnswer,

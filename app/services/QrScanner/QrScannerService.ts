@@ -2,6 +2,7 @@ import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import { QrScannerServiceConfig } from "./QrScannerService.types"
 import { secureStoreInstance } from "../SecureStore/SecureStorageService"
 import { quintonTheCybear } from "app/utils/QuintonTheCybear"
+import { DEFAULT_API_CONFIG } from "../api"
 
 export class QrScannerService {
   config: QrScannerServiceConfig
@@ -9,7 +10,7 @@ export class QrScannerService {
 
   constructor() {
     this.config = {
-      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan",
+      baseURL: DEFAULT_API_CONFIG.url,
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       timeout: 10000,
     }
@@ -74,7 +75,7 @@ export class QrScannerService {
       requestBody.longitude = longitude
     }
 
-    let res = await this.apisauce_urlScanEndPoint.post("/", requestBody)
+    let res = await this.apisauce_urlScanEndPoint.post("/scan", requestBody)
     return res
   }
 }
