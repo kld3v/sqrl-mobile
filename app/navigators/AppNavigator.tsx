@@ -43,6 +43,7 @@ export type AppStackParamList = {
   PushNotifications: undefined
   MarketPlace: undefined
   TermsAndConditions: undefined
+  Debug: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -61,7 +62,7 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
-  const { locationStore, termsAndConditionsStore } = useStores()
+  const { locationStore, termsAndConditionsStore, debugStore } = useStores()
 
   const recurringlyUpdateLocation = async () => {
     try {
@@ -73,6 +74,10 @@ const AppStack = observer(function AppStack() {
 
   useEffect(() => {
     let locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
+    debugStore.addInfoMessage("Started location updates")
+    debugStore.addInfoMessage(
+      `User has terms to sign: ${termsAndConditionsStore.userHasTermsToSign}`,
+    )
     // cleanup function
     return () => clearInterval(locationIntervalId)
   }, [])
@@ -94,6 +99,7 @@ const AppStack = observer(function AppStack() {
       {/** 🔥 Your screens go here */}
       {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
       {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
+      <Stack.Screen name="Debug" component={Screens.DebugScreen} />
 
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>

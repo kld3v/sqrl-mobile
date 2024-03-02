@@ -14,8 +14,9 @@ import { useStores } from "app/models"
 import { AutoImage } from "../AutoImage"
 import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 import Refresh from "../Svg/Refresh"
-import { openBrowserAsync } from "expo-web-browser"
+// import { openBrowserAsync } from "expo-web-browser"
 import { useDebouncedCallback } from "app/utils/useDebouncedCallback"
+import { useNavigation } from "@react-navigation/native"
 export interface QrScannerProps {
   /**
    * An optional style override useful for padding & margin.
@@ -27,7 +28,7 @@ export interface QrScannerProps {
  * Describe your component here
  */
 export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
-  const { locationStore } = useStores()
+  const { locationStore, debugStore } = useStores()
   const { style } = props
   const $styles = [$container, style]
   const [permission, requestPermission] = Camera.useCameraPermissions()
@@ -41,6 +42,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   const [showCamera, setShowCamera] = useState(false)
   const [readyToScan, setReadyToScan] = useState(true)
+  const navigation = useNavigation()
 
   useEffect(() => {
     setShowCamera(true)
@@ -99,12 +101,14 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
         ])
 
       handleTrustScore(response.data.trust_score)
-      setScanState("scanned")
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDataFunction: ${error}`)
+      debugStore.addErrorMessage(
+        `Error with sendUrlAndLocationDataFunction in QRScannerService: ${error}`,
+      )
       setErrorMsg("Oops! Failed to send scan data to the bush. Please try again.")
-      setScanState("scanned")
     }
+    setScanState("scanned")
   }, [])
 
   const onScanModified = useDebouncedCallback<BarCodeScanningResult[]>(onScan, 100)
@@ -134,7 +138,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           top: 0,
           right: 0,
         }}
-        onPress={() => openBrowserAsync("https://www.qrla.io")}
+        // @ts-ignore
+        onPress={() => navigation.navigate("Debug")}
       >
         <AutoImage
           style={{

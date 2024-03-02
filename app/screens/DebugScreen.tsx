@@ -6,14 +6,18 @@ import { TabScreenProps } from "../navigators/Navigator"
 import { colors, spacing } from "../theme"
 import { isRTL } from "../i18n"
 import { useStores } from "../models"
+import * as Device from "expo-device"
+import { observer } from "mobx-react-lite"
+import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
 
 function openLinkInBrowser(url: string) {
   Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
 }
 
-export const DebugScreen: FC<TabScreenProps<"Debug">> = function DebugScreen(_props) {
+export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugScreen(_props) {
   const {
     authenticationStore: { logout },
+    debugStore,
   } = useStores()
 
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
@@ -39,6 +43,50 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = function DebugScreen(_pr
     [],
   )
 
+  const renderDeviceProperties = (properties: string[]) => {
+    return properties.map((property) => (
+      <ListItem
+        key={property}
+        LeftComponent={
+          <View style={$item}>
+            <Text preset="bold">{property}</Text>
+            <Text>{Device[property as keyof typeof Device]}</Text>
+          </View>
+        }
+      />
+    ))
+  }
+
+  const renderDebugStoreErrorMessages = () => {
+    return debugStore.errorMessages.map((message, index) => (
+      <ListItem
+        key={index}
+        LeftComponent={
+          <View style={$item}>
+            <Text preset="bold" style={{ color: colors.palette.angry500 }}>
+              Error {index + 1}
+            </Text>
+            <Text>{message}</Text>
+          </View>
+        }
+      />
+    ))
+  }
+  const renderDebugStoreInfoMessages = () => {
+    return debugStore.infoMessages.map((message, index) => (
+      <ListItem
+        key={index}
+        LeftComponent={
+          <View style={$item}>
+            <Text preset="bold" style={{ color: colors.palette.primary500 }}>
+              Info {index + 1}
+            </Text>
+            <Text>{message}</Text>
+          </View>
+        }
+      />
+    ))
+  }
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
@@ -96,17 +144,59 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = function DebugScreen(_pr
             </View>
           }
         />
+        <ListItem
+          LeftComponent={
+            <View style={$item}>
+              <Text preset="bold">Device UUID</Text>
+              <Text>
+                {secureStoreInstance.device_uuid
+                  ? secureStoreInstance.device_uuid
+                  : " UUID Not available"}
+              </Text>
+            </View>
+          }
+        />
+
+        {renderDeviceProperties([
+          "brand",
+          "manufacturer",
+          "modelId",
+          "modelName",
+          "deviceType",
+          "productName",
+          "osName",
+          "osVersion",
+          "osBuildId",
+          "osInternalBuildId",
+          "osBuildFingerprint",
+          "totalMemory",
+          "supportedCpuArchitectures",
+          "deviceName",
+          "deviceYearClass",
+          "platformApiLevel",
+          "platformVersion",
+          "isDevice",
+        ])}
+
+        {renderDebugStoreErrorMessages()}
+        {renderDebugStoreInfoMessages()}
       </View>
+      {{ __DEV__ } && (
+        <View style={$buttonContainer}>
+          <Button style={$button} tx="demoDebugScreen.reactotron" onPress={demoReactotron} />
+          <Text style={$hint} tx={`demoDebugScreen.${Platform.OS}ReactotronHint` as const} />
+        </View>
+      )}
       <View style={$buttonContainer}>
-        <Button style={$button} tx="demoDebugScreen.reactotron" onPress={demoReactotron} />
-        <Text style={$hint} tx={`demoDebugScreen.${Platform.OS}ReactotronHint` as const} />
-      </View>
-      <View style={$buttonContainer}>
-        <Button style={$button} tx="common.logOut" onPress={logout} />
+        <Button
+          style={$button}
+          text="Clear Debug Store"
+          onPress={() => debugStore.clearAllMessages()}
+        />
       </View>
     </Screen>
   )
-}
+})
 
 const $container: ViewStyle = {
   paddingTop: spacing.lg + spacing.xl,

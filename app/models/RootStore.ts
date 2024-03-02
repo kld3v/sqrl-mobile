@@ -3,6 +3,7 @@ import { AuthenticationStoreModel } from "./AuthenticationStore/AuthenticationSt
 import { PushNotificationStoreModel } from "./PushNotificationStore/PushNotificationStore"
 import { LocationStoreModel } from "./LocationStore/LocationStore"
 import { TermsAndConditionsStoreModel } from "./TermsAndConditionsStore/TermsAndConditionsStore"
+import { DebugStoreModel } from "./DebugStore/DebugStore"
 /**
  * A RootStore model.
  */
@@ -11,6 +12,7 @@ export const RootStoreModel = types.model("RootStore").props({
   pushNotificationsStore: types.optional(PushNotificationStoreModel, {}),
   locationStore: types.optional(LocationStoreModel, {}),
   termsAndConditionsStore: types.optional(TermsAndConditionsStoreModel, {}),
+  debugStore: types.optional(DebugStoreModel, {}),
 })
 
 /**
