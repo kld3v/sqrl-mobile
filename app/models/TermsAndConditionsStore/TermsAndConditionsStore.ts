@@ -45,10 +45,12 @@ export const TermsAndConditionsStoreModel = types
         console.error("Error checking user agreements API Request", documentsToSign)
         return
       }
+
       if (!documentsToSign) {
         store.setProp("terms", [])
         console.log("No documents to sign")
       }
+
       if (documentsToSign) {
         store.setProp(
           "terms",

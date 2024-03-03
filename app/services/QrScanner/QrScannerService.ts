@@ -9,9 +9,13 @@ export class QrScannerService {
 
   constructor() {
     this.apisauce = create({
-      baseURL: DEFAULT_API_CONFIG.url,
-      timeout: DEFAULT_API_CONFIG.timeout,
-      headers: DEFAULT_API_CONFIG.headers,
+      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api",
+      timeout: 10000,
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
     })
   }
   isUrl(url: string): boolean {
