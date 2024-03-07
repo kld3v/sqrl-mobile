@@ -52,13 +52,15 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
   const dummyApiTest_Scan_apiSauce = useCallback(async () => {
     try {
       let response = await qrScannerService.sendUrlAndLocationDataToHttpURLWithAPISauce(
-        "www.pleaseLordWork.com",
+        "www.httpEndpointTest_apiSauce.com",
         latitude,
         longitude,
       )
 
       //@ts-ignore
-      debugStore.addInfoMessage(`dummyApiTest_Scan_apiSauce: ${JSON.stringify(response)}`)
+      debugStore.addInfoMessage(
+        `dummyApiTest_Scan_apiSauce to HTTP endpoint: ${JSON.stringify(response)}`,
+      )
     } catch (err) {
       debugStore.addErrorMessage(`dummyApiTest_Scan_apiSauce: ${JSON.stringify(err)}`)
     }
@@ -69,15 +71,15 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
       const response = await fetch(
         "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan",
         {
-          method: "POST", // or 'GET' depending on your API requirement
+          method: "POST",
           headers: {
             Accept: "application/json",
             "Accept-encoding": "gzip, deflate",
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            url: "www.pleaseLordWork.com",
-            device_uuid: secureStoreInstance.device_uuid,
+            url: "www.apiDebuggingFetchTest_httpEndpoint.com",
+            device_uuid: "0e43808c-7726-42a7-98f6-a15200fb16c2",
             latitude,
             longitude,
           }),
@@ -98,7 +100,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
   const dummyApiTest_HTTPS_ApiSauce = useCallback(async () => {
     try {
       let response = await qrScannerService.sendUrlAndLocationData(
-        "www.testingNewHttps.com",
+        "www.testingNewHttps_apiSauce.com",
         latitude,
         longitude,
       )
