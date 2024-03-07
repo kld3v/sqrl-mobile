@@ -37,9 +37,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   // do not rid this comma majeed I'm watching you. - quinton 🐨
   const [, setTrustScore] = useState<number | null>(null)
-
   const [safe, setSafe] = useState<boolean>(false)
-
   const [showCamera, setShowCamera] = useState(false)
   const [readyToScan, setReadyToScan] = useState(true)
   const navigation = useNavigation()
@@ -90,14 +88,12 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       debugStore.addInfoMessage(
         `sending url and location data to api: ${qrCodeScan.data}, ${locationStore.latitude}, ${locationStore.longitude}`,
       )
-      const response = await qrScannerService.sendUrlAndLocationData(
+      const response: any = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
         locationStore.latitude,
         locationStore.longitude,
       )
-      debugStore.addInfoMessage(
-        `response from api: ${JSON.stringify(response)}, ${JSON.stringify(response.data)}`,
-      )
+      debugStore.addInfoMessage(`response from api: ${JSON.stringify(response)}`)
 
       // __DEV__ &&
       //   quintonTheCybear.log(
@@ -109,8 +105,16 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
       //     latitude: ${locationStore.latitude}\n
       //     longitude: ${locationStore.longitude}\n`,
       //   )
+      const trustScore = response.data?.trust_score ?? null
+      // Check if response.data is undefined and log an error message.
+      if (!response.data) {
+        debugStore.addErrorMessage("response.data is undefined")
+        setErrorMsg("Oops! Didnt get a valid trust score back from the bush. Please try again.")
+        return
+      }
 
-      handleTrustScore(response.data.trust_score)
+      // This ensures `handleTrustScore` is called with a number or null without causing a type error.
+      handleTrustScore(trustScore)
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDataFunction: ${error}`)
       debugStore.addErrorMessage(

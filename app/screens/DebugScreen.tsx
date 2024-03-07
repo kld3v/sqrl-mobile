@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FC, useCallback } from "react"
 import * as Application from "expo-application"
 import { Linking, Platform, TextStyle, View, ViewStyle } from "react-native"
 import { Button, ListItem, Screen, Text } from "../components"
@@ -9,17 +9,23 @@ import { useStores } from "../models"
 import * as Device from "expo-device"
 import { observer } from "mobx-react-lite"
 import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
+import * as Clipboard from "expo-clipboard"
+import { qrScannerService } from "app/services/QrScanner"
 
 function openLinkInBrowser(url: string) {
   Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
 }
 
+const copyToClipboard = async (message: any) => {
+  await Clipboard.setStringAsync(message)
+  alert("Copied to clipboard")
+}
+
 export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugScreen(_props) {
   const {
-    authenticationStore: { logout },
     debugStore,
+    locationStore: { longitude, latitude },
   } = useStores()
-
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
   // @ts-expect-error
   const usingFabric = global.nativeFabricUIManager != null
@@ -43,7 +49,66 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     [],
   )
 
-  const renderDeviceProperties = (properties: string[]) => {
+  const dummyApiTest_Scan_apiSauce = useCallback(async () => {
+    try {
+      let response = await qrScannerService.sendUrlAndLocationDataToHttpURLWithAPISauce(
+        "www.pleaseLordWork.com",
+        latitude,
+        longitude,
+      )
+
+      //@ts-ignore
+      debugStore.addInfoMessage(`dummyApiTest_Scan_apiSauce: ${JSON.stringify(response)}`)
+    } catch (err) {
+      debugStore.addErrorMessage(`dummyApiTest_Scan_apiSauce: ${JSON.stringify(err)}`)
+    }
+  }, [])
+
+  const dummyApiTest_Scan_fetch = useCallback(async () => {
+    try {
+      const response = await fetch(
+        "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan",
+        {
+          method: "POST", // or 'GET' depending on your API requirement
+          headers: {
+            Accept: "application/json",
+            "Accept-encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            url: "www.pleaseLordWork.com",
+            device_uuid: secureStoreInstance.device_uuid,
+            latitude,
+            longitude,
+          }),
+        },
+      )
+      const res = await response.json()
+      debugStore.addInfoMessage(`dummyApiTest_Scan_fetch response: ${JSON.stringify(res)}`)
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok")
+      }
+    } catch (err) {
+      const error = err as Error
+      debugStore.addErrorMessage(`dummyApiTest_Scan_fetch Error: ${error}`)
+    }
+  }, [latitude, longitude])
+
+  const dummyApiTest_HTTPS_ApiSauce = useCallback(async () => {
+    try {
+      let response = await qrScannerService.sendUrlAndLocationData(
+        "www.testingNewHttps.com",
+        latitude,
+        longitude,
+      )
+      debugStore.addInfoMessage(`dummyApiTest_HTTPS_ApiSauce: ${JSON.stringify(response)}`)
+    } catch (error) {
+      debugStore.addErrorMessage(`dummyApiTest_HTTPS_ApiSauce: ${JSON.stringify(error)}`)
+    }
+  }, [])
+
+  const renderDeviceProperties = useCallback((properties: string[]) => {
     return properties.map((property) => (
       <ListItem
         key={property}
@@ -55,9 +120,9 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         }
       />
     ))
-  }
+  }, [])
 
-  const renderDebugStoreErrorMessages = () => {
+  const renderDebugStoreErrorMessages = useCallback(() => {
     return debugStore.errorMessages.map((message, index) => (
       <ListItem
         key={index}
@@ -67,12 +132,18 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
               Error {index + 1}
             </Text>
             <Text>{message}</Text>
+            <Button
+              style={$button}
+              text="Copy to Clipboard"
+              onPress={() => copyToClipboard(message)}
+            />
           </View>
         }
       />
     ))
-  }
-  const renderDebugStoreInfoMessages = () => {
+  }, [debugStore.errorMessages, copyToClipboard])
+
+  const renderDebugStoreInfoMessages = useCallback(() => {
     return debugStore.infoMessages.map((message, index) => (
       <ListItem
         key={index}
@@ -82,11 +153,17 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
               Info {index + 1}
             </Text>
             <Text>{message}</Text>
+            <Button
+              style={$button}
+              text="Copy to Clipboard"
+              onPress={() => copyToClipboard(message)}
+            />
           </View>
         }
       />
     ))
-  }
+  }, [debugStore.infoMessages, copyToClipboard])
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
@@ -188,10 +265,28 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         </View>
       )}
       <View style={$buttonContainer}>
+        <Button style={$button} text="Clear Debug Store" onPress={debugStore.clearAllMessages} />
+      </View>
+      <View style={$buttonContainer}>
         <Button
           style={$button}
-          text="Clear Debug Store"
-          onPress={() => debugStore.clearAllMessages()}
+          text="Make dummy test call using API sauce"
+          onPress={dummyApiTest_Scan_apiSauce}
+        />
+      </View>
+
+      <View style={$buttonContainer}>
+        <Button
+          style={$button}
+          text="Make dummy test call using fetch"
+          onPress={dummyApiTest_Scan_fetch}
+        />
+      </View>
+      <View style={$buttonContainer}>
+        <Button
+          style={$button}
+          text="Make dummy test call using https route "
+          onPress={dummyApiTest_HTTPS_ApiSauce}
         />
       </View>
     </Screen>

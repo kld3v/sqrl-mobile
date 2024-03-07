@@ -9,7 +9,7 @@ export class QrScannerService {
 
   constructor() {
     this.apisauce = create({
-      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api",
+      baseURL: "https://app.qrla.io/api",
       timeout: 10000,
       headers: {
         Accept: "application/json",
@@ -18,6 +18,7 @@ export class QrScannerService {
       },
     })
   }
+
   isUrl(url: string): boolean {
     const regex =
       /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?(\?[=&\w]*)?(#[\/\w]*)?$/i
@@ -45,16 +46,15 @@ export class QrScannerService {
     return url // Return the original URL if no match is found
   }
 
-  async sendUrlAndLocationData(
+  async sendUrlAndLocationDataToHttpURLWithAPISauce(
     url: string,
     latitude?: number,
     longitude?: number,
   ): Promise<ApiResponse<any, any>> {
     const device_uuid = await secureStoreInstance.getDeviceUUID()
-    quintonTheCybear.log("device_uuid being sent off to backend: ", device_uuid)
 
     if (!device_uuid) throw new Error("Wasn't able to get device uuid from secure store")
-    // Initialize the body with required properties
+
     let requestBody: {
       url: string
       device_uuid: string
@@ -65,16 +65,55 @@ export class QrScannerService {
       device_uuid,
     }
 
-    // Conditionally add latitude and longitude if they are not undefined
     if (typeof latitude !== "undefined") {
       requestBody.latitude = latitude
     }
+
     if (typeof longitude !== "undefined") {
       requestBody.longitude = longitude
     }
 
-    let res = await this.apisauce.post("/scan", requestBody)
-    return res
+    let tempApiSauceInstance = create({
+      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api",
+      timeout: 10000,
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+    })
+
+    return await tempApiSauceInstance.post("/scan", requestBody)
+  }
+
+  async sendUrlAndLocationData(
+    url: string,
+    latitude?: number,
+    longitude?: number,
+  ): Promise<ApiResponse<any, any>> {
+    const device_uuid = await secureStoreInstance.getDeviceUUID()
+
+    if (!device_uuid) throw new Error("Wasn't able to get device uuid from secure store")
+
+    let requestBody: {
+      url: string
+      device_uuid: string
+      latitude?: number
+      longitude?: number
+    } = {
+      url,
+      device_uuid,
+    }
+
+    if (typeof latitude !== "undefined") {
+      requestBody.latitude = latitude
+    }
+
+    if (typeof longitude !== "undefined") {
+      requestBody.longitude = longitude
+    }
+
+    return await this.apisauce.post("/scan", requestBody)
   }
 }
 
