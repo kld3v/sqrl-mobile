@@ -49,23 +49,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     [],
   )
 
-  const dummyApiTest_Scan_apiSauce = useCallback(async () => {
-    try {
-      let response = await qrScannerService.sendUrlAndLocationDataToHttpURLWithAPISauce(
-        "www.httpEndpointTest_apiSauce.com",
-        latitude,
-        longitude,
-      )
-
-      //@ts-ignore
-      debugStore.addInfoMessage(
-        `dummyApiTest_Scan_apiSauce to HTTP endpoint: ${JSON.stringify(response)}`,
-      )
-    } catch (err) {
-      debugStore.addErrorMessage(`dummyApiTest_Scan_apiSauce: ${JSON.stringify(err)}`)
-    }
-  }, [])
-
   const dummyApiTest_Scan_fetch = useCallback(async () => {
     try {
       const response = await fetch(
@@ -269,14 +252,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
       <View style={$buttonContainer}>
         <Button style={$button} text="Clear Debug Store" onPress={debugStore.clearAllMessages} />
       </View>
-      <View style={$buttonContainer}>
-        <Button
-          style={$button}
-          text="Make dummy test call using API sauce"
-          onPress={dummyApiTest_Scan_apiSauce}
-        />
-      </View>
-
       <View style={$buttonContainer}>
         <Button
           style={$button}

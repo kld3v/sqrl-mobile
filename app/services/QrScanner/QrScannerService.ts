@@ -1,23 +1,10 @@
-import { ApiResponse, ApisauceInstance, create } from "apisauce"
-import { QrScannerServiceConfig } from "./QrScannerService.types"
+import { ApiResponse } from "apisauce"
+
 import { secureStoreInstance } from "../SecureStore/SecureStorageService"
-import { quintonTheCybear } from "app/utils/QuintonTheCybear"
-import { DEFAULT_API_CONFIG } from "../api"
 
+import { api } from "../api/api"
 export class QrScannerService {
-  apisauce: ApisauceInstance
-
-  constructor() {
-    this.apisauce = create({
-      baseURL: "https://app.qrla.io/api",
-      timeout: 10000,
-      headers: {
-        Accept: "application/json",
-        "Accept-encoding": "gzip, deflate",
-        "Content-Type": "application/json",
-      },
-    })
-  }
+  constructor() {}
 
   isUrl(url: string): boolean {
     const regex =
@@ -44,46 +31,6 @@ export class QrScannerService {
       }
     }
     return url // Return the original URL if no match is found
-  }
-
-  async sendUrlAndLocationDataToHttpURLWithAPISauce(
-    url: string,
-    latitude?: number,
-    longitude?: number,
-  ): Promise<ApiResponse<any, any>> {
-    const device_uuid = await secureStoreInstance.getDeviceUUID()
-
-    if (!device_uuid) throw new Error("Wasn't able to get device uuid from secure store")
-
-    let requestBody: {
-      url: string
-      device_uuid: string
-      latitude?: number
-      longitude?: number
-    } = {
-      url,
-      device_uuid,
-    }
-
-    if (typeof latitude !== "undefined") {
-      requestBody.latitude = latitude
-    }
-
-    if (typeof longitude !== "undefined") {
-      requestBody.longitude = longitude
-    }
-
-    let tempApiSauceInstance = create({
-      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api",
-      timeout: 10000,
-      headers: {
-        Accept: "application/json",
-        "Accept-encoding": "gzip, deflate",
-        "Content-Type": "application/json",
-      },
-    })
-
-    return await tempApiSauceInstance.post("/scan", requestBody)
   }
 
   async sendUrlAndLocationData(
@@ -113,7 +60,7 @@ export class QrScannerService {
       requestBody.longitude = longitude
     }
 
-    return await this.apisauce.post("/scan", requestBody)
+    return await api.apisauce.post("/scan", requestBody)
   }
 }
 

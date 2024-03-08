@@ -1,9 +1,9 @@
-import { Pressable, StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Pressable, StyleProp, TextStyle, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, spacing } from "app/theme"
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
-import { BarCodeScanningResult, Camera, CameraType } from "expo-camera"
+import { BarCodeScanningResult, Camera } from "expo-camera"
 import { ScanStateOptions } from "types"
 import { useCallback, useEffect, useState } from "react"
 import { ScanResponseCard } from "./ScanResponseCard"
@@ -12,9 +12,9 @@ import { qrScannerService } from "app/services/QrScanner"
 
 import { useStores } from "app/models"
 import { AutoImage } from "../AutoImage"
-import { quintonTheCybear } from "app/utils/QuintonTheCybear"
+
 import Refresh from "../Svg/Refresh"
-// import { openBrowserAsync } from "expo-web-browser"
+import * as WebBrowser from "expo-web-browser"
 import { useDebouncedCallback } from "app/utils/useDebouncedCallback"
 import { useNavigation } from "@react-navigation/native"
 export interface QrScannerProps {
@@ -78,11 +78,13 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
   const onScan = useCallback(async (qrCodeScan: BarCodeScanningResult) => {
     setReadyToScan(false)
     setScanState("scanning")
+
     if (!qrScannerService.isUrl(qrCodeScan.data)) {
       setErrorMsg("Oops! That doesn't look like a valid URL.")
       setScanState("scanned")
       return
     }
+
     setUrl(qrCodeScan.data)
     try {
       debugStore.addInfoMessage(
@@ -144,7 +146,7 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
 
   return (
     <View style={$styles}>
-      <TouchableOpacity
+      <Pressable
         style={{
           margin: spacing.md,
           zIndex: 99,
@@ -153,7 +155,8 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           right: 0,
         }}
         // @ts-ignore
-        onPress={() => navigation.navigate("Debug")}
+        onLongPress={() => navigation.navigate("Debug")}
+        onPress={async () => await WebBrowser.openBrowserAsync("https://www.qrla.io")}
       >
         <AutoImage
           style={{
@@ -163,12 +166,11 @@ export const QrScanner = observer(function QrScanner(props: QrScannerProps) {
           source={require("../../../assets/images/winkface.png")}
           resizeMode="contain"
         />
-      </TouchableOpacity>
+      </Pressable>
 
       {showCamera && (
         <Camera
           style={$camera}
-          type={CameraType.back}
           ratio="16:9"
           onBarCodeScanned={readyToScan ? onScanModified : undefined}
         />
