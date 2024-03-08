@@ -19,13 +19,12 @@ export interface QrVenueNotificationsManagerProps {
 export const QrVenueNotificationsManager = observer(function QrVenueNotificationsManager(
   props: QrVenueNotificationsManagerProps,
 ) {
-  const { pushNotificationsStore, locationStore } = useStores()
+  const { pushNotificationsStore, locationStore, debugStore } = useStores()
 
   useEffect(() => {
     ;(async () => {
       const { latitude, longitude } = locationStore
-
-      if (latitude === undefined || longitude === undefined) return
+      if (!latitude || !longitude) return
 
       let qrVenueApiResponse
       try {
@@ -34,13 +33,18 @@ export const QrVenueNotificationsManager = observer(function QrVenueNotification
           longitude,
         )
       } catch (error) {
-        console.error(`Failed to seeIfUserLocationMatchesQrVenueGeoFence: ${error}`)
+        __DEV__ && console.error(`Failed to seeIfUserLocationMatchesQrVenueGeoFence: ${error}`)
+        debugStore.addErrorMessage(`Failed to seeIfUserLocationMatchesQrVenueGeoFence: ${error}`)
       }
+      debugStore.addInfoMessage(
+        `latitude: ${latitude} longitude: ${longitude} sent off to QR Venue API`,
+      )
 
       try {
         await pushNotificationsStore.fetchExpoPushToken()
       } catch (error) {
         console.error(`Failed to fetchExpoPushToken: ${error}`)
+        debugStore.addErrorMessage(`Failed to fetchExpoPushToken: ${error}`)
       }
 
       const expoPushToken = pushNotificationsStore.expoPushToken
@@ -55,10 +59,11 @@ export const QrVenueNotificationsManager = observer(function QrVenueNotification
           })
         } catch (error) {
           console.error(`failed to sendPushNotificationToUser: ${error}`)
+          debugStore.addErrorMessage(`failed to sendPushNotificationToUser: ${error}`)
         }
       } else {
-        console.warn(
-          `False response or no push token in QrVenueNotificationManager: qrVenueApiResponse: ${qrVenueApiResponse} expoPushToken: ${expoPushToken}`,
+        debugStore.addInfoMessage(
+          `QrNotificationsManager -> False response or no push token: qrVenueApiResponse: ${qrVenueApiResponse} expoPushToken: ${expoPushToken}`,
         )
       }
     })()

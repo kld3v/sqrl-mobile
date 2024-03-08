@@ -62,7 +62,7 @@ function App(props: AppProps) {
   } = useNavigationPersistence(storage, NAVIGATION_PERSISTENCE_KEY)
 
   const [areFontsLoaded] = useFonts(customFontsToLoad)
-  const { termsAndConditionsStore } = useStores()
+  const { termsAndConditionsStore, debugStore } = useStores()
 
   const { rehydrated } = useInitialRootStore(async () => {
     // This runs after the root store has been initialized and rehydrated.
@@ -79,8 +79,10 @@ function App(props: AppProps) {
         "What's in the terms and conditions store?",
         termsAndConditionsStore.termsIds,
       )
+      debugStore.addInfoMessage("Checked to see if user needed to sign up to date contract.")
     } catch (error) {
-      console.error(`Failed to init some app functions: ${error}`)
+      __DEV__ && console.error(`Failed to init some app functions: ${error}`)
+      debugStore.addErrorMessage(`Failed to init some app functions: ${error}`)
     }
     // <----------------- APP SETUP
     hideSplashScreen()

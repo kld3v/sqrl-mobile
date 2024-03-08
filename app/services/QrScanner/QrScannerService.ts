@@ -1,24 +1,11 @@
-import { ApiResponse, ApisauceInstance, create } from "apisauce"
-import { QrScannerServiceConfig } from "./QrScannerService.types"
+import { ApiResponse } from "apisauce"
+
 import { secureStoreInstance } from "../SecureStore/SecureStorageService"
-import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
+import { api } from "../api/api"
 export class QrScannerService {
-  config: QrScannerServiceConfig
-  apisauce_urlScanEndPoint: ApisauceInstance
+  constructor() {}
 
-  constructor() {
-    this.config = {
-      baseURL: "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      timeout: 10000,
-    }
-    this.apisauce_urlScanEndPoint = create({
-      baseURL: this.config.baseURL,
-      headers: this.config.headers,
-      timeout: this.config.timeout,
-    })
-  }
   isUrl(url: string): boolean {
     const regex =
       /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?(\?[=&\w]*)?(#[\/\w]*)?$/i
@@ -52,10 +39,9 @@ export class QrScannerService {
     longitude?: number,
   ): Promise<ApiResponse<any, any>> {
     const device_uuid = await secureStoreInstance.getDeviceUUID()
-    quintonTheCybear.log("device_uuid being sent off to backend: ", device_uuid)
 
     if (!device_uuid) throw new Error("Wasn't able to get device uuid from secure store")
-    // Initialize the body with required properties
+
     let requestBody: {
       url: string
       device_uuid: string
@@ -66,16 +52,15 @@ export class QrScannerService {
       device_uuid,
     }
 
-    // Conditionally add latitude and longitude if they are not undefined
     if (typeof latitude !== "undefined") {
       requestBody.latitude = latitude
     }
+
     if (typeof longitude !== "undefined") {
       requestBody.longitude = longitude
     }
 
-    let res = await this.apisauce_urlScanEndPoint.post("/", requestBody)
-    return res
+    return await api.apisauce.post("/scan", requestBody)
   }
 }
 
