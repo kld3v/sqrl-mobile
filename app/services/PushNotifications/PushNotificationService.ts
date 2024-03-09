@@ -1,10 +1,10 @@
-import { ApisauceInstance, create } from "apisauce"
 import { PushNotificationServiceConfig } from "./PushNotificationService.types"
 import { Platform } from "react-native"
 import * as Notifications from "expo-notifications"
 import Constants from "expo-constants"
 import * as Device from "expo-device"
 import * as WebBrowser from "expo-web-browser"
+import { api } from "../api"
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -15,7 +15,6 @@ Notifications.setNotificationHandler({
 })
 
 export class PushNotificationService {
-  apisauce: ApisauceInstance
   config: PushNotificationServiceConfig
   handleUserNotificationAction: any
 
@@ -24,16 +23,6 @@ export class PushNotificationService {
       url: "https://exp.host/--/api/v2/push/send",
       timeout: 10000,
     }
-
-    this.apisauce = create({
-      baseURL: this.config.url,
-      timeout: this.config.timeout,
-      headers: {
-        Accept: "application/json",
-        "Accept-encoding": "gzip, deflate",
-        "Content-Type": "application/json",
-      },
-    })
 
     this.handleUserNotificationAction = // Ie handle a user action on a notification
       Notifications.addNotificationResponseReceivedListener((response) => {
@@ -90,7 +79,7 @@ export class PushNotificationService {
   ): Promise<void> {
     let messageToSend = { ...message, to: expoPushToken }
     try {
-      const response = await this.apisauce.post("", messageToSend)
+      const response = await api.apisauce.post("", messageToSend)
       if (!response.ok) {
         console.error("Failed to send push notification to user")
       }
