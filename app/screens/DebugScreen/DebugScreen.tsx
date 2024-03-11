@@ -1,11 +1,11 @@
 import React, { FC, useCallback } from "react"
 import * as Application from "expo-application"
 import { Linking, Platform, TextStyle, View, ViewStyle } from "react-native"
-import { Button, ListItem, Screen, Text } from "../components"
-import { TabScreenProps } from "../navigators/Navigator"
-import { colors, spacing } from "../theme"
-import { isRTL } from "../i18n"
-import { useStores } from "../models"
+import { Button, ListItem, Screen, Text } from "../../components"
+import { TabScreenProps } from "../../navigators/Navigator"
+import { colors, spacing } from "../../theme"
+import { isRTL } from "../../i18n"
+import { useStores } from "../../models"
 import * as Device from "expo-device"
 import { observer } from "mobx-react-lite"
 import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
@@ -48,37 +48,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     },
     [],
   )
-
-  const dummyApiTest_Scan_fetch = useCallback(async () => {
-    try {
-      const response = await fetch(
-        "http://qrlaapi-env.eba-6ipnp3mc.eu-west-2.elasticbeanstalk.com/api/scan",
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Accept-encoding": "gzip, deflate",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            url: "www.apiDebuggingFetchTest_httpEndpoint.com",
-            device_uuid: "0e43808c-7726-42a7-98f6-a15200fb16c2",
-            latitude,
-            longitude,
-          }),
-        },
-      )
-      const res = await response.json()
-      debugStore.addInfoMessage(`dummyApiTest_Scan_fetch response: ${JSON.stringify(res)}`)
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok")
-      }
-    } catch (err) {
-      const error = err as Error
-      debugStore.addErrorMessage(`dummyApiTest_Scan_fetch Error: ${error}`)
-    }
-  }, [latitude, longitude])
 
   const dummyApiTest_HTTPS_ApiSauce = useCallback(async () => {
     try {
@@ -252,13 +221,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
       <View style={$buttonContainer}>
         <Button style={$button} text="Clear Debug Store" onPress={debugStore.clearAllMessages} />
       </View>
-      <View style={$buttonContainer}>
-        <Button
-          style={$button}
-          text="Make dummy test call using fetch"
-          onPress={dummyApiTest_Scan_fetch}
-        />
-      </View>
+
       <View style={$buttonContainer}>
         <Button
           style={$button}
