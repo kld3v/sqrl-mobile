@@ -44,7 +44,7 @@
       }
     },
     "ios": {
-      "buildNumber": "9.0.5",
+      "buildNumber": "9.0.6",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
