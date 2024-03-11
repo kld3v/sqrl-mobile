@@ -1,7 +1,6 @@
 import { View } from "react-native"
 import { observer } from "mobx-react-lite"
-import { Text } from "app/components/Text"
-import { Button } from "app/components/Button"
+
 import { AutoFocus, Camera } from "expo-camera"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticule } from "../Reticule"
@@ -12,8 +11,6 @@ import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
 
 export const QrScanner = observer(function QrScanner() {
-  const [permission, requestPermission] = Camera.useCameraPermissions()
-
   const {
     scanAgain,
     errorMsg,
@@ -26,19 +23,6 @@ export const QrScanner = observer(function QrScanner() {
     setScanState,
     url,
   } = useScanResults()
-
-  if (!permission) {
-    return <View />
-  }
-
-  if (!permission.granted) {
-    return (
-      <View style={$container}>
-        <Text>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} text="requestPermission" />
-      </View>
-    )
-  }
 
   return (
     <View style={$container}>

@@ -79,15 +79,13 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow Qrla to use your location.",
-          "locationAlwaysPermission": "Allow Qrla to use your location",
-          "locationWhenInUsePermission": "Allow Qrla to use your location"
+          "locationAlwaysAndWhenInUsePermission": "QRLA needs access to your location to detect if you are in the area of a verified QR code. For example, walking into the boundaries of a verified restaurant will notify you of the verified QR without having to scan."
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+          "cameraPermission": "QRLA needs access to your camera to scan QR codes. For example, using our camera function allows us to perform our security analysis on the URL in the QR code. We do not store any images or videos from your camera."
         }
       ],
       "expo-localization",
