@@ -92,6 +92,7 @@ export default () => {
     handleTrustScore,
     scanAgain,
     onScanModified,
+    onScan,
     errorMsg,
     setErrorMsg,
     safe,

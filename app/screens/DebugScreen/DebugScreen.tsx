@@ -125,8 +125,26 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         tx="demoDebugScreen.reportBugs"
         onPress={() => openLinkInBrowser("https://github.com/infinitered/ignite/issues")}
       />
+
       <Text style={$title} preset="heading" tx="demoDebugScreen.title" />
       <View style={$itemsContainer}>
+        {{ __DEV__ } && (
+          <View style={$buttonContainer}>
+            <Button style={$button} tx="demoDebugScreen.reactotron" onPress={demoReactotron} />
+            <Text style={$hint} tx={`demoDebugScreen.${Platform.OS}ReactotronHint` as const} />
+          </View>
+        )}
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Clear Debug Store" onPress={debugStore.clearAllMessages} />
+        </View>
+
+        <View style={$buttonContainer}>
+          <Button
+            style={$button}
+            text="Make dummy test call using https route "
+            onPress={dummyApiTest_HTTPS_ApiSauce}
+          />
+        </View>
         <ListItem
           LeftComponent={
             <View style={$item}>
@@ -211,23 +229,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
 
         {renderDebugStoreErrorMessages()}
         {renderDebugStoreInfoMessages()}
-      </View>
-      {{ __DEV__ } && (
-        <View style={$buttonContainer}>
-          <Button style={$button} tx="demoDebugScreen.reactotron" onPress={demoReactotron} />
-          <Text style={$hint} tx={`demoDebugScreen.${Platform.OS}ReactotronHint` as const} />
-        </View>
-      )}
-      <View style={$buttonContainer}>
-        <Button style={$button} text="Clear Debug Store" onPress={debugStore.clearAllMessages} />
-      </View>
-
-      <View style={$buttonContainer}>
-        <Button
-          style={$button}
-          text="Make dummy test call using https route "
-          onPress={dummyApiTest_HTTPS_ApiSauce}
-        />
       </View>
     </Screen>
   )

@@ -1,7 +1,7 @@
 import { View } from "react-native"
 import { observer } from "mobx-react-lite"
 
-import { AutoFocus, Camera } from "expo-camera"
+import { CameraView } from "expo-camera/next"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticule } from "../Reticule"
 import useScanResults from "./useScanResults"
@@ -15,6 +15,7 @@ export const QrScanner = observer(function QrScanner() {
     scanAgain,
     errorMsg,
     onScanModified,
+    onScan,
     setErrorMsg,
     safe,
     setReadyToScan,
@@ -24,15 +25,32 @@ export const QrScanner = observer(function QrScanner() {
     url,
   } = useScanResults()
 
+  CameraView.launchScanner({
+    barcodeTypes: [
+      "aztec",
+      "ean13",
+      "ean8",
+      "qr",
+      "pdf417",
+      "upc_e",
+      "datamatrix",
+      "code39",
+      "code93",
+      "itf14",
+      "codabar",
+      "code128",
+      "upc_a",
+    ],
+    isHighlightingEnabled: true,
+  })
+
   return (
     <View style={$container}>
       <QrlaButton />
-      <Camera
-        autoFocus={AutoFocus.on}
-        focusDepth={1}
-        style={$camera}
-        ratio="16:9"
-        onBarCodeScanned={readyToScan ? onScanModified : undefined}
+      <CameraView
+        // style={$camera}
+        style={{ flex: 1 }}
+        onBarcodeScanned={readyToScan ? onScan : undefined}
       />
       <Reticule
         style={$reticule}
