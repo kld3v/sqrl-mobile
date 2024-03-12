@@ -44,7 +44,7 @@
       }
     },
     "ios": {
-      "buildNumber": "9.0.6",
+      "buildNumber": "9.0.7",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
@@ -79,7 +79,9 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "QRLA needs access to your location to detect if you are in the area of a verified QR code. For example, walking into the boundaries of a verified restaurant will notify you of the verified QR without having to scan."
+          "locationAlwaysAndWhenInUsePermission": "QRLA needs access to your location to detect if you are in the area of a verified QR code. For example, walking into the boundaries of a verified restaurant will notify you of the verified QR without having to scan.",
+          "locationWhenInUsePermission": "QRLA needs access to your location to detect if you are in the area of a verified QR code. For example, walking into the boundaries of a verified restaurant will notify you of the verified QR without having to scan.",
+          "locationAlwaysPermission": "QRLA needs access to your location to detect if you are in the area of a verified QR code. For example, walking into the boundaries of a verified restaurant will notify you of the verified QR without having to scan."
         }
       ],
       [
