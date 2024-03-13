@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite"
-import React, { FC } from "react"
+import React, { FC, useEffect } from "react"
 import { ViewStyle } from "react-native"
 
 import { QrVenueNotificationsManager, QrScanner, Screen } from "../../components"
@@ -7,26 +7,39 @@ import { QrVenueNotificationsManager, QrScanner, Screen } from "../../components
 import { TabScreenProps } from "../../navigators/Navigator"
 import CameraPermissionDenied from "./CameraPermissionDenied"
 import { useCameraPermissions } from "expo-camera/next"
-// import { useCameraPermission } from "react-native-vision-camera"
 
 export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScreen(_props) {
-  // const { hasPermission, requestPermission } = useCameraPermission()
+  const [permission, requestPermission] = useCameraPermissions()
 
-  const [status, requestPermission] = useCameraPermissions()
+  useEffect(() => {
+    if (permission && permission.status !== "granted") {
+      requestPermission()
+    }
+  }, [])
+
+  const renderScanContent = () => {
+    if (permission && permission.status === "undetermined") {
+      return (
+        <CameraPermissionDenied
+          requestPermission={requestPermission}
+          permissionStatus={permission.status}
+        />
+      )
+    }
+    if (permission && permission.status === "denied") {
+      return (
+        <CameraPermissionDenied
+          requestPermission={requestPermission}
+          permissionStatus={permission.status}
+        />
+      )
+    }
+    return <QrScanner />
+  }
 
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      {/* {!hasPermission ? (
-        <CameraPermissionDenied requestPermission={requestPermission} />
-      ) : (
-        <QrScanner />
-      )} */}
-      {status && status.granted ? (
-        <QrScanner />
-      ) : (
-        <CameraPermissionDenied requestPermission={requestPermission} />
-      )}
-
+      {renderScanContent()}
       <QrVenueNotificationsManager />
     </Screen>
   )

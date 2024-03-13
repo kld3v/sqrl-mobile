@@ -1,19 +1,46 @@
 import React from "react"
-import { $container } from "app/components/CustomComponents/QrScanner/QrScannerStyles"
+import { $container, $textContainer } from "./CameraPermissionDenied.styles"
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
-import { View } from "react-native"
-import { PermissionResponse } from "expo-notifications"
+import { Pressable, View } from "react-native"
+import { PermissionResponse, PermissionStatus } from "expo-camera/next"
+import * as Linking from "expo-linking"
+import { colors } from "app/theme"
 
 const CameraPermissionDenied: React.FC<{
   requestPermission: () => Promise<PermissionResponse>
-}> = ({ requestPermission }) => {
-  return (
-    <View style={$container}>
-      <Text>We need your permission to show the camera</Text>
-      <Button onPress={requestPermission} text="requestPermission" />
-    </View>
-  )
+  permissionStatus: PermissionStatus
+}> = ({ requestPermission, permissionStatus }) => {
+  const openSettings = async () => {
+    await Linking.openSettings()
+  }
+  const renderCameraPermissionDenied = () => {
+    if (permissionStatus === "denied") {
+      return (
+        <Text style={$textContainer}>
+          Camera permission denied. Please enable this in your{" "}
+          <Pressable>
+            <Text
+              style={{ color: colors.palette.primary500, textDecorationLine: "underline" }}
+              onPress={openSettings}
+            >
+              settings
+            </Text>
+          </Pressable>
+        </Text>
+      )
+    }
+    if (permissionStatus === "undetermined") {
+      return (
+        <>
+          <Text style={$textContainer}>We need your permission to show the camera</Text>
+          <Button onPress={requestPermission} text="requestPermission" />
+        </>
+      )
+    }
+    return null
+  }
+  return <View style={$container}>{renderCameraPermissionDenied()}</View>
 }
 
 export default CameraPermissionDenied
