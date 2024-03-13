@@ -54,13 +54,7 @@ export const $refresh: ViewStyle = {
 }
 
 export const $card: TextStyle = {
-  color: colors.palette.primary500,
-  fontSize: 20,
   position: "absolute",
-  left: "50%",
-  top: "50%",
-  width: 200,
-  height: 200,
-  marginLeft: -100, // half of width to center
-  marginTop: -100, // half of height to center
+  width: "100%",
+  height: "100%",
 }

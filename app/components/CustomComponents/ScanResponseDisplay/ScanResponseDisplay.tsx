@@ -40,8 +40,16 @@ export interface ScanResponseDisplayProps {
 export const ScanResponseDisplay = observer(function ScanResponseDisplay(
   props: ScanResponseDisplayProps,
 ) {
-  const { safe, scanState, setScanState, url, errorMessage, setErrorMessage, setReadyToScan } =
-    props
+  const {
+    safe,
+    scanState,
+    setScanState,
+    url,
+    errorMessage,
+    setErrorMessage,
+    setReadyToScan,
+    style,
+  } = props
 
   const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
@@ -190,7 +198,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
   if (leaving) return leavingContent
 
   return (
-    <>
+    <View style={style}>
       {scanState === "scanned" && (
         <View style={$messageBoxContainer}>
           <View
@@ -254,6 +262,6 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           {!safe && !errorMessage && scanState === "scanned" && ProceedAnyway}
         </View>
       </View>
-    </>
+    </View>
   )
 })

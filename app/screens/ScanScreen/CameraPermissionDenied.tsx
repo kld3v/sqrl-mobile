@@ -3,7 +3,7 @@ import { $container } from "app/components/CustomComponents/QrScanner/QrScannerS
 import { Text } from "app/components/Text"
 import { Button } from "app/components/Button"
 import { View } from "react-native"
-import { PermissionResponse } from "expo-camera"
+import { PermissionResponse } from "expo-notifications"
 
 const CameraPermissionDenied: React.FC<{
   requestPermission: () => Promise<PermissionResponse>

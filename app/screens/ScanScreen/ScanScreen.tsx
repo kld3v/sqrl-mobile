@@ -1,23 +1,32 @@
 import { observer } from "mobx-react-lite"
 import React, { FC } from "react"
 import { ViewStyle } from "react-native"
-import { Camera } from "expo-camera"
 
 import { QrVenueNotificationsManager, QrScanner, Screen } from "../../components"
 
 import { TabScreenProps } from "../../navigators/Navigator"
 import CameraPermissionDenied from "./CameraPermissionDenied"
+import { useCameraPermissions } from "expo-camera/next"
+// import { useCameraPermission } from "react-native-vision-camera"
 
 export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScreen(_props) {
-  const [permission, requestPermission] = Camera.useCameraPermissions()
+  // const { hasPermission, requestPermission } = useCameraPermission()
 
-  if (permission && !permission.granted) {
-    return <CameraPermissionDenied requestPermission={requestPermission} />
-  }
+  const [status, requestPermission] = useCameraPermissions()
 
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      <QrScanner />
+      {/* {!hasPermission ? (
+        <CameraPermissionDenied requestPermission={requestPermission} />
+      ) : (
+        <QrScanner />
+      )} */}
+      {status && status.granted ? (
+        <QrScanner />
+      ) : (
+        <CameraPermissionDenied requestPermission={requestPermission} />
+      )}
+
       <QrVenueNotificationsManager />
     </Screen>
   )
