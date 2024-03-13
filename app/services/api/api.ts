@@ -30,6 +30,7 @@ export const DEFAULT_API_CONFIG: ApiConfig = {
 export class Api {
   apisauce: ApisauceInstance
   config: ApiConfig
+  apisauceForPushNotifications: ApisauceInstance
 
   /**
    * Set up our API instance. Keep this lightweight!
@@ -40,6 +41,15 @@ export class Api {
       baseURL: this.config.url,
       timeout: this.config.timeout,
       headers: this.config.headers,
+    })
+    this.apisauceForPushNotifications = create({
+      baseURL: "https://exp.host/--/api/v2/push",
+      timeout: 10000,
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
     })
   }
 }

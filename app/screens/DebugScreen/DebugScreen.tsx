@@ -11,10 +11,7 @@ import { observer } from "mobx-react-lite"
 import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
 import * as Clipboard from "expo-clipboard"
 import { qrScannerService } from "app/services/QrScanner"
-
-function openLinkInBrowser(url: string) {
-  Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
-}
+import { pushNotificationService } from "app/services/PushNotifications"
 
 const copyToClipboard = async (message: any) => {
   await Clipboard.setStringAsync(message)
@@ -25,6 +22,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
   const {
     debugStore,
     locationStore: { longitude, latitude },
+    pushNotificationsStore,
   } = useStores()
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
   // @ts-expect-error
@@ -118,12 +116,33 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     ))
   }, [debugStore.infoMessages, copyToClipboard])
 
+  const sendDummyPushNotification = useCallback(async () => {
+    const expoPushToken = pushNotificationsStore.expoPushToken
+    if (!expoPushToken) {
+      debugStore.addErrorMessage(
+        `sendDummyPushNotification: expoPushToken is not available or non-existant: ${expoPushToken}`,
+      )
+      return
+    }
+
+    try {
+      await pushNotificationService.sendPushNotificationToUser(expoPushToken, {
+        title: "Welcome to QRLA!",
+        body: "Click to see the trusted QR Destination!",
+        sound: "default",
+        data: { url: "www.qrla.io" },
+      })
+    } catch (error) {
+      debugStore.addErrorMessage(`failed to sendPushNotificationToUser: ${error}`)
+    }
+  }, [pushNotificationsStore.expoPushToken, debugStore])
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
         style={$reportBugsLink}
         tx="demoDebugScreen.reportBugs"
-        onPress={() => openLinkInBrowser("https://github.com/infinitered/ignite/issues")}
+        onPress={() => Linking.openURL("mailto:info@qrla.io")}
       />
 
       <Text style={$title} preset="heading" tx="demoDebugScreen.title" />
@@ -137,7 +156,13 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         <View style={$buttonContainer}>
           <Button style={$button} text="Clear Debug Store" onPress={debugStore.clearAllMessages} />
         </View>
-
+        <View style={$buttonContainer}>
+          <Button
+            style={$button}
+            text="Send Dummy Push Notification"
+            onPress={sendDummyPushNotification}
+          />
+        </View>
         <View style={$buttonContainer}>
           <Button
             style={$button}
