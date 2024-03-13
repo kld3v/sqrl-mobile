@@ -1,31 +1,32 @@
 import * as React from "react"
-import {
-  StyleProp,
-  View,
-  ViewStyle,
-  ImageStyle,
-  Dimensions,
-  TextStyle,
-  TouchableOpacity,
-  Platform,
-} from "react-native"
+import { StyleProp, View, ViewStyle, TouchableOpacity, Platform } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, spacing, typography } from "app/theme"
+import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { useCallback, useState } from "react"
-import SafeScannedPing from "../Audio/SafeScannedPing"
-
-import OnScanHaptic from "../Haptics/OnScanHaptic"
+import OnScanHaptic from "../../Haptics/OnScanHaptic"
 import * as WebBrowser from "expo-web-browser"
-import { Button } from "../Button"
+import { Button } from "../../Button"
 
-import Cancel from "../Svg/Cancel"
-import Tick from "../Svg/Tick"
-import { AutoImage } from "../AutoImage"
+import Cancel from "../../Svg/Cancel"
+import Tick from "../../Svg/Tick"
+import { AutoImage } from "../../AutoImage"
+import {
+  $infoBoxPositioningContainer,
+  $infoBoxCustom,
+  $infoBoxCustomBg,
+  $koalaGif,
+  $messageBoxContainer,
+  $infoBoxTopWithMessage,
+  $messageBoxIcon,
+  $safeText,
+  $unsafeText,
+} from "./ScanResponseDisplayStyles"
+import SafeScanResultButton from "./SafeScanResultButton"
 
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
-export interface ScanResponseCardProps {
+export interface ScanResponseDisplayProps {
   url: string
   safe: boolean
   scanState: ScanStateOptions
@@ -36,13 +37,24 @@ export interface ScanResponseCardProps {
   style?: StyleProp<ViewStyle>
 }
 
-export const ScanResponseCard = observer(function ScanResponseCard(props: ScanResponseCardProps) {
-  const { safe, scanState, setScanState, url, errorMessage, setErrorMessage, setReadyToScan } =
-    props
+export const ScanResponseDisplay = observer(function ScanResponseDisplay(
+  props: ScanResponseDisplayProps,
+) {
+  const {
+    safe,
+    scanState,
+    setScanState,
+    url,
+    errorMessage,
+    setErrorMessage,
+    setReadyToScan,
+    style,
+  } = props
 
   const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
-  const setDelayedLeaving = (): (() => void) => () => {
+
+  const setDelayedLeaving = () => {
     setLeaving(true)
     setTimeout(async () => {
       try {
@@ -65,36 +77,12 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   const scanCompleteContent = (
     <>
       {safe ? (
-        <>
-          <Button
-            tx="scannerScreen.proceedButton"
-            onPress={setDelayedLeaving()}
-            style={{
-              backgroundColor: colors.palette.primary600,
-              borderRadius: 25, // Half of the height
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 30,
-            }}
-            onPressIn={() => setpressed(true)}
-            onPressOut={() => setpressed(false)}
-            pressedStyle={{
-              backgroundColor: colors.palette.neutral200,
-              borderColor: colors.palette.neutral500,
-            }}
-            pressedTextStyle={{
-              color: colors.palette.neutral100,
-            }}
-            textStyle={{
-              color: colors.palette.neutral200,
-              fontSize: 22,
-              fontFamily: typography.primary.bold,
-              paddingTop: 8,
-            }}
-          />
-          <SafeScannedPing />
-          <OnScanHaptic scanState={scanState} safe={safe} />
-        </>
+        <SafeScanResultButton
+          setDelayedLeaving={setDelayedLeaving}
+          setPressed={setpressed}
+          scanState={scanState}
+          safe={safe}
+        />
       ) : (
         <Button
           text="Cancel"
@@ -127,7 +115,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
       <Text weight="mediumItalic">Checking your QR code...</Text>
     </>
   )
-  const koalaGif = require("../../../assets/images/koala.gif")
+  const koalaGif = require("../../../../assets/images/koala.gif")
 
   const leavingContent = (
     <>
@@ -195,7 +183,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
     }
   }
   const ProceedAnyway = (
-    <TouchableOpacity onPress={setDelayedLeaving()}>
+    <TouchableOpacity onPress={setDelayedLeaving}>
       <Text
         weight="mediumItalic"
         style={{
@@ -210,7 +198,7 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
   if (leaving) return leavingContent
 
   return (
-    <>
+    <View style={style}>
       {scanState === "scanned" && (
         <View style={$messageBoxContainer}>
           <View
@@ -274,79 +262,6 @@ export const ScanResponseCard = observer(function ScanResponseCard(props: ScanRe
           {!safe && !errorMessage && scanState === "scanned" && ProceedAnyway}
         </View>
       </View>
-    </>
+    </View>
   )
 })
-
-const $safeText = {
-  color: colors.palette.primary500,
-}
-const $unsafeText = {
-  color: colors.palette.angry100,
-}
-
-const screenHeight = Dimensions.get("window").height
-const messageBoxPosition = screenHeight * 0.05
-const $messageBoxContainer: ViewStyle = {
-  zIndex: 99,
-  marginTop: messageBoxPosition,
-  width: "100%",
-  height: 200,
-  flexDirection: "row",
-  justifyContent: "center",
-  alignItems: "center",
-  transform: [{ scale: 0.8 }],
-}
-
-const $messageBoxIcon: ImageStyle = {
-  position: "absolute",
-  bottom: -62,
-  right: -62,
-  transform: [{ scale: 1.2 }],
-}
-
-const $standardShadow: any = {
-  shadowColor: "#000",
-  shadowOffset: { width: 2, height: 5 },
-  shadowOpacity: 0.3,
-  shadowRadius: 3,
-  elevation: 5,
-}
-const $infoBoxCustomBg: TextStyle = {
-  backgroundColor: colors.scannerInfoBox,
-  borderWidth: 4,
-}
-const $infoBoxCustom: TextStyle = {
-  minWidth: 200,
-  maxWidth: "100%",
-  paddingHorizontal: 32,
-  paddingVertical: spacing.md,
-  borderRadius: 28,
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-}
-
-const $infoBoxTopWithMessage: TextStyle = {
-  ...$infoBoxCustomBg,
-  ...$infoBoxCustom,
-  paddingHorizontal: spacing.xxxl,
-  paddingVertical: spacing.lg,
-}
-
-const $infoBoxPositioningContainer: ViewStyle = {
-  zIndex: 99,
-  position: "absolute",
-  bottom: spacing.xxxl,
-  height: 100,
-  width: "100%",
-  flexDirection: "row",
-  justifyContent: "center",
-  alignItems: "center",
-}
-
-const $koalaGif: ImageStyle = {
-  width: 60,
-  height: 40,
-  transform: [{ scale: 1.5 }],
-}

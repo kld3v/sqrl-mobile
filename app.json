@@ -6,7 +6,7 @@
     "name": "QRLA",
     "slug": "qrlaApp",
     "scheme": "qrlaapp",
-    "version": "2.1.10",
+    "version": "2.1.12",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
     "extra": {
@@ -44,7 +44,7 @@
       }
     },
     "ios": {
-      "buildNumber": "9.0.4",
+      "buildNumber": "9.0.9",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
@@ -79,15 +79,15 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow Qrla to use your location.",
-          "locationAlwaysPermission": "Allow Qrla to use your location",
-          "locationWhenInUsePermission": "Allow Qrla to use your location"
+          "locationAlwaysAndWhenInUsePermission": "QRLA needs access to your location to detect if you are in the area of a verified QR code. For example, walking into the boundaries of a verified restaurant will notify you of the verified QR without having to scan.",
+          "locationWhenInUsePermission": "QRLA needs access to your location to detect if you are in the area of a verified QR code. For example, walking into the boundaries of a verified restaurant will notify you of the verified QR without having to scan.",
+          "locationAlwaysPermission": "QRLA needs access to your location to detect if you are in the area of a verified QR code. For example, walking into the boundaries of a verified restaurant will notify you of the verified QR without having to scan."
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+          "cameraPermission": "QRLA needs access to your camera to scan QR codes. For example, using our camera function allows us to perform our security analysis on the URL in the QR code. We do not store any images or videos from your camera."
         }
       ],
       "expo-localization",
