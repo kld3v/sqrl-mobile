@@ -69,13 +69,6 @@
     },
     "plugins": [
       [
-        "react-native-vision-camera",
-        {
-          "cameraPermissionText": "QRLA needs access to your camera to scan QR codes. For example, using our camera function allows us to perform our security analysis on the URL in the QR code. We do not store any images or videos from your camera.",
-          "enableCodeScanner": true
-        }
-      ],
-      [
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",
