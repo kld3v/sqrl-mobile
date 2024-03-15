@@ -96,9 +96,6 @@ const AppStack = observer(function AppStack() {
         <Stack.Screen name="Demo" component={Navigator} />
       )}
 
-      {/** 🔥 Your screens go here */}
-      {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
-      {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
       <Stack.Screen name="Debug" component={Screens.DebugScreen} />
 
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
