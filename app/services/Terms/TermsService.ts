@@ -26,11 +26,11 @@ export class TermsService {
 
   async signUserAgreements(signedDocIds: number[]): Promise<boolean> {
     try {
-      await api.apisauce.post("/agreements/sign", {
+      let res = await api.apisauce.post("/agreements/sign", {
         device_uuid: await secureStoreInstance.getDeviceUUID(),
         document_version_ids: signedDocIds,
       })
-      return true
+      return res && res.ok ? true : false
     } catch (error) {
       console.error("Error signing user agreements API Request", error)
       return false
