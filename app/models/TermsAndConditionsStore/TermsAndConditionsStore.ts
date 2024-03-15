@@ -33,6 +33,7 @@ export const TermsAndConditionsStoreModel = types
     },
 
     async signUserAgreements(): Promise<void> {
+      // TODO @kolyad3v - Add better error handling and update UI. See tests as to direction I'm taking.
       await termsService.signUserAgreements(store.termsIds)
       this.clearTerms()
     },
@@ -92,5 +93,3 @@ export interface TermsAndConditionsStoreSnapshotIn
   extends SnapshotIn<typeof TermsAndConditionsStoreModel> {}
 export const createTermsAndConditionsStoreDefaultModel = () =>
   types.optional(TermsAndConditionsStoreModel, {})
-
-// create an initital state

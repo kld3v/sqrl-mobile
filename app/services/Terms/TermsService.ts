@@ -24,14 +24,16 @@ export class TermsService {
     return res.data.documents_to_sign
   }
 
-  async signUserAgreements(signedDocIds: number[]): Promise<void> {
+  async signUserAgreements(signedDocIds: number[]): Promise<boolean> {
     try {
       await api.apisauce.post("/agreements/sign", {
         device_uuid: await secureStoreInstance.getDeviceUUID(),
         document_version_ids: signedDocIds,
       })
+      return true
     } catch (error) {
       console.error("Error signing user agreements API Request", error)
+      return false
     }
   }
 }

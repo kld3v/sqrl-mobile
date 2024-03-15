@@ -9,6 +9,7 @@ const QrlaButton = () => {
   const navigation = useNavigation()
   return (
     <Pressable
+      testID="qrlaButton"
       style={$qrlaButton}
       // @ts-ignore
       onLongPress={() => navigation.navigate("Debug")}

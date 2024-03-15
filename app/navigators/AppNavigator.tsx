@@ -38,7 +38,7 @@ import * as Screens from "app/screens"
 export type AppStackParamList = {
   Welcome: undefined
   Login: undefined
-  Demo: NavigatorScreenParams<TabParamList>
+  Main: NavigatorScreenParams<TabParamList>
   // 🔥 Your screens go here
   PushNotifications: undefined
   MarketPlace: undefined
@@ -93,7 +93,7 @@ const AppStack = observer(function AppStack() {
       {termsAndConditionsStore.userHasTermsToSign ? (
         <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       ) : (
-        <Stack.Screen name="Demo" component={Navigator} />
+        <Stack.Screen name="Main" component={Navigator} />
       )}
 
       <Stack.Screen name="Debug" component={Screens.DebugScreen} />

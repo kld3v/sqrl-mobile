@@ -42,4 +42,36 @@ describe("TermsService", () => {
       })
     })
   })
+
+  describe("signUserAgreements", () => {
+    it("should make a successful API call", async () => {
+      // Setup mocks
+      secureStoreInstance.getDeviceUUID = jest.fn().mockResolvedValueOnce("mock-uuid")
+      api.apisauce.post = jest.fn().mockResolvedValueOnce({ ok: true })
+
+      // Execute the method
+      await termsService.signUserAgreements([1, 2])
+
+      // Assertions
+      expect(api.apisauce.post).toHaveBeenCalledWith("/agreements/sign", {
+        device_uuid: "mock-uuid",
+        document_version_ids: [1, 2],
+      })
+    })
+
+    it("should handle error on unsuccessful API call", async () => {
+      // Setup mocks
+      secureStoreInstance.getDeviceUUID = jest.fn().mockResolvedValueOnce("mock-uuid")
+      api.apisauce.post = jest.fn().mockResolvedValueOnce({ ok: false })
+
+      // Execute the method
+      await termsService.signUserAgreements([1, 2])
+
+      // Assertions
+      expect(api.apisauce.post).toHaveBeenCalledWith("/agreements/sign", {
+        device_uuid: "mock-uuid",
+        document_version_ids: [1, 2],
+      })
+    })
+  })
 })
