@@ -2,9 +2,9 @@ import { View } from "react-native"
 import { observer } from "mobx-react-lite"
 import { CameraView } from "expo-camera/next"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
-import { Reticule } from "../Reticule"
+import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
-import { $card, $container, $reticule } from "./QrScannerStyles"
+import { $card, $container, $reticle } from "./QrScannerStyles"
 import QrlaButton from "./QrlaButton"
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
@@ -29,8 +29,8 @@ export const QrScanner = observer(function QrScanner() {
       <QrlaButton />
       <CameraView style={{ flex: 1 }} onBarcodeScanned={readyToScan ? onScanModified : undefined} />
 
-      <Reticule
-        style={$reticule}
+      <Reticle
+        style={$reticle}
         scanState={scanState}
         safe={safe}
         scanning={scanState === "scanning"}

@@ -5,16 +5,16 @@ import { colors } from "app/theme"
 
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated"
 import { useEffect } from "react"
-import { ReticuleProps } from "./Reticule"
+import { ReticleProps } from "./Reticle"
 
-export interface ReticuleCornerProps extends ReticuleProps {
+export interface ReticleCornerProps extends ReticleProps {
   position: "TopLeft" | "TopRight" | "BottomLeft" | "BottomRight"
 }
 
 /**
  * Describe your component here
  */
-export const ReticuleCorner = observer(function ReticuleCorner(props: ReticuleCornerProps) {
+export const ReticleCorner = observer(function ReticleCorner(props: ReticleCornerProps) {
   const { position, scanning, safe, scanState } = props
 
   // Distance to move closer. Adjust the value as needed.

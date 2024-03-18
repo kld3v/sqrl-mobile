@@ -21,7 +21,7 @@ export const $camera: ViewStyle = {
   zIndex: 1,
 }
 
-export const $reticule: ViewStyle = {
+export const $reticle: ViewStyle = {
   position: "absolute",
   left: "50%",
   top: "50%",
