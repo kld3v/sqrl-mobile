@@ -7,7 +7,7 @@ export const $container: ViewStyle = {
 
 export const $qrlaButton: ViewStyle = {
   margin: spacing.md,
-  zIndex: 99,
+  zIndex: 4,
   position: "absolute",
   top: 0,
   right: 0,

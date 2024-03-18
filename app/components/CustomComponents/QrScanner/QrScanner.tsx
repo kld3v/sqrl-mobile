@@ -8,6 +8,7 @@ import { $card, $container, $reticle } from "./QrScannerStyles"
 import QrlaButton from "./QrlaButton"
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
+import { CarouselSet } from "app/components/CarouselSet"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -34,6 +35,19 @@ export const QrScanner = observer(function QrScanner() {
         scanState={scanState}
         safe={safe}
         scanning={scanState === "scanning"}
+      />
+      <CarouselSet
+        style={{
+          position: "absolute",
+          justifyContent: "center",
+          alignItems: "center",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          top: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          zIndex: 5,
+        }}
       />
       {scanState !== "notScanned" && (
         <ScanResponseDisplay
