@@ -28,6 +28,7 @@ export const CarouselSet = observer(function CarouselSet(props: CarouselSetProps
         modeConfig={{
           parallaxScrollingScale: 0.8,
           parallaxScrollingOffset: 75,
+          parallaxAdjacentItemScale: 0.4,
         }}
         width={width}
         height={height / 1.2}
@@ -44,7 +45,17 @@ export const CarouselSet = observer(function CarouselSet(props: CarouselSetProps
               borderRadius: 24,
             }}
           >
-            <Text style={{ textAlign: "center", fontSize: 30 }}>{index}</Text>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 30,
+                color: "black",
+
+                padding: 10,
+              }}
+            >
+              {index}
+            </Text>
           </View>
         )}
       />
