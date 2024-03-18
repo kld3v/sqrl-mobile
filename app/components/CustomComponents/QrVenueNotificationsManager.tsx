@@ -1,24 +1,14 @@
 import * as React from "react"
-import { StyleProp, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { useEffect } from "react"
 import { useStores } from "app/models"
 import { qrVenueNotificationService } from "app/services/QrVenueNotifications"
 import { pushNotificationService } from "app/services/PushNotifications"
 
-export interface QrVenueNotificationsManagerProps {
-  /**
-   * An optional style override useful for padding & margin.
-   */
-  style?: StyleProp<ViewStyle>
-}
-
 /**
  * Describe your component here
  */
-export const QrVenueNotificationsManager = observer(function QrVenueNotificationsManager(
-  props: QrVenueNotificationsManagerProps,
-) {
+export const QrVenueNotificationsManager = observer(function QrVenueNotificationsManager() {
   const { pushNotificationsStore, locationStore, debugStore } = useStores()
 
   useEffect(() => {
