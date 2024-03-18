@@ -4,8 +4,7 @@ import { observer } from "mobx-react-lite"
 import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import Carousel from "react-native-reanimated-carousel"
-import Animated, { interpolate, interpolateColor, useAnimatedStyle } from "react-native-reanimated"
-export interface CarouselSetProps {
+export interface MultiCardCarouselProps {
   /**
    * An optional style override useful for padding & margin.
    */
@@ -15,7 +14,9 @@ export interface CarouselSetProps {
 /**
  * Describe your component here
  */
-export const CarouselSet = observer(function CarouselSet(props: CarouselSetProps) {
+export const MultiCardCarousel = observer(function MultiCardCarousel(
+  props: MultiCardCarouselProps,
+) {
   const { style } = props
   const $styles = [$container, style]
   const width = Dimensions.get("window").width

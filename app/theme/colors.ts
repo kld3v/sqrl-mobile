@@ -50,6 +50,7 @@ export const colors = {
   transparent: "rgba(0, 0, 0, 0)",
 
   textGreen: palette.primary600,
+  textLightBg: palette.neutral200,
   /**
    * The default text color in many components.
    */
