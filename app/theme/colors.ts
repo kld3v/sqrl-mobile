@@ -11,6 +11,8 @@ const palette = {
   neutral800: "#D6DBDF",
   neutral900: "#E1E5E8",
 
+  bluePressable: "#4183D7",
+
   primary100: "#D7F2C2",
   primary200: "#B4E89C",
   primary300: "#92DD75",
@@ -51,6 +53,8 @@ export const colors = {
 
   textGreen: palette.primary600,
   textLightBg: palette.neutral200,
+  //Text that is a standalone piece of text on a light background but also pressable causing some kind of event.
+  textLightBgButton: palette.bluePressable,
   /**
    * The default text color in many components.
    */

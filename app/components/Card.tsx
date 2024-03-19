@@ -221,7 +221,6 @@ export function Card(props: CardProps) {
                 style={$headingStyle}
               />
             ))}
-          <View style={$childStyle}>{children}</View>
           {ContentComponent ||
             (isContentPresent && (
               <Text
@@ -233,6 +232,7 @@ export function Card(props: CardProps) {
                 style={$contentStyle}
               />
             ))}
+          <View style={$childStyle}>{children}</View>
         </HeaderContentWrapper>
 
         {FooterComponent ||
