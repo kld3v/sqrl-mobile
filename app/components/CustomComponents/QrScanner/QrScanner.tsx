@@ -8,10 +8,10 @@ import { $card, $container, $reticle } from "./QrScannerStyles"
 import QrlaButton from "./QrlaButton"
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
-import { MultiCardCarousel } from "app/components/MultiCardCarousel"
+
 import { Carousel } from "app/components/Carousel"
-import { Text } from "app/components/Text"
-import { AutoImage } from "app/components/AutoImage"
+import { useStores } from "app/models"
+import useOnboarding from "./useOnboarding"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -27,6 +27,10 @@ export const QrScanner = observer(function QrScanner() {
     url,
   } = useScanResults()
 
+  const { onboardingStore } = useStores()
+
+  useOnboarding()
+
   return (
     <View style={$container}>
       <QrlaButton />
@@ -38,32 +42,21 @@ export const QrScanner = observer(function QrScanner() {
         safe={safe}
         scanning={scanState === "scanning"}
       />
-      <Carousel
-        style={{
-          position: "absolute",
-          justifyContent: "center",
-          alignItems: "center",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          top: 0,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          zIndex: 5,
-        }}
-      ></Carousel>
-      {/* <MultiCardCarousel
-        style={{
-          position: "absolute",
-          justifyContent: "center",
-          alignItems: "center",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          top: 0,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          zIndex: 5,
-        }}
-      /> */}
+      {!onboardingStore.hasOnboarded && (
+        <Carousel
+          style={{
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            top: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 5,
+          }}
+        />
+      )}
       {scanState !== "notScanned" && (
         <ScanResponseDisplay
           style={$card}

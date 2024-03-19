@@ -3,10 +3,8 @@ import { Dimensions, Pressable, StyleProp, TextStyle, View, ViewStyle, Image } f
 import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
 import { Card } from "./Card"
-import { AutoImage } from "./AutoImage"
-import { useEffect, useState } from "react"
 import { Text } from "./Text"
-import { Asset } from "expo-asset"
+import useOnboardingCarousel from "./CustomComponents/QrScanner/useOnboardingCarousel"
 
 export interface CarouselProps {
   style?: StyleProp<ViewStyle>
@@ -22,52 +20,20 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
   const { style, children } = props
   const $styles = [$container, style]
   const { width, height } = Dimensions.get("window")
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const images = [
-    require("../../assets/images/onBoardingImages/checking.jpeg"),
-    require("../../assets/images/onBoardingImages/goodToGo.jpeg"),
-    require("../../assets/images/onBoardingImages/eqr.jpeg"),
-    require("../../assets/images/onBoardingImages/caution.jpeg"),
-  ]
-
-  const text = [
-    "Hold the camera up to QR code for scanning.",
-    "If the QR code is safe, go ahead to the destination by clicking on the proceed button.",
-    "Skip scanning! Utilise our EQR feature for instant access to the right QR code at your location.",
-    "If the QR code is flagged as dangerous, we advice against proceeding to the site.",
-  ]
-
-  const onNextPress = () => {
-    // Increment the current image index, or loop back to the first image if at the end
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length)
-  }
-  const onBackPress = () => {
-    // Decrement the current image index, or loop back to the last image if at the start
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
-  }
-
-  const preloadImages = async () => {
-    const imageAssets = images.map((image) => {
-      return Asset.fromModule(image).downloadAsync()
-    })
-    await Promise.all(imageAssets)
-  }
-
-  useEffect(() => {
-    preloadImages()
-  }, [])
+  const { currentImageIndex, images, text, onNextPress, onBackPress, onFinishedOnboardingPress } =
+    useOnboardingCarousel()
 
   return (
     <View style={$styles}>
       <Card
-        verticalAlignment="space-between"
+        // verticalAlignment="space-between"
         style={{
           width: width - 40,
           height: height - 108,
-          padding: spacing.xl,
+          padding: spacing.lg,
         }}
         HeadingComponent={
-          <Pressable>
+          <Pressable onPress={onFinishedOnboardingPress}>
             <Text text="Skip" style={{ color: colors.textLightBgButton }} />
           </Pressable>
         }
@@ -84,25 +50,63 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
           />
         }
         FooterComponent={
-          <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-            <Pressable onPress={onBackPress}>
-              <Text text="Back" style={{ color: colors.textLightBgButton }} />
-            </Pressable>
-            {currentImageIndex === images.length - 1 ? (
-              <Pressable onPress={onNextPress}>
-                <Text text="Get Started" style={{ color: colors.textLightBgButton }} />
-              </Pressable>
-            ) : (
-              <Pressable onPress={onNextPress}>
-                <Text text="Next" style={{ color: colors.textLightBgButton }} />
-              </Pressable>
-            )}
-          </View>
+          <>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {[...Array(images.length)].map((_, index) => (
+                <View
+                  key={index}
+                  style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: 8,
+                    marginHorizontal: 4,
+                    backgroundColor:
+                      index === currentImageIndex ? colors.textGreen : colors.background,
+                    borderWidth: 4, // Add border width
+                    borderColor: colors.background, // Add border color
+                  }}
+                />
+              ))}
+            </View>
+
+            <View
+              style={{
+                // position: "relative",
+                flexDirection: "row",
+                justifyContent: currentImageIndex !== 0 ? "space-between" : "flex-end",
+                // alignItems: "center",
+
+                width: "100%",
+              }}
+            >
+              {currentImageIndex !== 0 && (
+                <Pressable onPress={onBackPress}>
+                  <Text text="Back" style={{ color: colors.textLightBgButton }} />
+                </Pressable>
+              )}
+
+              {currentImageIndex === images.length - 1 ? (
+                <Pressable onPress={onFinishedOnboardingPress}>
+                  <Text text="Get Started" style={{ color: colors.textLightBgButton }} />
+                </Pressable>
+              ) : (
+                <Pressable onPress={onNextPress}>
+                  <Text text="Next" style={{ color: colors.textLightBgButton }} />
+                </Pressable>
+              )}
+            </View>
+          </>
         }
       >
         <Image
           source={images[currentImageIndex]}
-          style={{ flex: 1, maxWidth: "100%", maxHeight: "100%" }}
+          style={{ flex: 1, width: "100%", maxHeight: "100%" }}
           resizeMode="contain"
         />
       </Card>

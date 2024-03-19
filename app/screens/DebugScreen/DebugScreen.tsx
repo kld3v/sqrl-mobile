@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from "react"
+import React, { FC, useCallback, useEffect } from "react"
 import * as Application from "expo-application"
 import { Linking, Platform, TextStyle, View, ViewStyle } from "react-native"
 import { Button, ListItem, Screen, Text } from "../../components"
@@ -12,6 +12,8 @@ import { secureStoreInstance } from "app/services/SecureStore/SecureStorageServi
 import * as Clipboard from "expo-clipboard"
 import { qrScannerService } from "app/services/QrScanner"
 import { pushNotificationService } from "app/services/PushNotifications"
+import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
+import { clear } from "app/utils/storage"
 
 const copyToClipboard = async (message: any) => {
   await Clipboard.setStringAsync(message)
@@ -23,7 +25,11 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     debugStore,
     locationStore: { longitude, latitude },
     pushNotificationsStore,
+    onboardingStore,
   } = useStores()
+
+  useOnboarding()
+
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
   // @ts-expect-error
   const usingFabric = global.nativeFabricUIManager != null
@@ -137,6 +143,15 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     }
   }, [pushNotificationsStore.expoPushToken, debugStore])
 
+  const clearOnboarding = useCallback(() => {
+    onboardingStore.setHasOnboarded(false)
+    secureStoreInstance.clearFromSecureStore("hasOnboarded")
+  }, [])
+
+  const clearDeviceUUID = useCallback(() => {
+    secureStoreInstance.clearFromSecureStore("device_uuid")
+  }, [])
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
@@ -169,6 +184,12 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
             text="Make dummy test call using https route "
             onPress={dummyApiTest_HTTPS_ApiSauce}
           />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Clear Onboarding " onPress={clearOnboarding} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Clear Device UUID" onPress={clearDeviceUUID} />
         </View>
         <ListItem
           LeftComponent={
@@ -227,6 +248,14 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
                   ? secureStoreInstance.device_uuid
                   : " UUID Not available"}
               </Text>
+            </View>
+          }
+        />
+        <ListItem
+          LeftComponent={
+            <View style={$item}>
+              <Text preset="bold">User Has Onboarded?</Text>
+              <Text>{onboardingStore.hasOnboarded ? "Yes" : "No"}</Text>
             </View>
           }
         />
