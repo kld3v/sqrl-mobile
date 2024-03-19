@@ -50,8 +50,14 @@ export const colors = {
    * A helper for making something see-thru.
    */
   transparent: "rgba(0, 0, 0, 0)",
-
+  /**
+   * The primary text color used against dark backdrop.
+  8.8:1 Wcag AAA grade
+   */
   textGreen: palette.primary600,
+  /**
+   * The primary text color used against light backdrop.
+   */
   textLightBg: palette.neutral200,
   //Text that is a standalone piece of text on a light background but also pressable causing some kind of event.
   textLightBgButton: palette.bluePressable,

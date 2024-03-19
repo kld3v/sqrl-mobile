@@ -13,6 +13,14 @@ export const $qrlaButton: ViewStyle = {
   right: 0,
 }
 
+export const $informationIcon: ViewStyle = {
+  margin: spacing.md,
+  zIndex: 5,
+  position: "absolute",
+  top: 8,
+  left: 0,
+}
+
 export const $camera: ViewStyle = {
   flex: 1,
   position: "absolute",

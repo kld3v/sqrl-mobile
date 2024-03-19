@@ -44,7 +44,8 @@ export type AppStackParamList = {
   MarketPlace: undefined
   TermsAndConditions: undefined
   Debug: undefined
-  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  Information: undefined
+	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -101,7 +102,8 @@ const AppStack = observer(function AppStack() {
       {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
       <Stack.Screen name="Debug" component={Screens.DebugScreen} />
 
-      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+      <Stack.Screen name="Information" component={Screens.InformationScreen} />
+			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 })

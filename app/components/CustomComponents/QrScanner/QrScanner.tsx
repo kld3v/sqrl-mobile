@@ -4,7 +4,7 @@ import { CameraView } from "expo-camera/next"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
-import { $card, $container, $reticle } from "./QrScannerStyles"
+import { $card, $container, $reticle, $informationIcon } from "./QrScannerStyles"
 import QrlaButton from "./QrlaButton"
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
@@ -12,6 +12,9 @@ import RefreshButton from "./RefreshButton"
 import { Carousel } from "app/components/Carousel"
 import { useStores } from "app/models"
 import useOnboarding from "./useOnboarding"
+import { Icon } from "app/components/Icon"
+import { colors } from "app/theme"
+import { useNavigation } from "@react-navigation/native"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -28,14 +31,22 @@ export const QrScanner = observer(function QrScanner() {
   } = useScanResults()
 
   const { onboardingStore } = useStores()
+  const navigation = useNavigation()
 
   useOnboarding()
 
   return (
     <View style={$container}>
+      <Icon
+        icon="information"
+        color={colors.tint}
+        containerStyle={$informationIcon}
+        size={32}
+        // @ts-ignore
+        onPress={() => navigation.navigate("Information")}
+      />
       <QrlaButton />
       <CameraView style={{ flex: 1 }} onBarcodeScanned={readyToScan ? onScanModified : undefined} />
-
       <Reticle
         style={$reticle}
         scanState={scanState}
