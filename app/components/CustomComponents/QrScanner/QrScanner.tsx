@@ -32,7 +32,6 @@ export const QrScanner = observer(function QrScanner() {
 
   const { onboardingStore } = useStores()
   const navigation = useNavigation()
-
   useOnboarding()
 
   return (

@@ -9,7 +9,7 @@ import { colors } from "app/theme"
 
 const CameraPermissionDenied: React.FC<{
   requestPermission: () => Promise<PermissionResponse>
-  permissionStatus: PermissionStatus
+  permissionStatus?: PermissionStatus
 }> = ({ requestPermission, permissionStatus }) => {
   const openSettings = async () => {
     await Linking.openSettings()

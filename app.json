@@ -44,10 +44,11 @@
       }
     },
     "ios": {
-      "buildNumber": "9.0.12",
+      "buildNumber": "9.0.13",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
+      "usesAppleSignIn": true,
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -87,7 +88,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "QRLA needs access to your camera to scan QR codes. For example, using our camera function allows us to perform our security analysis on the URL in the QR code. We do not store any images or videos from your camera."
+          "cameraPermission": "QRLA needs access to your camera to scan QR codes. For example, using our camera function allows us to perform our security analysis on the URL in the QR code. We do not store any images or videos from your camera.",
+          "microphonePermission": "This app does not require access to the microphone."
         }
       ],
       "expo-localization",

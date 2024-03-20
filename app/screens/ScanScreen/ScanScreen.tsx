@@ -17,29 +17,16 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
     }
   }, [])
 
-  const renderScanContent = () => {
-    if (permission && permission.status === "undetermined") {
-      return (
-        <CameraPermissionDenied
-          requestPermission={requestPermission}
-          permissionStatus={permission.status}
-        />
-      )
-    }
-    if (permission && permission.status === "denied") {
-      return (
-        <CameraPermissionDenied
-          requestPermission={requestPermission}
-          permissionStatus={permission.status}
-        />
-      )
-    }
-    return <QrScanner />
-  }
-
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      {renderScanContent()}
+      {permission && permission.status === "granted" ? (
+        <QrScanner />
+      ) : (
+        <CameraPermissionDenied
+          requestPermission={requestPermission}
+          permissionStatus={permission?.status}
+        />
+      )}
       <QrVenueNotificationsManager />
     </Screen>
   )
