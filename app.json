@@ -6,7 +6,7 @@
     "name": "QRLA",
     "slug": "qrlaApp",
     "scheme": "qrlaapp",
-    "version": "2.1.14",
+    "version": "2.1.15",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
     "extra": {
@@ -44,7 +44,7 @@
       }
     },
     "ios": {
-      "buildNumber": "9.0.11",
+      "buildNumber": "9.0.12",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",

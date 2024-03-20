@@ -93,9 +93,8 @@ const $container: ViewStyle = {
 const $title: TextStyle = {
   marginTop: spacing.xxl,
   marginBottom: spacing.sm,
-  // fontFamily: "Borsok",
-  fontFamily: typography.Poppins.boldItalic,
-  // color: colors.palette.primary500,
+  fontFamily: "Borsok",
+  color: colors.palette.primary500,
 
   ...baseTextStyle,
 }
