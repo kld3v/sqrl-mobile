@@ -19,6 +19,12 @@ export const $informationIcon: ViewStyle = {
   position: "absolute",
   top: 8,
   left: 0,
+  shadowColor: "#000", // Shadow color
+  shadowOffset: { width: 0.8, height: 2 }, // Shadow offset
+  shadowOpacity: 0.6, // Shadow opacity
+  shadowRadius: 3.8, // Shadow blur radius
+  // Elevation property for Android
+  elevation: 5,
 }
 
 export const $camera: ViewStyle = {

@@ -9,7 +9,7 @@ import QrlaButton from "./QrlaButton"
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
 
-import { Carousel } from "app/components/Carousel"
+import { Carousel } from "app/components/CustomComponents/Carousel"
 import { useStores } from "app/models"
 import useOnboarding from "./useOnboarding"
 import { Icon } from "app/components/Icon"
@@ -39,7 +39,7 @@ export const QrScanner = observer(function QrScanner() {
     <View style={$container}>
       <Icon
         icon="information"
-        color={colors.tint}
+        color={colors.palette.primary300}
         containerStyle={$informationIcon}
         size={32}
         // @ts-ignore

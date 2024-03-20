@@ -11,7 +11,7 @@ const palette = {
   neutral800: "#D6DBDF",
   neutral900: "#E1E5E8",
 
-  bluePressable: "#4183D7",
+  bluePressable: "#21569C",
 
   primary100: "#D7F2C2",
   primary200: "#B4E89C",
@@ -19,6 +19,8 @@ const palette = {
   primary400: "#71D255",
   primary500: "#a2f732",
   primary600: "#8BC34A",
+  primary700: "#689F38",
+  primary800: "#4D7C2F",
 
   secondary100: "#E7B2C3",
   secondary200: "#D485A1",
@@ -100,6 +102,11 @@ export const colors = {
    * The default color of the icons
    */
   icon: palette.primary500,
+
+  /**
+   * Dimmer Icon
+   */
+  dimIcon: palette.primary500,
 
   scannerInfoBox: "rgba(44, 62, 80, 0.5)",
 }

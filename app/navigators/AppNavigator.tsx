@@ -38,14 +38,14 @@ import * as Screens from "app/screens"
 export type AppStackParamList = {
   Welcome: undefined
   Login: undefined
-  Demo: NavigatorScreenParams<TabParamList>
+  Main: NavigatorScreenParams<TabParamList>
   // 🔥 Your screens go here
   PushNotifications: undefined
   MarketPlace: undefined
   TermsAndConditions: undefined
   Debug: undefined
   Information: undefined
-	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -94,7 +94,7 @@ const AppStack = observer(function AppStack() {
       {termsAndConditionsStore.userHasTermsToSign ? (
         <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       ) : (
-        <Stack.Screen name="Demo" component={Navigator} />
+        <Stack.Screen name="Main" component={Navigator} />
       )}
 
       {/** 🔥 Your screens go here */}
@@ -103,7 +103,7 @@ const AppStack = observer(function AppStack() {
       <Stack.Screen name="Debug" component={Screens.DebugScreen} />
 
       <Stack.Screen name="Information" component={Screens.InformationScreen} />
-			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 })

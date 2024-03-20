@@ -1,10 +1,10 @@
 import * as React from "react"
-import { Dimensions, Pressable, StyleProp, TextStyle, View, ViewStyle, Image } from "react-native"
+import { Dimensions, Pressable, StyleProp, View, ViewStyle, Image } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
-import { Card } from "./Card"
-import { Text } from "./Text"
-import useOnboardingCarousel from "./CustomComponents/QrScanner/useOnboardingCarousel"
+import { Card } from "../Card"
+import { Text } from "../Text"
+import useOnboardingCarousel from "./QrScanner/useOnboardingCarousel"
 
 export interface CarouselProps {
   style?: StyleProp<ViewStyle>
@@ -15,6 +15,8 @@ export interface CarouselProps {
  * A generic carousel component which is essentially a set of state controlled cards.
  * Pass an array of ReactNode to the children prop for each new piece of content.
  * @MajidrNEO1879 Please stick to the interface. I'm watching you.
+ *
+ * Todo Refactor this into a generic component that takes the content as an array via children. @kolyad3v
  */
 export const Carousel = observer(function Carousel(props: CarouselProps) {
   const { style, children } = props
@@ -22,7 +24,7 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
   const { width, height } = Dimensions.get("window")
   const { currentImageIndex, images, text, onNextPress, onBackPress, onFinishedOnboardingPress } =
     useOnboardingCarousel()
-
+  const hitSlopFactor = { top: 10, bottom: 10, left: 10, right: 10 }
   return (
     <View style={$styles}>
       <Card
@@ -33,7 +35,7 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
           padding: spacing.lg,
         }}
         HeadingComponent={
-          <Pressable onPress={onFinishedOnboardingPress}>
+          <Pressable hitSlop={hitSlopFactor} onPress={onFinishedOnboardingPress}>
             <Text text="Skip" style={{ color: colors.textLightBgButton }} />
           </Pressable>
         }
@@ -86,17 +88,17 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
               }}
             >
               {currentImageIndex !== 0 && (
-                <Pressable onPress={onBackPress}>
+                <Pressable hitSlop={hitSlopFactor} onPress={onBackPress}>
                   <Text text="Back" style={{ color: colors.textLightBgButton }} />
                 </Pressable>
               )}
 
               {currentImageIndex === images.length - 1 ? (
-                <Pressable onPress={onFinishedOnboardingPress}>
-                  <Text text="Get Started" style={{ color: colors.textLightBgButton }} />
+                <Pressable hitSlop={hitSlopFactor} onPress={onFinishedOnboardingPress}>
+                  <Text text="Start" style={{ color: colors.textLightBgButton }} />
                 </Pressable>
               ) : (
-                <Pressable onPress={onNextPress}>
+                <Pressable hitSlop={hitSlopFactor} onPress={onNextPress}>
                   <Text text="Next" style={{ color: colors.textLightBgButton }} />
                 </Pressable>
               )}
