@@ -12,7 +12,7 @@ import { useStores } from "app/models"
 import * as WebBrowser from "expo-web-browser"
 
 import { pushNotificationService } from "app/services/PushNotifications"
-import { TabScreenProps } from "app/navigators/Navigator"
+import { TabScreenProps } from "app/navigators/MainNavigator"
 
 export const TestingScreen: FC<TabScreenProps<"Testing">> = observer(function TestingScreen() {
   // Pull in navigation via hook

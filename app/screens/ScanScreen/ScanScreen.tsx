@@ -4,7 +4,7 @@ import { ViewStyle } from "react-native"
 
 import { QrVenueNotificationsManager, QrScanner, Screen } from "../../components"
 
-import { TabScreenProps } from "../../navigators/Navigator"
+import { TabScreenProps } from "../../navigators/MainNavigator"
 import CameraPermissionDenied from "./CameraPermissionDenied"
 import { useCameraPermissions } from "expo-camera/next"
 

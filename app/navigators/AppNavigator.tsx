@@ -17,7 +17,7 @@ import { useColorScheme } from "react-native"
 
 import Config from "../config"
 import { useStores } from "../models"
-import { Navigator, TabParamList } from "./Navigator"
+import { MainNavigator, TabParamList } from "./MainNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import * as Screens from "app/screens"
@@ -79,9 +79,6 @@ const AppStack = observer(function AppStack() {
       locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
       debugStore.addInfoMessage("Started location updates")
     }
-    debugStore.addInfoMessage(
-      `User has terms to sign: ${termsAndConditionsStore.userHasTermsToSign}`,
-    )
     // cleanup function
     return () => clearInterval(locationIntervalId)
   }, [locationStore.permission])
@@ -97,12 +94,10 @@ const AppStack = observer(function AppStack() {
       {termsAndConditionsStore.userHasTermsToSign ? (
         <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       ) : (
-        <Stack.Screen name="Main" component={Navigator} />
+        <Stack.Screen name="Main" component={MainNavigator} />
       )}
 
       {/** 🔥 Your screens go here */}
-      {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
-      {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
       <Stack.Screen name="Debug" component={Screens.DebugScreen} />
 
       <Stack.Screen name="Information" component={Screens.InformationScreen} />

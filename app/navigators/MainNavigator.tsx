@@ -32,7 +32,7 @@ export type TabScreenProps<T extends keyof TabParamList> = CompositeScreenProps<
 
 const Tab = createBottomTabNavigator<TabParamList>()
 
-export function Navigator() {
+export function MainNavigator() {
   const { bottom } = useSafeAreaInsets()
   const iconSize = 42
   const { locationStore } = useStores()

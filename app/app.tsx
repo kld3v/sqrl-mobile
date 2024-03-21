@@ -74,7 +74,7 @@ function App(props: AppProps) {
 
     // APP SETUP ----------->
     try {
-      await termsAndConditionsStore.checkIfUserHasSignedUpToDateContract()
+      await termsAndConditionsStore.setUnsignedDocumentsToState()
       quintonTheCybear.log(
         "What's in the terms and conditions store?",
         termsAndConditionsStore.termsIds,
