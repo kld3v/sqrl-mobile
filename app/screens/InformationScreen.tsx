@@ -9,11 +9,11 @@ import QrlaButton from "app/components/CustomComponents/QrScanner/QrlaButton"
 import * as WebBrowser from "expo-web-browser"
 import { useNavigation } from "@react-navigation/native"
 
-interface InformationScreenProps extends AppStackScreenProps<"MarketPlace"> {}
+interface InformationScreenProps extends AppStackScreenProps<"Information"> {}
 
 export const InformationScreen: FC<InformationScreenProps> = observer(function InformationScreen() {
   const text = [
-    "1. Point your camera at the QR code , trying to get it inside the frame.",
+    "1. Point your camera at the QR code, trying to get it inside the frame.",
     "2. Wait for the camera to focus and scan the QR code.",
     "3. Once the QR code is scanned, the app will display the result.",
     "4. If the QR code is a valid QRLA QR code, the app will display the result.",

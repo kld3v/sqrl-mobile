@@ -12,21 +12,18 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
   const [permission, requestPermission] = useCameraPermissions()
 
   useEffect(() => {
-    if (permission && permission.status !== "granted") {
+    // Request permission if it hasn't been determined yet
+    if (!permission) {
       requestPermission()
     }
-  }, [])
+  }, [permission, permission?.status])
+
+  // Decide what to render based on the camera permission status
+  const content = permission?.granted ? <QrScanner /> : <CameraPermissionDenied />
 
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      {permission && permission.status === "granted" ? (
-        <QrScanner />
-      ) : (
-        <CameraPermissionDenied
-          requestPermission={requestPermission}
-          permissionStatus={permission?.status}
-        />
-      )}
+      {content}
       <QrVenueNotificationsManager />
     </Screen>
   )

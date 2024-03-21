@@ -74,14 +74,17 @@ const AppStack = observer(function AppStack() {
   }
 
   useEffect(() => {
-    let locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
-    debugStore.addInfoMessage("Started location updates")
+    let locationIntervalId: NodeJS.Timeout
+    if (locationStore.permission) {
+      locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
+      debugStore.addInfoMessage("Started location updates")
+    }
     debugStore.addInfoMessage(
       `User has terms to sign: ${termsAndConditionsStore.userHasTermsToSign}`,
     )
     // cleanup function
     return () => clearInterval(locationIntervalId)
-  }, [])
+  }, [locationStore.permission])
 
   return (
     <Stack.Navigator
