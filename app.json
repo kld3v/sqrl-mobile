@@ -29,7 +29,7 @@
     "jsEngine": "hermes",
     "assetBundlePatterns": ["**/*"],
     "android": {
-      "versionCode": 11,
+      "versionCode": 12,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/images/app-icon-android-legacy.png",
       "package": "com.qrlaapp",
