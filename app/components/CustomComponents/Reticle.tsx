@@ -2,7 +2,7 @@ import * as React from "react"
 import { StyleProp, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { ScanStateOptions } from "types"
-import { ReticuleCorner } from "./ReticuleCorner"
+import { ReticleCorner } from "./ReticleCorner"
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 import { useEffect } from "react"
-export interface ReticuleProps {
+export interface ReticleProps {
   /**
    * An optional style override useful for padding & margin.
    */
@@ -20,14 +20,14 @@ export interface ReticuleProps {
   scanState: ScanStateOptions
 }
 
-export const Reticule = observer(function Reticule(props: ReticuleProps) {
+export const Reticle = observer(function Reticule(props: ReticleProps) {
   const { style, safe, scanState, scanning } = props
   const $styles = [$container, style]
 
   // Shared value for rotation
   const rotation = useSharedValue(0)
 
-  // Animated style for rotating the reticule
+  // Animated style for rotating the reticle
   const rotateStyle = useAnimatedStyle(() => {
     return {
       transform: [{ rotate: `${rotation.value}deg` }],
@@ -46,15 +46,15 @@ export const Reticule = observer(function Reticule(props: ReticuleProps) {
   return (
     <>
       <Animated.View style={[$styles, rotateStyle]}>
-        <ReticuleCorner scanState={scanState} position="TopLeft" scanning={scanning} safe={safe} />
-        <ReticuleCorner scanState={scanState} position="TopRight" scanning={scanning} safe={safe} />
-        <ReticuleCorner
+        <ReticleCorner scanState={scanState} position="TopLeft" scanning={scanning} safe={safe} />
+        <ReticleCorner scanState={scanState} position="TopRight" scanning={scanning} safe={safe} />
+        <ReticleCorner
           scanState={scanState}
           position="BottomLeft"
           scanning={scanning}
           safe={safe}
         />
-        <ReticuleCorner
+        <ReticleCorner
           scanState={scanState}
           position="BottomRight"
           scanning={scanning}

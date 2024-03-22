@@ -1,4 +1,3 @@
-import { PushNotificationServiceConfig } from "./PushNotificationService.types"
 import { Platform } from "react-native"
 import * as Notifications from "expo-notifications"
 import Constants from "expo-constants"
@@ -15,15 +14,9 @@ Notifications.setNotificationHandler({
 })
 
 export class PushNotificationService {
-  config: PushNotificationServiceConfig
   handleUserNotificationAction: any
 
   constructor() {
-    this.config = {
-      url: "https://exp.host/--/api/v2/push/send",
-      timeout: 10000,
-    }
-
     this.handleUserNotificationAction = // Ie handle a user action on a notification
       Notifications.addNotificationResponseReceivedListener((response) => {
         const url = response.notification.request.content.data.url
@@ -77,9 +70,10 @@ export class PushNotificationService {
       data: { url: string }
     },
   ): Promise<void> {
-    let messageToSend = { ...message, to: expoPushToken }
+    console.log(expoPushToken)
+    let messageToSend = { to: expoPushToken, ...message }
     try {
-      const response = await api.apisauce.post("", messageToSend)
+      const response = await api.apisauceForPushNotifications.post("/send", messageToSend)
       if (!response.ok) {
         console.error("Failed to send push notification to user")
       }

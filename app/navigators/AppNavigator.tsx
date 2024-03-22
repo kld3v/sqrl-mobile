@@ -17,7 +17,7 @@ import { useColorScheme } from "react-native"
 
 import Config from "../config"
 import { useStores } from "../models"
-import { Navigator, TabParamList } from "./Navigator"
+import { MainNavigator, TabParamList } from "./MainNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import * as Screens from "app/screens"
@@ -44,6 +44,7 @@ export type AppStackParamList = {
   MarketPlace: undefined
   TermsAndConditions: undefined
   Debug: undefined
+  Information: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -73,14 +74,14 @@ const AppStack = observer(function AppStack() {
   }
 
   useEffect(() => {
-    let locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
-    debugStore.addInfoMessage("Started location updates")
-    debugStore.addInfoMessage(
-      `User has terms to sign: ${termsAndConditionsStore.userHasTermsToSign}`,
-    )
+    let locationIntervalId: NodeJS.Timeout
+    if (locationStore.permission) {
+      locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
+      debugStore.addInfoMessage("Started location updates")
+    }
     // cleanup function
     return () => clearInterval(locationIntervalId)
-  }, [])
+  }, [locationStore.permission])
 
   return (
     <Stack.Navigator
@@ -93,11 +94,13 @@ const AppStack = observer(function AppStack() {
       {termsAndConditionsStore.userHasTermsToSign ? (
         <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
       ) : (
-        <Stack.Screen name="Main" component={Navigator} />
+        <Stack.Screen name="Main" component={MainNavigator} />
       )}
 
+      {/** 🔥 Your screens go here */}
       <Stack.Screen name="Debug" component={Screens.DebugScreen} />
 
+      <Stack.Screen name="Information" component={Screens.InformationScreen} />
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )

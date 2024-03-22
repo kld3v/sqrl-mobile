@@ -30,7 +30,7 @@ export class TermsService {
         device_uuid: await secureStoreInstance.getDeviceUUID(),
         document_version_ids: signedDocIds,
       })
-      return res && res.ok ? true : false
+      return res.ok
     } catch (error) {
       console.error("Error signing user agreements API Request", error)
       return false

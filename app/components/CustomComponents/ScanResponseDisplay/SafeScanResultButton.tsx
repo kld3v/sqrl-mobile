@@ -1,4 +1,3 @@
-import SafeScannedPing from "app/components/Audio/SafeScannedPing"
 import { Button } from "app/components/Button"
 import OnScanHaptic from "app/components/Haptics/OnScanHaptic"
 import { colors, typography } from "app/theme"
@@ -39,7 +38,6 @@ const SafeScanResultButton: React.FC<{
           paddingTop: 8,
         }}
       />
-      <SafeScannedPing />
       <OnScanHaptic scanState={scanState} safe={safe} />
     </>
   )

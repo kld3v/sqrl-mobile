@@ -67,6 +67,10 @@ interface CardProps extends TouchableOpacityProps {
    */
   content?: TextProps["text"]
   /**
+   * The styling for the child container.
+   */
+  childStyle?: StyleProp<ViewStyle>
+  /**
    * Content text which is looked up via i18n.
    */
   contentTx?: TextProps["tx"]
@@ -140,12 +144,14 @@ export function Card(props: CardProps) {
     RightComponent,
     verticalAlignment = "top",
     style: $containerStyleOverride,
+    childStyle: $childStyleOverride,
     contentStyle: $contentStyleOverride,
     headingStyle: $headingStyleOverride,
     footerStyle: $footerStyleOverride,
     ContentTextProps,
     HeadingTextProps,
     FooterTextProps,
+    children,
     ...WrapperProps
   } = props
 
@@ -166,6 +172,12 @@ export function Card(props: CardProps) {
     (isFooterPresent || isContentPresent) && { marginBottom: spacing.xxxs },
     $headingStyleOverride,
     HeadingTextProps?.style,
+  ]
+  const $childStyle = [
+    $childStyleOverride,
+    { flex: 1 },
+    isHeadingPresent && { marginTop: spacing.xxxs },
+    isContentPresent && { marginBottom: spacing.xxxs },
   ]
   const $contentStyle = [
     $contentPresets[preset],
@@ -209,7 +221,6 @@ export function Card(props: CardProps) {
                 style={$headingStyle}
               />
             ))}
-
           {ContentComponent ||
             (isContentPresent && (
               <Text
@@ -221,6 +232,7 @@ export function Card(props: CardProps) {
                 style={$contentStyle}
               />
             ))}
+          <View style={$childStyle}>{children}</View>
         </HeaderContentWrapper>
 
         {FooterComponent ||

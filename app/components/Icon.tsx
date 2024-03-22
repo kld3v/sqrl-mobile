@@ -114,7 +114,8 @@ export const iconRegistry = {
   eucalyptus: require("../../assets/icons/eucalyptus.png"),
   shoppingCart: require("../../assets/icons/shopping-cart.png"),
   paperPlane: require("../../assets/icons/paperPlane.png"),
-}
+  information: require("../../assets/icons/information.png"),
+} as const
 
 const $imageStyleBase: ImageStyle = {
   resizeMode: "contain",
