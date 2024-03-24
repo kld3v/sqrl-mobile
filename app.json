@@ -62,7 +62,7 @@
     "web": {
       "favicon": "./assets/images/app-icon-web-favicon.png",
       "splash": {
-        "image": "./assets/images/splash-logo-web.png",
+        "image": "./assets/images/splash-logo-all.png",
         "resizeMode": "contain",
         "backgroundColor": "#041522"
       },
