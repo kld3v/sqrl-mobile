@@ -9,7 +9,6 @@ import Tick from "app/components/Svg/Tick"
 import Cancel from "app/components/Svg/Cancel"
 import { Scan } from "app/services/HistoryService/HistoryService.types"
 import { historyService } from "app/services/HistoryService"
-import { RefreshControl } from "react-native"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 

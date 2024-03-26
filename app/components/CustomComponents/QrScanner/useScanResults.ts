@@ -1,4 +1,5 @@
 import { useStores } from "app/models"
+import { leaderboardInstance } from "app/services/Leaderboard"
 import { qrScannerService } from "app/services/QrScanner"
 import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 import { useDebouncedCallback } from "app/utils/useDebouncedCallback"
@@ -76,6 +77,7 @@ export default () => {
 
       // This ensures `handleTrustScore` is called with a number or null without causing a type error.
       handleTrustScore(trustScore)
+      await leaderboardInstance.bumpUserScore()
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDataFunction: ${error}`)
       debugStore.addErrorMessage(
