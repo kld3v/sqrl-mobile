@@ -68,7 +68,7 @@ export function MainNavigator() {
           tabBarLabel: "",
           tabBarAccessibilityLabel: translate("navigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={iconSize} />
+            <Icon icon="more" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
       />
@@ -90,7 +90,7 @@ export function MainNavigator() {
           tabBarLabel: "",
           tabBarAccessibilityLabel: translate("navigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={iconSize} />
+            <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
       />
@@ -99,7 +99,6 @@ export function MainNavigator() {
 }
 
 const $tabBar: ViewStyle = {
-  display: "none",
   backgroundColor: colors.background,
   borderTopColor: colors.transparent,
 }

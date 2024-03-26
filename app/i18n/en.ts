@@ -15,6 +15,14 @@ const en = {
     exciting: "(ohh, this is exciting!)",
     letsGo: "Let's go!",
   },
+  historyScreen: {
+    title: "History",
+    subHeader: "View your QR scan history. Click to revisit that destination!",
+  },
+  leaderboardScreen: {
+    title: "Leaderboard",
+    subHeader: "Who's number 1! smguly is!",
+  },
   errorScreen: {
     title: "Something went wrong!",
     friendlySubtitle:

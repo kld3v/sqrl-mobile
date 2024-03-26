@@ -4,14 +4,15 @@ import { typography } from "./typography"
 import { spacing } from "./spacing"
 
 export const $rootScreen: ViewStyle = {
-  paddingVertical: spacing.xxl,
+  paddingVertical: spacing.xl,
   paddingHorizontal: spacing.md,
 }
 
 export const $title: TextStyle = {
+  fontFamily: typography.fonts.borsok.normal,
   color: colors.palette.primary500,
   textAlign: "center",
-  marginBottom: spacing.xs,
+  marginVertical: spacing.xl,
 }
 
 export const $hyperlink: TextStyle = {
