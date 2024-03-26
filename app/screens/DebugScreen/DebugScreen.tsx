@@ -14,6 +14,7 @@ import { qrScannerService } from "app/services/QrScanner"
 import { pushNotificationService } from "app/services/PushNotifications"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
 import { clear } from "app/utils/storage"
+import { historyService } from "app/services/HistoryService/HistoryService"
 
 const copyToClipboard = async (message: any) => {
   await Clipboard.setStringAsync(message)
@@ -152,6 +153,11 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     secureStoreInstance.clearFromSecureStore("device_uuid")
   }, [])
 
+  const getHistory = useCallback(async () => {
+    let history = await historyService.getTestHistory()
+    debugStore.addInfoMessage(JSON.stringify(history))
+  }, [])
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
@@ -199,6 +205,9 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
               throw new Error("Hello Sentry")
             }}
           />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Get History" onPress={getHistory} />
         </View>
         <ListItem
           LeftComponent={

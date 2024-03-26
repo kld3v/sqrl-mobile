@@ -1,23 +1,44 @@
-import React, { FC, useState } from "react"
+import React, { FC, useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Alert, Pressable, ViewStyle } from "react-native"
+import { Alert, ImageStyle, Pressable, ScrollView, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Card, Screen, Text } from "app/components"
+import { Card, ListView, Screen, Text } from "app/components"
 import { $rootScreen, $title } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
+import Tick from "app/components/Svg/Tick"
+import Cancel from "app/components/Svg/Cancel"
+import { Scan } from "app/services/HistoryService/HistoryService.types"
+import { historyService } from "app/services/HistoryService"
+import { RefreshControl } from "react-native"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
-type Scan = {
-  url: string
-  date_and_time: string
-  trust_score: number
-}
 export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistoryScreen() {
-  const showConfirmationDialog = () => {
+  const [history, setHistory] = useState<Scan[]>([])
+  const [refreshing, setRefreshing] = useState(false)
+
+  const fetchHistory = async () => {
+    setRefreshing(true)
+    // Fetch history data
+    let res = await historyService.getHistory()
+    console.log(res)
+    if (res) {
+      setHistory(res)
+    }
+    setRefreshing(false)
+  }
+
+  useEffect(() => {
+    fetchHistory()
+  }, [])
+
+  const takeUserToScanUrl = (el: Scan) => async () => {
+    if (el.trust_score > 500) {
+      await WebBrowser.openBrowserAsync(el.url)
+    }
     Alert.alert(
       "Confirm Action", // Title of the dialog
-      "Are you sure you want to do this?", // Message of the dialog
+      "Are you sure you want to do this? This QR was deemed unsafe.", // Message of the dialog
       [
         // Array of buttons
         {
@@ -25,89 +46,63 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel",
         },
-        { text: "OK", onPress: async () => await WebBrowser.openBrowserAsync("https://qrla.io") },
+        { text: "OK", onPress: async () => await WebBrowser.openBrowserAsync(el.url) },
       ],
       { cancelable: false }, // The dialog is not cancelable outside of the buttons
     )
   }
 
-  const [history, setHistory] = useState<Scan[]>([
-    {
-      url: "https://google.com/",
-      date_and_time: "2024-02-29 17:41:11",
-      trust_score: 500,
-    },
-    {
-      url: "https://www.toy.org/qui-cumque-est-culpa-et",
-      date_and_time: "2024-03-04 11:45:23",
-      trust_score: 642,
-    },
-    {
-      url: "http://www.turner.org/delectus-est-ut-asperiores-numquam-quisquam.html",
-      date_and_time: "2024-03-04 11:45:25",
-      trust_score: 346,
-    },
-    {
-      url: "http://durgan.com/",
-      date_and_time: "2024-03-04 11:45:25",
-      trust_score: 1000,
-    },
-    {
-      url: "http://kemmer.com/laudantium-quo-quo-soluta-enim-debitis",
-      date_and_time: "2024-03-04 11:45:26",
-      trust_score: 432,
-    },
-    {
-      url: "http://www.barton.com/",
-      date_and_time: "2024-03-04 11:45:26",
-      trust_score: 730,
-    },
-    {
-      url: "http://www.schuster.com/et-dignissimos-a-quis-minus-laudantium-blanditiis.html",
-      date_and_time: "2024-03-04 11:45:26",
-      trust_score: 230,
-    },
-    {
-      url: "http://www.wyman.biz/",
-      date_and_time: "2024-03-04 11:45:26",
-      trust_score: 369,
-    },
-    {
-      url: "http://schmitt.com/",
-      date_and_time: "2024-03-04 11:45:26",
-      trust_score: 570,
-    },
-    {
-      url: "https://www.waelchi.com/accusantium-numquam-nihil-accusantium-molestiae",
-      date_and_time: "2024-03-04 11:45:26",
-      trust_score: 1000,
-    },
-    {
-      url: "http://lemke.com/cum-qui-consectetur-qui-reiciendis-magni-ut",
-      date_and_time: "2024-03-04 11:45:29",
-      trust_score: 136,
-    },
-    {
-      url: "https://www.google.com",
-      date_and_time: "2024-03-12 12:22:49",
-      trust_score: 500,
-    },
-  ])
+  const sortedHistory = useMemo(() => {
+    return [...history].sort(
+      (a, b) => new Date(b.date_and_time).getTime() - new Date(a.date_and_time).getTime(),
+    )
+  }, [history])
 
-  const qrHistory = (): React.ReactNode => {
-    return history.map((el, index) => {
-      return (
-        <Pressable key={index} style={$scanCard} onPress={showConfirmationDialog}>
-          <Card heading={el.url} headingStyle={{ color: "black" }} />
-        </Pressable>
-      )
-    })
-  }
+  const renderItem = ({ item, index }: { item: Scan; index: number }) => (
+    <Pressable key={index} style={$scanCard} onPress={() => takeUserToScanUrl(item)}>
+      <Card
+        style={{ padding: 16, position: "relative" }}
+        heading={item.url.length > 48 ? `${item.url.substring(0, 48)}...` : item.url}
+        headingStyle={{ color: "black", maxWidth: "80%" }}
+        RightComponent={
+          item.trust_score > 500 ? <Tick style={$iconStyle} /> : <Cancel style={$iconStyle} />
+        }
+        RightComponentStyle={{ justifyContent: "center", alignItems: "center" }}
+        footer={item.date_and_time}
+        footerStyle={{ color: "black" }}
+      />
+    </Pressable>
+  )
+
+  const noHistory = (
+    <View>
+      <Text preset="heading" text="No history - Get Scanning" />
+    </View>
+  )
+
+  const loading = (
+    <View>
+      <Text preset="heading" style={{ textAlign: "center" }} text="Loading..." />
+    </View>
+  )
 
   return (
-    <Screen style={$rootScreen} preset="scroll" safeAreaEdges={["top", "bottom"]}>
+    <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>
       <Text preset="heading" tx="historyScreen.title" style={$title} />
-      {qrHistory()}
+
+      {history.length === 0 && noHistory}
+      {refreshing && loading}
+
+      <View style={{ width: "100%", height: "80%" }}>
+        <ListView
+          data={sortedHistory}
+          renderItem={renderItem}
+          estimatedItemSize={200}
+          keyExtractor={(item, index) => `history-${index}`}
+          onRefresh={fetchHistory}
+          refreshing={refreshing}
+        />
+      </View>
     </Screen>
   )
 })
@@ -119,3 +114,10 @@ const $root: ViewStyle = {
 const $scanCard: ViewStyle = {
   marginVertical: 8,
 }
+
+const $iconStyle: ImageStyle = {
+  position: "absolute",
+  top: 0,
+  bottom: 0,
+  transform: [{ scale: 1.3 }],
+} as const

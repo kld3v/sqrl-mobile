@@ -6,6 +6,8 @@ import { spacing } from "./spacing"
 export const $rootScreen: ViewStyle = {
   paddingVertical: spacing.xl,
   paddingHorizontal: spacing.md,
+  width: "100%",
+  height: "100%",
 }
 
 export const $title: TextStyle = {

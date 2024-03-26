@@ -37,6 +37,10 @@ interface CardProps extends TouchableOpacityProps {
    */
   RightComponent?: ReactElement
   /**
+   * Custom styling for the right component
+   */
+  RightComponentStyle?: StyleProp<ViewStyle>
+  /**
    * The heading text to display if not using `headingTx`.
    */
   heading?: TextProps["text"]
@@ -142,6 +146,7 @@ export function Card(props: CardProps) {
     FooterComponent,
     LeftComponent,
     RightComponent,
+    RightComponentStyle: $RightComponentStyle,
     verticalAlignment = "top",
     style: $containerStyleOverride,
     childStyle: $childStyleOverride,
@@ -186,6 +191,7 @@ export function Card(props: CardProps) {
     $contentStyleOverride,
     ContentTextProps?.style,
   ]
+
   const $footerStyle = [
     $footerPresets[preset],
     (isHeadingPresent || isContentPresent) && { marginTop: spacing.xxxs },
@@ -249,7 +255,7 @@ export function Card(props: CardProps) {
           ))}
       </View>
 
-      {RightComponent}
+      <View style={$RightComponentStyle}>{RightComponent}</View>
     </Wrapper>
   )
 }
