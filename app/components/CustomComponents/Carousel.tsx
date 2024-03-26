@@ -25,6 +25,7 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
   const { currentImageIndex, images, text, onNextPress, onBackPress, onFinishedOnboardingPress } =
     useOnboardingCarousel()
   const hitSlopFactor = { top: 10, bottom: 10, left: 10, right: 10 }
+  console.log("Carousel rendered")
   return (
     <View style={$styles}>
       <Card

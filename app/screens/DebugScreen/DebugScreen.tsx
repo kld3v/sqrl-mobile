@@ -191,6 +191,15 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         <View style={$buttonContainer}>
           <Button style={$button} text="Clear Device UUID" onPress={clearDeviceUUID} />
         </View>
+        <View style={$buttonContainer}>
+          <Button
+            style={$button}
+            text="Test Sentry Error"
+            onPress={() => {
+              throw new Error("Hello Sentry")
+            }}
+          />
+        </View>
         <ListItem
           LeftComponent={
             <View style={$item}>

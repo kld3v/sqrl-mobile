@@ -1,6 +1,7 @@
 import { View } from "react-native"
 import { observer } from "mobx-react-lite"
 import { CameraView } from "expo-camera/next"
+import { AutoFocus, Camera } from "expo-camera"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
@@ -8,13 +9,7 @@ import { $card, $container, $reticle, $informationIcon } from "./QrScannerStyles
 import QrlaButton from "./QrlaButton"
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
-
-import { Carousel } from "app/components/CustomComponents/Carousel"
-import { useStores } from "app/models"
-import useOnboarding from "./useOnboarding"
-import { Icon } from "app/components/Icon"
-import { colors } from "app/theme"
-import { useNavigation } from "@react-navigation/native"
+import { useEffect, useRef, useState } from "react"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -30,43 +25,41 @@ export const QrScanner = observer(function QrScanner() {
     url,
   } = useScanResults()
 
-  const { onboardingStore } = useStores()
-  const navigation = useNavigation()
-  useOnboarding()
+  const [focus, setFocus] = useState<AutoFocus>(AutoFocus.on)
+  const cameraRef = useRef(null)
+
+  const updateCameraFocus = () => setFocus(AutoFocus.off)
+
+  // * Switch autofocus back to "on" after 50ms, this refocuses the camera
+  useEffect(() => {
+    if (focus !== AutoFocus.off) return
+    const timeout = setTimeout(() => setFocus(AutoFocus.on), 50)
+    return () => clearTimeout(timeout)
+  }, [focus])
+
+  // * Refocus camera every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => updateCameraFocus(), 2000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <View style={$container}>
-      <Icon
-        icon="information"
-        color={colors.palette.primary300}
-        containerStyle={$informationIcon}
-        size={32}
-        // @ts-ignore
-        onPress={() => navigation.navigate("Information")}
-      />
-      <QrlaButton />
-      <CameraView style={{ flex: 1 }} onBarcodeScanned={readyToScan ? onScanModified : undefined} />
-      <Reticle
-        style={$reticle}
-        scanState={scanState}
-        safe={safe}
-        scanning={scanState === "scanning"}
-      />
-      {!onboardingStore.hasOnboarded && (
-        <Carousel
-          style={{
-            position: "absolute",
-            justifyContent: "center",
-            alignItems: "center",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            top: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 5,
-          }}
+      {/* <CameraView style={{ flex: 1 }} onBarcodeScanned={readyToScan ? onScanModified : undefined} /> */}
+
+      <Camera
+        style={{ flex: 1 }}
+        onBarCodeScanned={readyToScan ? onScanModified : undefined}
+        ref={cameraRef}
+        autoFocus={focus}
+      >
+        <Reticle
+          style={$reticle}
+          scanState={scanState}
+          safe={safe}
+          scanning={scanState === "scanning"}
         />
-      )}
+      </Camera>
       {scanState !== "notScanned" && (
         <ScanResponseDisplay
           style={$card}

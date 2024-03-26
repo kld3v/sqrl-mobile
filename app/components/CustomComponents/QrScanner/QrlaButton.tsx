@@ -4,9 +4,11 @@ import { $qrlaButton } from "./QrScannerStyles"
 import * as WebBrowser from "expo-web-browser"
 import { AutoImage } from "../../AutoImage"
 import { useNavigation } from "@react-navigation/native"
+import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 const QrlaButton = () => {
   const navigation = useNavigation()
+  quintonTheCybear.log("qrla button rendered")
   return (
     <Pressable
       style={$qrlaButton}
