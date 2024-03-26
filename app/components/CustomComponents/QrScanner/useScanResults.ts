@@ -2,7 +2,7 @@ import { useStores } from "app/models"
 import { qrScannerService } from "app/services/QrScanner"
 import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 import { useDebouncedCallback } from "app/utils/useDebouncedCallback"
-import { BarCodeScanningResult } from "expo-camera"
+import { AutoFocus, BarCodeScanningResult } from "expo-camera"
 import { useCallback, useState } from "react"
 import { ScanStateOptions } from "types"
 
@@ -88,6 +88,12 @@ export default () => {
 
   const onScanModified = useDebouncedCallback<BarCodeScanningResult[]>(onScan, 100)
 
+  const [focus, setFocus] = useState<AutoFocus>(AutoFocus.on)
+
+  const updateCameraFocus = () => {
+    setFocus(focus === AutoFocus.on ? AutoFocus.off : AutoFocus.on)
+  }
+
   return {
     handleTrustScore,
     scanAgain,
@@ -103,5 +109,7 @@ export default () => {
     setScanState,
     url,
     setUrl,
+    focus,
+    updateCameraFocus,
   }
 }
