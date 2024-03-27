@@ -26,7 +26,7 @@ export const LeaderboardStoreModel = types
     },
 
     async bumpUserScore() {
-      if (await leaderboardServiceInstance.bumpUserScore()) {
+      if (await leaderboardServiceInstance.bumpUserScore(store.userScore)) {
         let newScore = (parseInt(store.userScore) + 1).toString()
         store.setProp("userScore", newScore)
       }

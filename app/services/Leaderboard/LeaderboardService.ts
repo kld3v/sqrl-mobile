@@ -48,10 +48,8 @@ export class LeaderboardService {
     return true
   }
 
-  async bumpUserScore(): Promise<boolean> {
+  async bumpUserScore(currentScore: string): Promise<boolean> {
     try {
-      let currentScore = await secureStoreInstance.getValueFromSecureStore("userScore")
-      if (currentScore === null) return false
       let updatedScore = (parseInt(currentScore, 10) + 1).toString()
       await secureStoreInstance.setValueInSecureStore("userScore", updatedScore)
     } catch (error) {
