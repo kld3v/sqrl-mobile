@@ -8,7 +8,7 @@ import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 const QrlaButton = () => {
   const navigation = useNavigation()
-  quintonTheCybear.log("qrla button rendered")
+  quintonTheCybear.log("qrla button re-rendered")
   return (
     <Pressable
       style={$qrlaButton}

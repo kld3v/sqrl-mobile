@@ -9,6 +9,7 @@ import { $card, $container, $reticle } from "./QrScannerStyles"
 
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
+import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -26,6 +27,7 @@ export const QrScanner = observer(function QrScanner() {
     updateCameraFocus,
   } = useScanResults()
 
+  quintonTheCybear.log("qrScanner re-rendered")
   return (
     <View style={$container}>
       <Pressable style={{ flex: 1 }} onPress={updateCameraFocus}>

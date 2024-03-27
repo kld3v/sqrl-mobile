@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
 import { View, ViewStyle } from "react-native"
-import { Carousel, Icon, Text } from "../../components"
+import { Carousel, Icon, ScanScreenScore, Text } from "../../components"
 
 import { QrScanner, Screen } from "../../components"
 
@@ -27,10 +27,13 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
     if (!permission) {
       requestPermission()
     }
+  }, [permission, permission?.status])
+
+  useEffect(() => {
     ;(async () => {
       await leaderboardStore.setUserScoreFromSecureStorage()
     })()
-  }, [permission, permission?.status])
+  }, [])
 
   // Decide what to render based on the camera permission status
   const content = permission?.granted ? (
@@ -44,19 +47,7 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
   console.log(leaderboardStore.userScore, "leaderboardStore")
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      <View
-        style={{
-          width: "100%",
-          // backgroundColor: "blue",
-          position: "absolute",
-          zIndex: 3,
-          justifyContent: "center",
-          alignItems: "center",
-          top: spacing.xl,
-        }}
-      >
-        <Text text={leaderboardStore.score} />
-      </View>
+      <ScanScreenScore />
       <QrlaButton />
       {!onboardingStore.hasOnboarded && (
         <Carousel
