@@ -5,6 +5,7 @@ import { AppStackScreenProps } from "app/navigators"
 import { Card, Screen, Text } from "app/components"
 import { $rootScreen, $title, colors } from "app/theme"
 import { leaderboardServiceInstance } from "app/services/Leaderboard"
+import { useStores } from "app/models"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
@@ -18,7 +19,7 @@ type UserScore = {
 
 export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function LeaderboardScreen() {
   // Pull in one of our MST stores
-  // const { someStore, anotherStore } = useStores()
+  const { leaderboardStore } = useStores()
 
   // Pull in navigation via hook
   // const navigation = useNavigation()
@@ -61,7 +62,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
 
       setLeaderboardData(leaderboardData)
     })()
-  }, [])
+  }, [leaderboardStore.userScore])
 
   return (
     <Screen style={$rootScreen} preset="scroll" safeAreaEdges={["top"]}>

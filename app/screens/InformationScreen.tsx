@@ -26,8 +26,8 @@ export const InformationScreen: FC<InformationScreenProps> = observer(function I
       {text.map((item, index) => (
         <Text key={index} style={$description} text={item} />
       ))}
-      <Text>
-        <Text style={$description}>
+      <Text style={$description}>
+        <Text>
           For more information on our security measures, and usage guidelines, please refer to our{" "}
           <Text
             onPress={() =>

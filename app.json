@@ -70,13 +70,6 @@
     },
     "plugins": [
       [
-        "@sentry/react-native/expo",
-        {
-          "organization": "qrla-labs-ltd",
-          "project": "react-native"
-        }
-      ],
-      [
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",

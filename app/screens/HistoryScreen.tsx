@@ -15,8 +15,8 @@ import { $rootScreen, $title } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
 import Tick from "app/components/Svg/Tick"
 import Cancel from "app/components/Svg/Cancel"
-import { Scan } from "app/services/HistoryService/HistoryService.types"
-import { historyService } from "app/services/HistoryService"
+import { Scan } from "app/services/History/HistoryService.types"
+import { historyService } from "app/services/History"
 import LottieView from "lottie-react-native"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
