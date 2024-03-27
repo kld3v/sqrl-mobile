@@ -43,6 +43,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   const takeUserToScanUrl = (el: Scan) => async () => {
     if (el.trust_score > 500) {
       await WebBrowser.openBrowserAsync(el.url)
+      return
     }
     Alert.alert(
       "Confirm Action", // Title of the dialog
