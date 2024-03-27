@@ -15,7 +15,7 @@ export class LeaderboardService {
       if (!(await this.userHasScoreInStorage())) {
         await this.initUserScoreInStorage()
         //TODO
-        let name = Device.deviceName ? Device.deviceName : "Sheppard"
+        let name = Device.deviceName ? Device.deviceName : "You"
         await this.initUserNameInStorage(name)
       }
       if (!(await this.dummyLeaderboardDataExists())) {
@@ -61,14 +61,14 @@ export class LeaderboardService {
     return true
   }
 
-  async getUserScoreAndUserNameFromStorage(): Promise<false | { username: string; score: number }> {
+  async getUserScoreAndUserNameFromStorage(): Promise<false | { username: string; score: string }> {
     let username = await secureStoreInstance.getValueFromSecureStore("userName")
     let score = await secureStoreInstance.getValueFromSecureStore("userScore")
     console.log(username, score)
     if (username === null || score === null) return false
     return {
       username,
-      score: Number(score),
+      score,
     }
   }
 
@@ -142,4 +142,4 @@ export class LeaderboardService {
   }
 }
 
-export const leaderboardInstance = new LeaderboardService()
+export const leaderboardServiceInstance = new LeaderboardService()

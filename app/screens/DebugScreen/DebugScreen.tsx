@@ -13,8 +13,7 @@ import * as Clipboard from "expo-clipboard"
 import { qrScannerService } from "app/services/QrScanner"
 import { pushNotificationService } from "app/services/PushNotifications"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
-import { clear } from "app/utils/storage"
-import { historyService } from "app/services/HistoryService/HistoryService"
+import { historyService } from "app/services/History/HistoryService"
 
 const copyToClipboard = async (message: any) => {
   await Clipboard.setStringAsync(message)
@@ -27,6 +26,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     locationStore: { longitude, latitude },
     pushNotificationsStore,
     onboardingStore,
+    leaderboardStore,
   } = useStores()
 
   useOnboarding()
@@ -158,6 +158,12 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     debugStore.addInfoMessage(JSON.stringify(history))
   }, [])
 
+  const bumpUserScore = useCallback(async () => {
+    await leaderboardStore.bumpUserScore()
+    debugStore.addInfoMessage(leaderboardStore.userScore)
+    alert("bumped")
+  }, [])
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
@@ -208,6 +214,9 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         </View>
         <View style={$buttonContainer}>
           <Button style={$button} text="Get History" onPress={getHistory} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Bump User Score" onPress={bumpUserScore} />
         </View>
         <ListItem
           LeftComponent={
@@ -277,7 +286,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
             </View>
           }
         />
-
         {renderDeviceProperties([
           "brand",
           "manufacturer",
@@ -298,7 +306,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
           "platformVersion",
           "isDevice",
         ])}
-
         {renderDebugStoreErrorMessages()}
         {renderDebugStoreInfoMessages()}
       </View>

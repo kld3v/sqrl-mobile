@@ -3,14 +3,14 @@ import React, { FC, useEffect } from "react"
 import { View, ViewStyle } from "react-native"
 import { Carousel, Icon, Text } from "../../components"
 
-import { QrVenueNotificationsManager, QrScanner, Screen } from "../../components"
+import { QrScanner, Screen } from "../../components"
 
 import { TabScreenProps } from "../../navigators/MainNavigator"
 import CameraPermissionDenied from "./CameraPermissionDenied"
 import { useCameraPermissions } from "expo-camera/next"
 import CameraPermissionUndetermined from "./CamerPermissionUndetermined"
 import { $informationIcon } from "app/components/CustomComponents/QrScanner/QrScannerStyles"
-import { colors } from "app/theme"
+import { colors, spacing } from "app/theme"
 import { useStores } from "app/models"
 import { useNavigation } from "@react-navigation/native"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
@@ -18,12 +18,18 @@ import QrlaButton from "app/components/CustomComponents/QrScanner/QrlaButton"
 
 export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScreen(_props) {
   const [permission, requestPermission] = useCameraPermissions()
+  const { onboardingStore, leaderboardStore } = useStores()
+  const navigation = useNavigation()
+  useOnboarding()
 
   useEffect(() => {
     // Request permission if it hasn't been determined yet
     if (!permission) {
       requestPermission()
     }
+    ;(async () => {
+      await leaderboardStore.setUserScoreFromSecureStorage()
+    })()
   }, [permission, permission?.status])
 
   // Decide what to render based on the camera permission status
@@ -34,12 +40,23 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
   ) : (
     <CameraPermissionDenied />
   )
-  const { onboardingStore } = useStores()
-  const navigation = useNavigation()
-  useOnboarding()
 
+  console.log(leaderboardStore.userScore, "leaderboardStore")
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
+      <View
+        style={{
+          width: "100%",
+          // backgroundColor: "blue",
+          position: "absolute",
+          zIndex: 3,
+          justifyContent: "center",
+          alignItems: "center",
+          top: spacing.xl,
+        }}
+      >
+        <Text text={leaderboardStore.score} />
+      </View>
       <QrlaButton />
       {!onboardingStore.hasOnboarded && (
         <Carousel
@@ -65,7 +82,6 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
         onPress={() => navigation.navigate("Information")}
       />
       {content}
-      <QrVenueNotificationsManager />
     </Screen>
   )
 })

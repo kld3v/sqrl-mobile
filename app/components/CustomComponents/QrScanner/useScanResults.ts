@@ -13,7 +13,7 @@ export default () => {
   const [url, setUrl] = useState<string>("")
   const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
   const [readyToScan, setReadyToScan] = useState(true)
-  const { locationStore, debugStore } = useStores()
+  const { locationStore, debugStore, leaderboardStore } = useStores()
 
   const handleTrustScore = useCallback((trustScore: number | null) => {
     if (typeof trustScore !== "number") {
@@ -77,7 +77,7 @@ export default () => {
 
       // This ensures `handleTrustScore` is called with a number or null without causing a type error.
       handleTrustScore(trustScore)
-      await leaderboardInstance.bumpUserScore()
+      await leaderboardStore.bumpUserScore()
     } catch (error) {
       console.error(`Error with sendUrlAndLocationDataFunction: ${error}`)
       debugStore.addErrorMessage(

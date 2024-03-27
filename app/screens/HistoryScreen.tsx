@@ -1,6 +1,14 @@
-import React, { FC, useEffect, useMemo, useState } from "react"
+import React, { FC, useEffect, useMemo, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Alert, ImageStyle, Pressable, ScrollView, View, ViewStyle } from "react-native"
+import {
+  Alert,
+  ImageStyle,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+  ViewStyle,
+} from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { Card, ListView, Screen, Text } from "app/components"
 import { $rootScreen, $title } from "app/theme"
@@ -9,12 +17,14 @@ import Tick from "app/components/Svg/Tick"
 import Cancel from "app/components/Svg/Cancel"
 import { Scan } from "app/services/HistoryService/HistoryService.types"
 import { historyService } from "app/services/HistoryService"
+import LottieView from "lottie-react-native"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
 export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistoryScreen() {
   const [history, setHistory] = useState<Scan[]>([])
   const [refreshing, setRefreshing] = useState(false)
+  const loadingAnimation = useRef(null)
 
   const fetchHistory = async () => {
     setRefreshing(true)
@@ -79,21 +89,14 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     </View>
   )
 
-  const loading = (
-    <View>
-      <Text preset="heading" style={{ textAlign: "center" }} text="Loading..." />
-    </View>
-  )
-
   return (
     <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>
       <Text preset="heading" tx="historyScreen.title" style={$title} />
 
       {history.length === 0 && noHistory}
-      {refreshing && loading}
 
       <View style={{ width: "100%", height: "80%" }}>
-        <ListView
+        <ListView<Scan>
           data={sortedHistory}
           renderItem={renderItem}
           estimatedItemSize={200}
