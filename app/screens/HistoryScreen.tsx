@@ -30,7 +30,6 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     setRefreshing(true)
     // Fetch history data
     let res = await historyService.getHistory()
-    console.log(res)
     if (res) {
       setHistory(res)
     }
@@ -68,7 +67,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   }, [history])
 
   const renderItem = ({ item, index }: { item: Scan; index: number }) => (
-    <Pressable key={index} style={$scanCard} onPress={() => takeUserToScanUrl(item)}>
+    <Pressable key={index} style={$scanCard} onPress={takeUserToScanUrl(item)}>
       <Card
         style={{ padding: 16, position: "relative" }}
         heading={item.url.length > 48 ? `${item.url.substring(0, 48)}...` : item.url}
@@ -85,7 +84,8 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
 
   const noHistory = (
     <View>
-      <Text preset="heading" text="No history - Get Scanning" />
+      <Text style={{ textAlign: "center" }} preset="subheading" text="No history yet" />
+      <Text style={{ textAlign: "center" }} preset="subheading" text="Get Scanning!" />
     </View>
   )
 
@@ -94,9 +94,10 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
       <Text preset="heading" tx="historyScreen.title" style={$title} />
 
       {history.length === 0 && noHistory}
+      {refreshing && <Text>Loading</Text>}
 
-      <View style={{ width: "100%", height: "80%" }}>
-        <ListView<Scan>
+      <View style={{ width: "100%", height: "90%" }}>
+        <ListView
           data={sortedHistory}
           renderItem={renderItem}
           estimatedItemSize={200}

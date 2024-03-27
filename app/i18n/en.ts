@@ -20,8 +20,8 @@ const en = {
     subHeader: "View your QR scan history. Click to revisit that destination!",
   },
   leaderboardScreen: {
-    title: "Leaderboard",
-    subHeader: "Who's number 1! smguly is!",
+    title: "Top Scanners",
+    subHeader: "West-Sydney League",
   },
   errorScreen: {
     title: "Something went wrong!",

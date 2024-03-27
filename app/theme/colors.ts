@@ -39,6 +39,8 @@ const palette = {
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
+
+  tableBorder: "rgba(215, 242, 194, 0.5)",
 } as const
 
 export const colors = {
@@ -79,7 +81,7 @@ export const colors = {
   /**
    * The default border color.
    */
-  border: palette.neutral400,
+  border: palette.tableBorder,
   /**
    * The main tinting color.
    */

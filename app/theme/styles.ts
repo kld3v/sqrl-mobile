@@ -12,9 +12,10 @@ export const $rootScreen: ViewStyle = {
 
 export const $title: TextStyle = {
   fontFamily: typography.fonts.borsok.normal,
+  fontSize: typography.fontSizes.h1,
   color: colors.palette.primary500,
   textAlign: "center",
-  marginVertical: spacing.xl,
+  paddingVertical: spacing.md,
 }
 
 export const $hyperlink: TextStyle = {

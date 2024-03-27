@@ -43,8 +43,6 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
   ) : (
     <CameraPermissionDenied />
   )
-
-  console.log(leaderboardStore.userScore, "leaderboardStore")
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
       <ScanScreenScore />

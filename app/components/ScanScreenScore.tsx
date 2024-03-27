@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { useStores } from "app/models"
+import Leaf from "./Svg/Leaf"
 
 export interface ScanScreenScoreProps {
   /**
@@ -27,10 +28,25 @@ export const ScanScreenScore = observer(function ScanScreenScore(props: ScanScre
         zIndex: 3,
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: "row",
         top: spacing.xl,
       }}
     >
-      <Text text={leaderboardStore.score} />
+      <Text
+        style={{
+          fontFamily: typography.fonts.borsok.normal,
+          fontSize: typography.fontSizes.h4,
+          paddingVertical: 4,
+        }}
+        text={leaderboardStore.score}
+      />
+      <Leaf
+        style={{
+          transform: [{ scale: 1.4 }],
+          marginLeft: 6,
+          marginTop: -6,
+        }}
+      />
     </View>
   )
 })
