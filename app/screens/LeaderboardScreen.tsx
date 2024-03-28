@@ -2,7 +2,7 @@ import React, { FC, useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Card, Screen, Text } from "app/components"
+import { AutoImage, Card, Screen, Text } from "app/components"
 import { $rootScreen, $title, colors, spacing, typography } from "app/theme"
 import { leaderboardServiceInstance } from "app/services/Leaderboard"
 import { useStores } from "app/models"
@@ -21,7 +21,7 @@ type UserScore = {
   username: string
   score: number
   mult?: number
-  user?: boolean
+  isUser?: boolean
 }
 
 export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function LeaderboardScreen() {
@@ -70,12 +70,22 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
   const renderLeaderboard = (): React.ReactNode => {
     return sortedLeaderboardData.map((el, index) => {
       return (
-        <View key={el.username} style={el.user ? $userTableRow : $tableRowContainer}>
+        <View key={el.username} style={el.isUser ? $userTableRow : $tableRowContainer}>
           {displayMedalOrRankNumber(index)}
-          <Text
-            style={{ ...$userNameColStyle, ...$tableRowUsernameAndIndexStyle }}
-            text={el.username}
-          />
+
+          <View style={$userNameColStyle}>
+            <Text
+              style={{ ...$userNameColStyle, ...$tableRowUsernameAndIndexStyle }}
+              text={el.username}
+            />
+            {el.username === "theShephard" && (
+              <AutoImage
+                source={require("../../assets/images/shep.jpg")}
+                style={{ height: 40, width: 40 }}
+              />
+            )}
+          </View>
+
           <View style={$scoreColContainer}>
             <Text style={$scoreColEntryTextOnlyStyle} text={el.score.toString()} />
             <Leaf
@@ -103,16 +113,17 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
         let userDataFormatted = {
           username: userData.username,
           score: parseInt(userData.score),
-          user: true,
+          isUser: true,
         }
-        let isJoelsUUID = secureStoreInstance.device_uuid === "773d52fc-06c3-4bc2-8303-641elff28bd5"
-        let leaderboardData = [...dummyData, userDataFormatted]
 
-        if (isJoelsUUID) {
+        let leaderboardData = [...dummyData, userDataFormatted]
+        let isJoelsUUID = secureStoreInstance.device_uuid === "773d52fc-06c3-4bc2-8303-641elff28bd5"
+
+        if (!isJoelsUUID) {
           let DaveTheShephard = {
             username: "theShephard",
             score: parseInt(userData.score) + 1,
-            user: false,
+            isUser: false,
           }
           leaderboardData.push(DaveTheShephard)
         }
@@ -203,6 +214,8 @@ const $positionColStyle: TextStyle = {
 
 const $userNameColStyle: TextStyle = {
   width: "60%",
+  flexDirection: "row",
+  alignItems: "center",
 }
 
 const $scoreColStyle: TextStyle = {
