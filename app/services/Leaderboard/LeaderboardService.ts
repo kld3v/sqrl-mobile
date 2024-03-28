@@ -2,7 +2,6 @@ import { secureStoreInstance } from "../SecureStore/SecureStorageService"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { api } from "../api"
 import { LeaderboardEntry } from "./LeaderboardService.types"
-import * as Device from "expo-device"
 
 export class LeaderboardService {
   public initialised: Promise<boolean> | null = null
@@ -14,9 +13,7 @@ export class LeaderboardService {
     try {
       if (!(await this.userHasScoreInStorage())) {
         await this.initUserScoreInStorage()
-        //TODO
-        let name = Device.deviceName ? Device.deviceName : "You"
-        await this.initUserNameInStorage(name)
+        await this.initUserNameInStorage("You")
       }
       if (!(await this.dummyLeaderboardDataExists())) {
         let data = await this.getDummyLeaderboardDataForFirstTime()

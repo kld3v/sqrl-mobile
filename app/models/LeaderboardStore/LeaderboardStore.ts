@@ -12,7 +12,7 @@ export const LeaderboardStoreModel = types
   })
   .actions(withSetPropAction)
   .views((store) => ({
-    get score() {
+    get getScore() {
       return store.userScore
     },
   })) // eslint-disable-line @typescript-eslint/no-unused-vars

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
 import { View, ViewStyle } from "react-native"
-import { Carousel, Icon, ScanScreenScore, Text } from "../../components"
+import { Button, Carousel, Icon, LeafFallAnimation, ScanScreenScore, Text } from "../../components"
 
 import { QrScanner, Screen } from "../../components"
 
@@ -71,6 +71,7 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
         onPress={() => navigation.navigate("Information")}
       />
       {content}
+      <Button onPress={leaderboardStore.bumpUserScore} />
     </Screen>
   )
 })
