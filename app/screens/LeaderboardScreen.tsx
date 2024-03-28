@@ -7,6 +7,10 @@ import { $rootScreen, $title, colors, spacing, typography } from "app/theme"
 import { leaderboardServiceInstance } from "app/services/Leaderboard"
 import { useStores } from "app/models"
 import Leaf from "app/components/Svg/Leaf"
+import GoldMedal from "app/components/Svg/GoldMedal"
+import SilverMedal from "app/components/Svg/SilverMedal"
+import BronzeMedal from "app/components/Svg/BronzeMedal"
+import DisplayUrlText from "app/components/CustomComponents/QrScanner/DisplayUrlText"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
@@ -34,17 +38,47 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
     return sortedData
   }, [leaderboardData])
 
+  const displayMedalOrRankNumber = (index: number): React.JSX.Element => {
+    switch (index) {
+      case 0:
+        return (
+          <View style={{ ...$positionColStyle }}>
+            <GoldMedal style={$medalStyle} />
+          </View>
+        )
+      case 1:
+        return (
+          <View style={{ ...$positionColStyle }}>
+            <SilverMedal style={$medalStyle} />
+          </View>
+        )
+      case 2:
+        return (
+          <View style={{ ...$positionColStyle }}>
+            <BronzeMedal style={$medalStyle} />
+          </View>
+        )
+      default:
+        return (
+          <Text style={{ ...$positionColStyle, ...$tableRowUsernameAndIndexStyle }}>
+            {index + 1}{" "}
+          </Text>
+        )
+    }
+  }
   const renderLeaderboard = (): React.ReactNode => {
     return sortedLeaderboardData.map((el, index) => {
       return (
-        <View key={el.username} style={el.user ? $userTableRow : $tableRow}>
-          <Text style={{ ...$positionColStyle, ...$tableRowEntryStyle }}>{index + 1} </Text>
-          <Text style={{ ...$userNameColStyle, ...$tableRowEntryStyle }} text={el.username} />
+        <View key={el.username} style={el.user ? $userTableRow : $tableRowContainer}>
+          {displayMedalOrRankNumber(index)}
+          <Text
+            style={{ ...$userNameColStyle, ...$tableRowUsernameAndIndexStyle }}
+            text={el.username}
+          />
           <View style={$scoreColContainer}>
             <Text style={$scoreColEntryTextOnlyStyle} text={el.score.toString()} />
             <Leaf
               style={{
-                transform: [{ scale: 1 }],
                 marginLeft: 6,
                 marginTop: -4,
               }}
@@ -110,7 +144,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
   )
 })
 
-const $tableRow: ViewStyle = {
+const $tableRowContainer: ViewStyle = {
   width: "100%",
   flexDirection: "row",
 
@@ -121,25 +155,29 @@ const $tableRow: ViewStyle = {
   // padding: spacing.md,
   paddingVertical: spacing.sm,
   marginVertical: spacing.sm,
+  alignItems: "center",
 }
 
 const $userTableRow: ViewStyle = {
-  ...$tableRow,
+  ...$tableRowContainer,
   backgroundColor: colors.scannerInfoBox,
   borderRadius: 16,
 }
+
 const $tableHeadStyle: TextStyle = {
   fontSize: 16,
   color: colors.palette.neutral100,
   // padding: spacing.md,
 }
 
-const $tableRowEntryStyle: TextStyle = {
-  fontFamily: typography.fonts.poppins.bold,
+const $tableRowUsernameAndIndexStyle: TextStyle = {
+  fontFamily: typography.fonts.poppins.semiBold,
   fontSize: 20,
   color: colors.palette.neutral800,
   // backgroundColor: "blue",
-  paddingVertical: 6,
+  // flexDirection: "row",
+  // alignItems: "center",
+  // paddingVertical: 8,
 }
 
 const $positionColStyle: TextStyle = {
@@ -158,13 +196,13 @@ const $scoreColStyle: TextStyle = {
 }
 const $scoreColContainer: ViewStyle = {
   ...$scoreColStyle,
-  // borderRadius: 30,
-  // borderColor: "#a3f632",
-  // borderWidth: 2,
+  borderRadius: 30,
+  borderColor: "#a3f632",
+  borderWidth: 2,
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "row",
-
+  height: 40,
   // backgroundColor: "blue",
 }
 
@@ -172,4 +210,11 @@ const $scoreColEntryTextOnlyStyle: TextStyle = {
   fontFamily: typography.fonts.poppins.semiBold,
   color: "white",
   textAlign: "center",
+}
+
+const $medalStyle = {
+  transform: [{ scale: 1.6 }],
+  // backgroundColor: "blue",
+  marginLeft: 22,
+  marginTop: 4,
 }

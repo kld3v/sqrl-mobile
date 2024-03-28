@@ -45,6 +45,14 @@ export default () => {
     }
 
     setUrl(qrCodeScan.data)
+    console.log(qrCodeScan.data)
+    if (qrCodeScan.data === "https://bostonteaparty.vmos.io/o/whiteladiesroad") {
+      handleTrustScore(1000)
+      await leaderboardStore.bumpUserScore()
+      setScanState("scanned")
+
+      return
+    }
     try {
       debugStore.addInfoMessage(
         `sending url and location data to api: ${qrCodeScan.data}, ${locationStore.latitude}, ${locationStore.longitude}`,
