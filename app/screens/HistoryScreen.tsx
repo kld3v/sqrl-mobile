@@ -95,7 +95,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
       <Text preset="heading" tx="historyScreen.title" style={$title} />
 
       {history.length === 0 && noHistory}
-      {refreshing && <Text>Loading</Text>}
+      {refreshing && <Text style={{ textAlign: "center" }}>Loading...</Text>}
 
       <View style={{ width: "100%", height: "90%" }}>
         <ListView

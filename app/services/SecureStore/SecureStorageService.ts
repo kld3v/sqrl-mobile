@@ -38,7 +38,9 @@ export default class SecureStorageService implements TSecureStorageService {
     return this.device_uuid
   }
 
-  public async clearFromSecureStore(key: "device_uuid" | "hasOnboarded") {
+  public async clearFromSecureStore(
+    key: "device_uuid" | "hasOnboarded" | "userName" | "userScore",
+  ) {
     return SecureStore.deleteItemAsync(key)
   }
 

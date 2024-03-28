@@ -71,7 +71,6 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
         onPress={() => navigation.navigate("Information")}
       />
       {content}
-      <Button onPress={leaderboardStore.bumpUserScore} />
     </Screen>
   )
 })

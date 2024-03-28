@@ -10,7 +10,8 @@ import Leaf from "app/components/Svg/Leaf"
 import GoldMedal from "app/components/Svg/GoldMedal"
 import SilverMedal from "app/components/Svg/SilverMedal"
 import BronzeMedal from "app/components/Svg/BronzeMedal"
-import DisplayUrlText from "app/components/CustomComponents/QrScanner/DisplayUrlText"
+import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
+
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
@@ -25,7 +26,7 @@ type UserScore = {
 
 export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function LeaderboardScreen() {
   // Pull in one of our MST stores
-  const { leaderboardStore } = useStores()
+  const { leaderboardStore, debugStore } = useStores()
 
   // Pull in navigation via hook
   // const navigation = useNavigation()
@@ -91,22 +92,36 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
 
   useEffect(() => {
     ;(async () => {
-      await leaderboardServiceInstance.waitForInitToComplete()
-      let dummyData = await leaderboardServiceInstance.getDummyLeaderboardDataFromStorage()
-      let userData = await leaderboardServiceInstance.getUserScoreAndUserNameFromStorage()
+      try {
+        await leaderboardServiceInstance.waitForInitToComplete()
+        let dummyData = await leaderboardServiceInstance.getDummyLeaderboardDataFromStorage()
+        let userData = await leaderboardServiceInstance.getUserScoreAndUserNameFromStorage()
+        if (!dummyData || !userData) {
+          console.log("dummyData", dummyData, "userData", userData)
+          return
+        }
+        let userDataFormatted = {
+          username: userData.username,
+          score: parseInt(userData.score),
+          user: true,
+        }
+        let isJoelsUUID = secureStoreInstance.device_uuid === "773d52fc-06c3-4bc2-8303-641elff28bd5"
+        let leaderboardData = [...dummyData, userDataFormatted]
 
-      if (!dummyData || !userData) {
-        console.log("dummyData", dummyData, "userData", userData)
-        return
-      }
-      let userDataFormatted = {
-        username: userData.username,
-        score: parseInt(userData.score),
-        user: true,
-      }
-      let leaderboardData = [...dummyData, userDataFormatted]
+        if (isJoelsUUID) {
+          let DaveTheShephard = {
+            username: "theShephard",
+            score: parseInt(userData.score) + 1,
+            user: false,
+          }
+          leaderboardData.push(DaveTheShephard)
+        }
 
-      setLeaderboardData(leaderboardData)
+        setLeaderboardData(leaderboardData)
+      } catch (error) {
+        console.log(error, "error setting the data for leaderboard - check leaderboard screen ")
+        debugStore.addErrorMessage("something fucked up in leaderboard screen")
+      }
     })()
   }, [leaderboardStore.userScore])
 

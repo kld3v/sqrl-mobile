@@ -135,6 +135,18 @@ export class LeaderboardService {
       return false
     }
   }
+
+  async nukeLeaderboardData(): Promise<boolean> {
+    try {
+      await secureStoreInstance.clearFromSecureStore("userName")
+      await secureStoreInstance.clearFromSecureStore("userScore")
+      await AsyncStorage.clear()
+    } catch (error) {
+      console.log("failed to clear Data", error)
+      return false
+    }
+    return true
+  }
 }
 
 export const leaderboardServiceInstance = new LeaderboardService()
