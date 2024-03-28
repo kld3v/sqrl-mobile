@@ -119,7 +119,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
         let leaderboardData = [...dummyData, userDataFormatted]
         let isJoelsUUID = secureStoreInstance.device_uuid === "773d52fc-06c3-4bc2-8303-641elff28bd5"
 
-        if (!isJoelsUUID) {
+        if (isJoelsUUID) {
           let DaveTheShephard = {
             username: "theShephard",
             score: parseInt(userData.score) + 1,
