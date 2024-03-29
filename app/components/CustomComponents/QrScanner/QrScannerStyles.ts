@@ -15,7 +15,7 @@ export const $qrlaButton: ViewStyle = {
 
 export const $informationIcon: ViewStyle = {
   margin: spacing.md,
-  zIndex: 5,
+  zIndex: 4,
   position: "absolute",
   top: 8,
   left: 0,

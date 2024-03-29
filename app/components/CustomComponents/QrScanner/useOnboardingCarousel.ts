@@ -12,6 +12,7 @@ export default () => {
     require("../../../../assets/images/onBoardingImages/goodToGo.jpeg"),
     require("../../../../assets/images/onBoardingImages/eqr.jpeg"),
     require("../../../../assets/images/onBoardingImages/caution.jpeg"),
+    require("../../../../assets/images/onBoardingImages/caution.jpeg"),
   ]
 
   const text = [
@@ -19,6 +20,7 @@ export default () => {
     "If the QR code is safe, go ahead to the destination by clicking on the proceed button.",
     "Skip scanning! Utilise our EQR feature for instant access to the right QR code at your location.",
     "If the QR code is flagged as dangerous, we advice against proceeding to the site.",
+    "Earn a leaf on every scan and become the top scanner for your area!",
   ]
 
   const onNextPress = () => {
