@@ -12,7 +12,7 @@ export default () => {
     require("../../../../assets/images/onBoardingImages/goodToGo.jpeg"),
     require("../../../../assets/images/onBoardingImages/eqr.jpeg"),
     require("../../../../assets/images/onBoardingImages/caution.jpeg"),
-    require("../../../../assets/images/onBoardingImages/caution.jpeg"),
+    require("../../../../assets/images/onBoardingImages/goodToGo.jpeg"),
   ]
 
   const text = [
