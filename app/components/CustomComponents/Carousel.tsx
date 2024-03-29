@@ -35,14 +35,20 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
   const hitSlopFactor = { top: 10, bottom: 10, left: 10, right: 10 }
   console.log("Carousel rendered")
 
-  const onSwipeEvent = (event: GestureEvent) => {
-    if (event.nativeEvent.state === State.END) {
-      const { translationX } = event.nativeEvent
+  const swipeThreshold = 20 // Minimum pixels the user must swipe to trigger the action
+  const velocityThreshold = 500 // Minimum velocity of the swipe
 
-      if ((translationX as number) > 0) {
-        currentImageIndex > 0 && onBackPress()
-      } else {
-        currentImageIndex !== images.length - 1 && onNextPress()
+  const onSwipeEvent = (event: GestureEvent<Record<string, number>>) => {
+    if (event.nativeEvent.state === State.END) {
+      const { translationX, velocityX } = event.nativeEvent
+
+      if (Math.abs(translationX) > swipeThreshold && Math.abs(velocityX) > velocityThreshold) {
+        if (translationX > 0) {
+          console.log("Swiped right")
+          currentImageIndex > 0 && onBackPress()
+        } else {
+          currentImageIndex !== images.length - 1 && onNextPress()
+        }
       }
     }
   }
