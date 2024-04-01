@@ -6,7 +6,6 @@ import { TabScreenProps } from "../../navigators/MainNavigator"
 import { colors, spacing, typography } from "../../theme"
 import { isRTL } from "../../i18n"
 import { useStores } from "../../models"
-import * as Device from "expo-device"
 import { observer } from "mobx-react-lite"
 import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
 import * as Clipboard from "expo-clipboard"
@@ -66,20 +65,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     } catch (error) {
       debugStore.addErrorMessage(`dummyApiTest_HTTPS_ApiSauce: ${JSON.stringify(error)}`)
     }
-  }, [])
-
-  const renderDeviceProperties = useCallback((properties: string[]) => {
-    return properties.map((property) => (
-      <ListItem
-        key={property}
-        LeftComponent={
-          <View style={$item}>
-            <Text preset="bold">{property}</Text>
-            <Text>{Device[property as keyof typeof Device]}</Text>
-          </View>
-        }
-      />
-    ))
   }, [])
 
   const renderDebugStoreErrorMessages = useCallback(() => {
@@ -322,26 +307,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
             </View>
           }
         />
-        {renderDeviceProperties([
-          "brand",
-          "manufacturer",
-          "modelId",
-          "modelName",
-          "deviceType",
-          "productName",
-          "osName",
-          "osVersion",
-          "osBuildId",
-          "osInternalBuildId",
-          "osBuildFingerprint",
-          "totalMemory",
-          "supportedCpuArchitectures",
-          "deviceName",
-          "deviceYearClass",
-          "platformApiLevel",
-          "platformVersion",
-          "isDevice",
-        ])}
+
         {renderDebugStoreErrorMessages()}
         {renderDebugStoreInfoMessages()}
       </View>
