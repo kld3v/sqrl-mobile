@@ -1,7 +1,7 @@
 import { Pressable, View } from "react-native"
 import { observer } from "mobx-react-lite"
 
-import { Camera } from "expo-camera"
+import { BarCodeScanningResult, Camera } from "expo-camera"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
@@ -9,16 +9,14 @@ import { $card, $container, $reticle } from "./QrScannerStyles"
 
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
-import { quintonTheCybear } from "app/utils/QuintonTheCybear"
 
 export const QrScanner = observer(function QrScanner() {
   const {
     scanAgain,
     errorMsg,
-    onScanModified,
+    onScan,
     setErrorMsg,
     safe,
-    setReadyToScan,
     readyToScan,
     scanState,
     setScanState,
@@ -27,15 +25,16 @@ export const QrScanner = observer(function QrScanner() {
     updateCameraFocus,
   } = useScanResults()
 
-  quintonTheCybear.log("qrScanner re-rendered")
+  const handleScan = (barcodeScanResult: BarCodeScanningResult) => {
+    if (readyToScan.current) {
+      onScan(barcodeScanResult)
+    }
+  }
+
   return (
     <View style={$container}>
       <Pressable style={{ flex: 1 }} onPress={updateCameraFocus}>
-        <Camera
-          style={{ flex: 1 }}
-          onBarCodeScanned={readyToScan ? onScanModified : undefined}
-          autoFocus={focus}
-        >
+        <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus}>
           <Reticle
             style={$reticle}
             scanState={scanState}
@@ -53,7 +52,7 @@ export const QrScanner = observer(function QrScanner() {
           setScanState={setScanState}
           setErrorMessage={setErrorMsg}
           errorMessage={errorMsg}
-          setReadyToScan={setReadyToScan}
+          readyToScan={readyToScan}
         />
       )}
       <DisplayUrlText url={url} scanState={scanState} />
