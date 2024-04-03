@@ -38,8 +38,6 @@ export const TermsAndConditionsStoreModel = types
       )
 
       documentsHaveBeenSignedSuccessfully && this.clearTerms()
-
-      console.log("docs signed ok?", documentsHaveBeenSignedSuccessfully)
     },
 
     async setUnsignedDocumentsToState(): Promise<void> {
