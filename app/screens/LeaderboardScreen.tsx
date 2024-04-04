@@ -2,7 +2,7 @@ import React, { FC, useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { AutoImage, Card, Screen, Text } from "app/components"
+import { Screen, Text } from "app/components"
 import { $rootScreen, $title, colors, spacing, typography } from "app/theme"
 import { leaderboardServiceInstance } from "app/services/Leaderboard"
 import { useStores } from "app/models"
@@ -10,7 +10,6 @@ import Leaf from "app/components/Svg/Leaf"
 import GoldMedal from "app/components/Svg/GoldMedal"
 import SilverMedal from "app/components/Svg/SilverMedal"
 import BronzeMedal from "app/components/Svg/BronzeMedal"
-import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
 
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
@@ -78,12 +77,6 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
               style={{ ...$userNameColStyle, ...$tableRowUsernameAndIndexStyle }}
               text={el.username}
             />
-            {el.username === "theShephard" && (
-              <AutoImage
-                source={require("../../assets/images/shep.jpg")}
-                style={{ height: 40, width: 40 }}
-              />
-            )}
           </View>
 
           <View style={$scoreColContainer}>
@@ -115,18 +108,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
           score: parseInt(userData.score),
           isUser: true,
         }
-
         let leaderboardData = [...dummyData, userDataFormatted]
-        let isJoelsUUID = secureStoreInstance.device_uuid === "773d52fc-06c3-4bc2-8303-641elff28bd5"
-
-        if (isJoelsUUID) {
-          let DaveTheShephard = {
-            username: "theShephard",
-            score: parseInt(userData.score) + 1,
-            isUser: false,
-          }
-          leaderboardData.push(DaveTheShephard)
-        }
 
         setLeaderboardData(leaderboardData)
       } catch (error) {
@@ -158,12 +140,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
             width: "100%",
             flexDirection: "row",
           }}
-        >
-          {/* <Text style={{ ...$positionColStyle, ...$tableHeadStyle }}>Pos</Text>
-          <Text style={{ ...$userNameColStyle, ...$tableHeadStyle }}>Player</Text> */}
-
-          {/* <Text style={{ ...$scoreColStyle, ...$tableHeadStyle }}>Leaves</Text> */}
-        </View>
+        ></View>
         {renderLeaderboard()}
       </View>
     </Screen>
@@ -173,12 +150,6 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
 const $tableRowContainer: ViewStyle = {
   width: "100%",
   flexDirection: "row",
-
-  // backgroundColor: "blue"
-  // borderRadius: 50,
-  // borderWidth: 2,
-  // borderColor: "#a3f632",
-  // padding: spacing.md,
   paddingVertical: spacing.sm,
   marginVertical: spacing.sm,
   alignItems: "center",
@@ -193,23 +164,17 @@ const $userTableRow: ViewStyle = {
 const $tableHeadStyle: TextStyle = {
   fontSize: 16,
   color: colors.palette.neutral100,
-  // padding: spacing.md,
 }
 
 const $tableRowUsernameAndIndexStyle: TextStyle = {
   fontFamily: typography.fonts.poppins.semiBold,
   fontSize: 20,
   color: colors.palette.neutral800,
-  // backgroundColor: "blue",
-  // flexDirection: "row",
-  // alignItems: "center",
-  // paddingVertical: 8,
 }
 
 const $positionColStyle: TextStyle = {
   width: "16%",
   textAlign: "center",
-  // backgroundColor: "red",
 }
 
 const $userNameColStyle: TextStyle = {
@@ -231,7 +196,6 @@ const $scoreColContainer: ViewStyle = {
   alignItems: "center",
   flexDirection: "row",
   height: 40,
-  // backgroundColor: "blue",
 }
 
 const $scoreColEntryTextOnlyStyle: TextStyle = {
@@ -242,7 +206,6 @@ const $scoreColEntryTextOnlyStyle: TextStyle = {
 
 const $medalStyle = {
   transform: [{ scale: 1.6 }],
-  // backgroundColor: "blue",
   marginLeft: 22,
   marginTop: 4,
 }

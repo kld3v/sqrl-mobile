@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
-import { View, ViewStyle } from "react-native"
-import { Button, Carousel, Icon, LeafFallAnimation, ScanScreenScore, Text } from "../../components"
+import { ViewStyle } from "react-native"
+import { Carousel, Icon, ScanScreenScore } from "../../components"
 
 import { QrScanner, Screen } from "../../components"
 
@@ -10,7 +10,7 @@ import CameraPermissionDenied from "./CameraPermissionDenied"
 import { useCameraPermissions } from "expo-camera/next"
 import CameraPermissionUndetermined from "./CamerPermissionUndetermined"
 import { $informationIcon } from "app/components/CustomComponents/QrScanner/QrScannerStyles"
-import { colors, spacing } from "app/theme"
+import { colors } from "app/theme"
 import { useStores } from "app/models"
 import { useNavigation } from "@react-navigation/native"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
