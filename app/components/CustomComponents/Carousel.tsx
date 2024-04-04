@@ -5,14 +5,7 @@ import { colors, spacing, typography } from "app/theme"
 import { Card } from "../Card"
 import { Text } from "../Text"
 import useOnboardingCarousel from "./QrScanner/useOnboardingCarousel"
-import {
-  GestureDetector,
-  Gesture,
-  PanGestureHandler,
-  GestureEvent,
-  State,
-} from "react-native-gesture-handler"
-import Animated, { useSharedValue, withTiming, useAnimatedStyle } from "react-native-reanimated"
+import { PanGestureHandler, GestureEvent, State } from "react-native-gesture-handler"
 
 export interface CarouselProps {
   style?: StyleProp<ViewStyle>
@@ -59,7 +52,7 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
         // verticalAlignment="space-between"
         style={{
           width: width - 40,
-          height: height - 108,
+          height: height - 208,
           padding: spacing.lg,
         }}
         HeadingComponent={
