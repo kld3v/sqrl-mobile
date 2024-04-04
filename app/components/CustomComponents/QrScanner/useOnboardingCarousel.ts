@@ -8,11 +8,13 @@ export default () => {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const images = [
-    require("../../../../assets/images/onBoardingImages/checking.jpeg"),
-    require("../../../../assets/images/onBoardingImages/goodToGo.jpeg"),
-    require("../../../../assets/images/onBoardingImages/eqr.jpeg"),
-    require("../../../../assets/images/onBoardingImages/caution.jpeg"),
-    require("../../../../assets/images/onBoardingImages/goodToGo.jpeg"),
+    require("../../../../assets/images/onBoardingImages/checking.png"),
+    require("../../../../assets/images/onBoardingImages/goodToGo.png"),
+    require("../../../../assets/images/onBoardingImages/eqr.png"),
+    require("../../../../assets/images/onBoardingImages/caution.png"),
+    require("../../../../assets/images/onBoardingImages/goodToGo.png"),
+    require("../../../../assets/images/onBoardingImages/history.png"),
+    require("../../../../assets/images/onBoardingImages/leaderboard.png"),
   ]
 
   const text = [
@@ -21,6 +23,8 @@ export default () => {
     "Skip scanning! Utilise our EQR feature for instant access to the right QR code at your location.",
     "If the QR code is flagged as dangerous, we advice against proceeding to the site.",
     "Earn a leaf on every scan and become the top scanner for your area!",
+    "",
+    "",
   ]
 
   const onNextPress = () => {

@@ -26,7 +26,6 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
   const { currentImageIndex, images, text, onNextPress, onBackPress, onFinishedOnboardingPress } =
     useOnboardingCarousel()
   const hitSlopFactor = { top: 10, bottom: 10, left: 10, right: 10 }
-  console.log("Carousel rendered")
 
   const swipeThreshold = 20 // Minimum pixels the user must swipe to trigger the action
   const velocityThreshold = 500 // Minimum velocity of the swipe
