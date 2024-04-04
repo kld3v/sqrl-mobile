@@ -81,7 +81,7 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-google-services.json
+
 qrla-c43ff-firebase-adminsdk-nji1i-7b848b1c7a.json
 
 # Configurations
