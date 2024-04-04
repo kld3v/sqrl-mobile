@@ -22,7 +22,6 @@ export default class SecureStorageService implements TSecureStorageService {
   public async initDeviceUUID(): Promise<void> {
     try {
       let uuid: string | null = await SecureStore.getItemAsync("device_uuid")
-      console.log("get uuid from store", uuid)
       if (uuid === null) {
         uuid = UUIDService.generateUUID()
         await SecureStore.setItemAsync("device_uuid", uuid)
@@ -38,7 +37,9 @@ export default class SecureStorageService implements TSecureStorageService {
     return this.device_uuid
   }
 
-  public async clearFromSecureStore(key: "device_uuid" | "hasOnboarded") {
+  public async clearFromSecureStore(
+    key: "device_uuid" | "hasOnboarded" | "userName" | "userScore",
+  ) {
     return SecureStore.deleteItemAsync(key)
   }
 

@@ -1,10 +1,11 @@
 import * as React from "react"
-import { Dimensions, Pressable, StyleProp, View, ViewStyle, Image } from "react-native"
+import { Dimensions, Pressable, StyleProp, View, ViewStyle, Image, ImageStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
 import { Card } from "../Card"
 import { Text } from "../Text"
 import useOnboardingCarousel from "./QrScanner/useOnboardingCarousel"
+import { PanGestureHandler, GestureEvent, State } from "react-native-gesture-handler"
 
 export interface CarouselProps {
   style?: StyleProp<ViewStyle>
@@ -25,13 +26,33 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
   const { currentImageIndex, images, text, onNextPress, onBackPress, onFinishedOnboardingPress } =
     useOnboardingCarousel()
   const hitSlopFactor = { top: 10, bottom: 10, left: 10, right: 10 }
+  console.log("Carousel rendered")
+
+  const swipeThreshold = 20 // Minimum pixels the user must swipe to trigger the action
+  const velocityThreshold = 500 // Minimum velocity of the swipe
+
+  const onSwipeEvent = (event: GestureEvent<Record<string, number>>) => {
+    if (event.nativeEvent.state === State.END) {
+      const { translationX, velocityX } = event.nativeEvent
+
+      if (Math.abs(translationX) > swipeThreshold && Math.abs(velocityX) > velocityThreshold) {
+        if (translationX > 0) {
+          console.log("Swiped right")
+          currentImageIndex > 0 && onBackPress()
+        } else {
+          currentImageIndex !== images.length - 1 && onNextPress()
+        }
+      }
+    }
+  }
+
   return (
     <View style={$styles}>
       <Card
         // verticalAlignment="space-between"
         style={{
           width: width - 40,
-          height: height - 108,
+          height: height - 208,
           padding: spacing.lg,
         }}
         HeadingComponent={
@@ -106,11 +127,9 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
           </>
         }
       >
-        <Image
-          source={images[currentImageIndex]}
-          style={{ flex: 1, width: "100%", maxHeight: "100%" }}
-          resizeMode="contain"
-        />
+        <PanGestureHandler onHandlerStateChange={onSwipeEvent}>
+          <Image source={images[currentImageIndex]} style={$imageStyle} resizeMode="contain" />
+        </PanGestureHandler>
       </Card>
     </View>
   )
@@ -118,4 +137,10 @@ export const Carousel = observer(function Carousel(props: CarouselProps) {
 
 const $container: ViewStyle = {
   justifyContent: "center",
+}
+
+const $imageStyle: ImageStyle = {
+  flex: 1,
+  width: "100%",
+  maxHeight: "100%",
 }

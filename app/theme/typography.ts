@@ -55,7 +55,7 @@ const fonts = {
 }
 
 const fontSizes = {
-  h1: 38,
+  h1: 48,
   h2: 34,
   h3: 30,
   h4: 26,

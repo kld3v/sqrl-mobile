@@ -23,6 +23,8 @@ import Config from "./config"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { ViewStyle } from "react-native"
 import { quintonTheCybear } from "./utils/QuintonTheCybear"
+import { leaderboardServiceInstance } from "./services/Leaderboard"
+import { QrVenueNotificationsManager } from "./components"
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
 // Web linking configuration
@@ -80,6 +82,7 @@ function App(props: AppProps) {
         termsAndConditionsStore.termsIds,
       )
       debugStore.addInfoMessage("Checked to see if user needed to sign up to date contract.")
+      await leaderboardServiceInstance.incrementDummyLeadboardData()
     } catch (error) {
       __DEV__ && console.error(`Failed to init some app functions: ${error}`)
       debugStore.addErrorMessage(`Failed to init some app functions: ${error}`)
@@ -112,6 +115,7 @@ function App(props: AppProps) {
               initialState={initialNavigationState}
               onStateChange={onNavigationStateChange}
             />
+            <QrVenueNotificationsManager />
           </GestureHandlerRootView>
         </ErrorBoundary>
       </SafeAreaProvider>

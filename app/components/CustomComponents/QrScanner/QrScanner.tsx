@@ -1,72 +1,48 @@
-import { View } from "react-native"
+import { Pressable, View } from "react-native"
 import { observer } from "mobx-react-lite"
-import { CameraView } from "expo-camera/next"
+
+import { BarCodeScanningResult, Camera } from "expo-camera"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
-import { $card, $container, $reticle, $informationIcon } from "./QrScannerStyles"
-import QrlaButton from "./QrlaButton"
+import { $card, $container, $reticle } from "./QrScannerStyles"
+
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
-
-import { Carousel } from "app/components/CustomComponents/Carousel"
-import { useStores } from "app/models"
-import useOnboarding from "./useOnboarding"
-import { Icon } from "app/components/Icon"
-import { colors } from "app/theme"
-import { useNavigation } from "@react-navigation/native"
 
 export const QrScanner = observer(function QrScanner() {
   const {
     scanAgain,
     errorMsg,
-    onScanModified,
+    onScan,
     setErrorMsg,
     safe,
-    setReadyToScan,
     readyToScan,
     scanState,
     setScanState,
     url,
+    focus,
+    updateCameraFocus,
   } = useScanResults()
 
-  const { onboardingStore } = useStores()
-  const navigation = useNavigation()
-  useOnboarding()
+  const handleScan = (barcodeScanResult: BarCodeScanningResult) => {
+    if (readyToScan.current) {
+      onScan(barcodeScanResult)
+    }
+  }
 
   return (
     <View style={$container}>
-      <Icon
-        icon="information"
-        color={colors.palette.primary300}
-        containerStyle={$informationIcon}
-        size={32}
-        // @ts-ignore
-        onPress={() => navigation.navigate("Information")}
-      />
-      <QrlaButton />
-      <CameraView style={{ flex: 1 }} onBarcodeScanned={readyToScan ? onScanModified : undefined} />
-      <Reticle
-        style={$reticle}
-        scanState={scanState}
-        safe={safe}
-        scanning={scanState === "scanning"}
-      />
-      {!onboardingStore.hasOnboarded && (
-        <Carousel
-          style={{
-            position: "absolute",
-            justifyContent: "center",
-            alignItems: "center",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            top: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 5,
-          }}
-        />
-      )}
+      <Pressable style={{ flex: 1 }} onPress={updateCameraFocus}>
+        <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus}>
+          <Reticle
+            style={$reticle}
+            scanState={scanState}
+            safe={safe}
+            scanning={scanState === "scanning"}
+          />
+        </Camera>
+      </Pressable>
       {scanState !== "notScanned" && (
         <ScanResponseDisplay
           style={$card}
@@ -76,7 +52,7 @@ export const QrScanner = observer(function QrScanner() {
           setScanState={setScanState}
           setErrorMessage={setErrorMsg}
           errorMessage={errorMsg}
-          setReadyToScan={setReadyToScan}
+          readyToScan={readyToScan}
         />
       )}
       <DisplayUrlText url={url} scanState={scanState} />

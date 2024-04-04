@@ -1,4 +1,4 @@
-import { OnboardingModel } from "./OnboardingStore/Onboarding"
+import { OnboardingModel } from "./Onboarding"
 
 test("can be created", () => {
   const instance = OnboardingModel.create({})

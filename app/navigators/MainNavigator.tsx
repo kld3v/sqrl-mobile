@@ -10,6 +10,7 @@ import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { locationService } from "app/services/Location"
 import { useStores } from "app/models"
+import { HistoryScreen, LeaderboardScreen } from "app/screens"
 
 export type TabParamList = {
   Community: undefined
@@ -18,6 +19,8 @@ export type TabParamList = {
   Scan: undefined
   Debug: undefined
   Testing: undefined
+  Leaderboard: undefined
+  History: undefined
 }
 
 /**
@@ -59,6 +62,17 @@ export function MainNavigator() {
       }}
     >
       <Tab.Screen
+        name="History"
+        component={HistoryScreen}
+        options={{
+          tabBarLabel: "",
+          tabBarAccessibilityLabel: translate("navigator.scannerTab"),
+          tabBarIcon: ({ focused }) => (
+            <Icon icon="more" color={focused ? colors.tint : colors.text} size={iconSize} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Scan"
         component={ScanScreen}
         options={{
@@ -69,12 +83,22 @@ export function MainNavigator() {
           ),
         }}
       />
+      <Tab.Screen
+        name="Leaderboard"
+        component={LeaderboardScreen}
+        options={{
+          tabBarLabel: "",
+          tabBarAccessibilityLabel: translate("navigator.scannerTab"),
+          tabBarIcon: ({ focused }) => (
+            <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   )
 }
 
 const $tabBar: ViewStyle = {
-  display: "none",
   backgroundColor: colors.background,
   borderTopColor: colors.transparent,
 }

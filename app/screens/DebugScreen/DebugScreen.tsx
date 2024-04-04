@@ -1,19 +1,19 @@
 import React, { FC, useCallback, useEffect } from "react"
 import * as Application from "expo-application"
 import { Linking, Platform, TextStyle, View, ViewStyle } from "react-native"
-import { Button, ListItem, Screen, Text } from "../../components"
+import { AutoImage, Button, ListItem, Screen, Text } from "../../components"
 import { TabScreenProps } from "../../navigators/MainNavigator"
-import { colors, spacing } from "../../theme"
+import { colors, spacing, typography } from "../../theme"
 import { isRTL } from "../../i18n"
 import { useStores } from "../../models"
-import * as Device from "expo-device"
 import { observer } from "mobx-react-lite"
 import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
 import * as Clipboard from "expo-clipboard"
 import { qrScannerService } from "app/services/QrScanner"
 import { pushNotificationService } from "app/services/PushNotifications"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
-import { clear } from "app/utils/storage"
+import { historyService } from "app/services/History/HistoryService"
+import { leaderboardServiceInstance } from "app/services/Leaderboard"
 
 const copyToClipboard = async (message: any) => {
   await Clipboard.setStringAsync(message)
@@ -26,6 +26,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     locationStore: { longitude, latitude },
     pushNotificationsStore,
     onboardingStore,
+    leaderboardStore,
   } = useStores()
 
   useOnboarding()
@@ -64,20 +65,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     } catch (error) {
       debugStore.addErrorMessage(`dummyApiTest_HTTPS_ApiSauce: ${JSON.stringify(error)}`)
     }
-  }, [])
-
-  const renderDeviceProperties = useCallback((properties: string[]) => {
-    return properties.map((property) => (
-      <ListItem
-        key={property}
-        LeftComponent={
-          <View style={$item}>
-            <Text preset="bold">{property}</Text>
-            <Text>{Device[property as keyof typeof Device]}</Text>
-          </View>
-        }
-      />
-    ))
   }, [])
 
   const renderDebugStoreErrorMessages = useCallback(() => {
@@ -152,6 +139,24 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     secureStoreInstance.clearFromSecureStore("device_uuid")
   }, [])
 
+  const getHistory = useCallback(async () => {
+    let history = await historyService.getTestHistory()
+    debugStore.addInfoMessage(JSON.stringify(history))
+  }, [])
+
+  const bumpUserScore = useCallback(async () => {
+    await leaderboardStore.bumpUserScore()
+    debugStore.addInfoMessage(leaderboardStore.userScore)
+    alert("bumped")
+  }, [])
+
+  const nukeLeaderboardData = useCallback(async () => {
+    await leaderboardServiceInstance.nukeLeaderboardData()
+    alert(
+      "Leaderboard data destroyed. You'll probs need to close/open or reinstall the app to reset. ",
+    )
+  }, [])
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
@@ -161,6 +166,31 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
       />
 
       <Text style={$title} preset="heading" tx="demoDebugScreen.title" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          paddingVertical: 16,
+          // backgroundColor: "blue",
+        }}
+      >
+        <Text
+          text="“You all now can imagine a little Dave sitting on your shoulder, and can ask yourselves 'What would Dave do/say in this situation?’” "
+          style={{
+            width: "80%",
+            textAlign: "center",
+            fontFamily: typography.Poppins.mediumItalic,
+          }}
+        />
+        <AutoImage
+          source={require("../../../assets/images/shep.jpg")}
+          style={{
+            width: 200,
+            height: 200,
+          }}
+        />
+      </View>
       <View style={$itemsContainer}>
         {{ __DEV__ } && (
           <View style={$buttonContainer}>
@@ -190,6 +220,24 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         </View>
         <View style={$buttonContainer}>
           <Button style={$button} text="Clear Device UUID" onPress={clearDeviceUUID} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="NukeLeaderboardData " onPress={nukeLeaderboardData} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button
+            style={$button}
+            text="Test Sentry Error"
+            onPress={() => {
+              throw new Error("Hello Sentry")
+            }}
+          />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Get History" onPress={getHistory} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Bump User Score" onPress={bumpUserScore} />
         </View>
         <ListItem
           LeftComponent={
@@ -259,27 +307,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
             </View>
           }
         />
-
-        {renderDeviceProperties([
-          "brand",
-          "manufacturer",
-          "modelId",
-          "modelName",
-          "deviceType",
-          "productName",
-          "osName",
-          "osVersion",
-          "osBuildId",
-          "osInternalBuildId",
-          "osBuildFingerprint",
-          "totalMemory",
-          "supportedCpuArchitectures",
-          "deviceName",
-          "deviceYearClass",
-          "platformApiLevel",
-          "platformVersion",
-          "isDevice",
-        ])}
 
         {renderDebugStoreErrorMessages()}
         {renderDebugStoreInfoMessages()}

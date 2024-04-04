@@ -33,23 +33,15 @@ export interface ScanResponseDisplayProps {
   setScanState: React.Dispatch<React.SetStateAction<ScanStateOptions>>
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
   errorMessage: string | null
-  setReadyToScan: React.Dispatch<React.SetStateAction<boolean>>
+  readyToScan: React.MutableRefObject<boolean>
   style?: StyleProp<ViewStyle>
 }
 
 export const ScanResponseDisplay = observer(function ScanResponseDisplay(
   props: ScanResponseDisplayProps,
 ) {
-  const {
-    safe,
-    scanState,
-    setScanState,
-    url,
-    errorMessage,
-    setErrorMessage,
-    setReadyToScan,
-    style,
-  } = props
+  const { safe, scanState, setScanState, url, errorMessage, setErrorMessage, readyToScan, style } =
+    props
 
   const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
@@ -70,7 +62,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
   const resetScanState = useCallback(() => {
     setScanState("notScanned")
     setErrorMessage(null)
-    setReadyToScan(true)
+    readyToScan.current = true
   }, [])
 
   const deviceIsAndroid = Platform.OS === "android"
