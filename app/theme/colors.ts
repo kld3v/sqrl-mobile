@@ -41,6 +41,8 @@ const palette = {
   overlay50: "rgba(25, 16, 21, 0.5)",
 
   tableBorder: "rgba(215, 242, 194, 0.5)",
+
+  heartRed: "#ea3b52",
 } as const
 
 export const colors = {

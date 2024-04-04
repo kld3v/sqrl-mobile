@@ -10,7 +10,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Card, ListView, Screen, Text } from "app/components"
+import { Card, Icon, ListView, Screen, Text } from "app/components"
 import { $rootScreen, $title } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
 import Tick from "app/components/Svg/Tick"
@@ -18,6 +18,7 @@ import Cancel from "app/components/Svg/Cancel"
 import { Scan } from "app/services/History/HistoryService.types"
 import { historyService } from "app/services/History"
 import LottieView from "lottie-react-native"
+import HeartIcon from "app/components/CustomComponents/HeartIcon"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
@@ -29,7 +30,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   const fetchHistory = async () => {
     setRefreshing(true)
     // Fetch history data
-    let res = await historyService.getHistory()
+    let res = await historyService.getTestHistory()
     if (res) {
       setHistory(res)
     }
@@ -68,17 +69,27 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   }, [history])
 
   const renderItem = ({ item, index }: { item: Scan; index: number }) => (
-    <Pressable key={index} style={$scanCard} onPress={takeUserToScanUrl(item)}>
+    // <Pressable key={index} style={$scanCard} onPress={takeUserToScanUrl(item)}>
+    <Pressable key={index} style={$scanCard}>
       <Card
-        style={{ padding: 16, position: "relative" }}
-        heading={item.url.length > 48 ? `${item.url.substring(0, 48)}...` : item.url}
-        headingStyle={{ color: "black", maxWidth: "80%" }}
+        style={{ paddingVertical: 16, paddingHorizontal: 16 }}
+        heading={item.url.length > 36 ? `${item.url.substring(0, 36)}...` : item.url}
+        headingStyle={{ color: "black", maxWidth: "90%", marginTop: 8 }}
         RightComponent={
-          item.trust_score > 500 ? <Tick style={$iconStyle} /> : <Cancel style={$iconStyle} />
+          <View style={$iconContainer}>
+            {item.trust_score > 500 ? (
+              <>
+                <Tick style={$iconStyle} />
+                <HeartIcon onPress={() => console.log("click")} />
+              </>
+            ) : (
+              <Cancel style={$iconStyle} />
+            )}
+          </View>
         }
         RightComponentStyle={{ justifyContent: "center", alignItems: "center" }}
         footer={item.date_and_time}
-        footerStyle={{ color: "black" }}
+        footerStyle={{ color: "black", marginBottom: 8 }}
       />
     </Pressable>
   )
@@ -111,17 +122,18 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   )
 })
 
-const $root: ViewStyle = {
-  flex: 1,
-}
-
 const $scanCard: ViewStyle = {
-  marginVertical: 8,
+  marginVertical: 16,
 }
 
 const $iconStyle: ImageStyle = {
-  position: "absolute",
-  top: 0,
-  bottom: 0,
-  transform: [{ scale: 1.3 }],
+  transform: [{ scale: 0.8 }],
+  // backgroundColor: "blue",
 } as const
+
+const $iconContainer: ViewStyle = {
+  // backgroundColor: "black",
+  justifyContent: "space-between",
+  alignItems: "center",
+  height: "100%",
+}
