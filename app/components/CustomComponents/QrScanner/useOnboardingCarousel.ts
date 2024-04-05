@@ -8,23 +8,23 @@ export default () => {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const images = [
+    require("../../../../assets/images/onBoardingImages/normal.png"),
     require("../../../../assets/images/onBoardingImages/checking.png"),
     require("../../../../assets/images/onBoardingImages/goodToGo.png"),
-    require("../../../../assets/images/onBoardingImages/eqr.png"),
     require("../../../../assets/images/onBoardingImages/caution.png"),
-    require("../../../../assets/images/onBoardingImages/goodToGo.png"),
+    require("../../../../assets/images/onBoardingImages/eqr.png"),
     require("../../../../assets/images/onBoardingImages/history.png"),
     require("../../../../assets/images/onBoardingImages/leaderboard.png"),
   ]
 
   const text = [
     "Hold the camera up to QR code for scanning.",
-    "If the QR code is safe, go ahead to the destination by clicking on the proceed button.",
-    "Skip scanning! Utilise our EQR feature for instant access to the right QR code at your location.",
-    "If the QR code is flagged as dangerous, we advice against proceeding to the site.",
-    "Earn a leaf on every scan and become the top scanner for your area!",
-    "",
-    "",
+    "Wait a couple of seconds while we check the QR code.",
+    "If the QR code is safe, go ahead to the destination.",
+    "If the QR code is flagged as dangerous, we advise against proceeding to the site.",
+    "Skip scanning! Utilise our EQR feature for instant access to the right QR code at your location!",
+    "View your previous scans for quick access with our 'History' page.",
+    "Compete and climb your way up the leaderboard to become a Top Scanner!",
   ]
 
   const onNextPress = () => {
