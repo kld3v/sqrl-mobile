@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from "react"
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
 import {
   Alert,
@@ -25,17 +25,15 @@ interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistoryScreen() {
   const [history, setHistory] = useState<Scan[]>([])
   const [refreshing, setRefreshing] = useState(false)
-  const loadingAnimation = useRef(null)
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     setRefreshing(true)
-    // Fetch history data
     let res = await historyService.getTestHistory()
     if (res) {
       setHistory(res)
     }
     setRefreshing(false)
-  }
+  }, [])
 
   useEffect(() => {
     fetchHistory()
