@@ -7,4 +7,5 @@
  */
 export default {
   API_URL: "https://app.qrla.io/api",
+  GOOGLE_AUTH_URL: "https://qrla.io/login/google",
 }

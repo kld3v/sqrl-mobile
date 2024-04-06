@@ -1,6 +1,6 @@
 export * from "./WelcomeScreen"
 
-export * from "./LoginScreen"
+export * from "./SignInScreen"
 export * from "./CommunityScreen"
 export * from "./DebugScreen/DebugScreen"
 export * from "./MapScreen"
@@ -13,3 +13,4 @@ export * from "./TermsAndConditionsScreen/TermsAndConditionsScreen"
 export * from "./InformationScreen"
 export * from "./LeaderboardScreen"
 export * from "./HistoryScreen"
+export * from "./SignUpScreen"

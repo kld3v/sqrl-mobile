@@ -27,9 +27,7 @@
       "fallbackToCacheTimeout": 0
     },
     "jsEngine": "hermes",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "android": {
       "versionCode": 15,
       "googleServicesFile": "./google-services.json",
@@ -71,15 +69,13 @@
       "bundler": "metro"
     },
     "plugins": [
+      ["expo-apple-authentication"],
       [
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",
           "color": "#ffffff",
-          "sounds": [
-            "./assets/sounds/notification.wav",
-            "./assets/sounds/notification.wav"
-          ]
+          "sounds": ["./assets/sounds/notification.wav", "./assets/sounds/notification.wav"]
         }
       ],
       [

@@ -5,10 +5,13 @@ import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
+import { useNavigation } from "@react-navigation/native"
+import AppleLogin from "app/components/CustomComponents/AppleLogin/AppleLogin"
+import GoogleLogin from "app/components/CustomComponents/GoogleLogin/GoogleLogin"
 
-interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
+interface SignInProps extends AppStackScreenProps<"SignIn"> {}
 
-export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
+export const SignInScreen: FC<SignInProps> = observer(function SignIn(_props) {
   const authPasswordInput = useRef<TextInput>(null)
 
   const [authPassword, setAuthPassword] = useState("")
@@ -18,6 +21,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const {
     authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
   } = useStores()
+
+  const navigation = useNavigation()
 
   useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
@@ -34,7 +39,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
 
   const error = isSubmitted ? validationError : ""
 
-  function login() {
+  function SignIn() {
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
 
@@ -72,9 +77,9 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text testID="login-heading" tx="loginScreen.signIn" preset="heading" style={$signIn} />
-      <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} />
-      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
+      <Text testID="SignIn-heading" tx="SignInScreen.signIn" preset="heading" style={$signIn} />
+
+      {attemptsCount > 2 && <Text tx="SignInScreen.hint" size="sm" weight="light" style={$hint} />}
 
       <TextField
         value={authEmail}
@@ -84,8 +89,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         autoComplete="email"
         autoCorrect={false}
         keyboardType="email-address"
-        labelTx="loginScreen.emailFieldLabel"
-        placeholderTx="loginScreen.emailFieldPlaceholder"
+        labelTx="SignInScreen.emailFieldLabel"
+        placeholderTx="SignInScreen.emailFieldPlaceholder"
         helper={error}
         status={error ? "error" : undefined}
         onSubmitEditing={() => authPasswordInput.current?.focus()}
@@ -100,18 +105,27 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         autoComplete="password"
         autoCorrect={false}
         secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen.passwordFieldLabel"
-        placeholderTx="loginScreen.passwordFieldPlaceholder"
-        onSubmitEditing={login}
+        labelTx="SignInScreen.passwordFieldLabel"
+        placeholderTx="SignInScreen.passwordFieldPlaceholder"
+        onSubmitEditing={SignIn}
         RightAccessory={PasswordRightAccessory}
       />
 
+      <AppleLogin />
+      <GoogleLogin />
+
       <Button
-        testID="login-button"
-        tx="loginScreen.tapToSignIn"
+        testID="SignIn-button"
+        tx="SignInScreen.tapToSignIn"
         style={$tapButton}
-        preset="reversed"
-        onPress={login}
+        onPress={SignIn}
+      />
+      <Button
+        testID="signUp-button"
+        style={$tapButton}
+        text="Sign Up"
+        //@ts-ignore
+        onPress={() => navigation.navigate("SignUp")}
       />
     </Screen>
   )
