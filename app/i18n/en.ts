@@ -42,7 +42,7 @@ const en = {
     invalidEmail: "Invalid email address.",
   },
   SignInScreen: {
-    signIn: "Sign In",
+    signIn: "Secure QR Scanning Awaits.",
     enterDetails:
       "Enter your details below to unlock top secret info. You'll never guess what we've got waiting. Or maybe you will; it's not rocket science here.",
     emailFieldLabel: "Email",
@@ -51,6 +51,10 @@ const en = {
     passwordFieldPlaceholder: "Super secret password here",
     tapToSignIn: "Tap to sign in!",
     hint: "Hint: you can use any email address and your favorite password :)",
+    termsAndConditions_1: "By signing up, you agree to our ",
+    termsAndConditions_2: "Terms ",
+    termsAndConditions_3: "and ",
+    privacyPolicy: "Privacy Policy.",
   },
   navigator: {
     scannerTab: "Scanner",

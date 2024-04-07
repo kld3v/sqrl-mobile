@@ -1,158 +1,134 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, ViewStyle } from "react-native"
-import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
+import { TextInput, TextStyle, View, ViewStyle } from "react-native"
+import {
+  AutoImage,
+  Button,
+  Icon,
+  Screen,
+  Text,
+  TextField,
+  TextFieldAccessoryProps,
+} from "../components"
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
-import { colors, spacing } from "../theme"
+import { colors, spacing, typography } from "../theme"
 import { useNavigation } from "@react-navigation/native"
 import AppleLogin from "app/components/CustomComponents/AppleLogin/AppleLogin"
 import GoogleLogin from "app/components/CustomComponents/GoogleLogin/GoogleLogin"
+import { Platform } from "react-native"
+import { assetService } from "app/services/Assets/AssetService"
+
+import { $termsHyperlink } from "../theme"
+import SeperatorWithText from "../components/SeperatorWithText"
+import { Dimensions } from "react-native"
 
 interface SignInProps extends AppStackScreenProps<"SignIn"> {}
 
 export const SignInScreen: FC<SignInProps> = observer(function SignIn(_props) {
-  const authPasswordInput = useRef<TextInput>(null)
-
-  const [authPassword, setAuthPassword] = useState("")
-  const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [attemptsCount, setAttemptsCount] = useState(0)
-  const {
-    authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
-  } = useStores()
-
   const navigation = useNavigation()
 
-  useEffect(() => {
-    // Here is where you could fetch credentials from keychain or storage
-    // and pre-fill the form fields.
-    setAuthEmail("branchManager@qrla.io")
-    setAuthPassword("stayPawsitive")
-
-    // Return a "cleanup" function that React will run when the component unmounts
-    return () => {
-      setAuthPassword("")
-      setAuthEmail("")
-    }
-  }, [])
-
-  const error = isSubmitted ? validationError : ""
-
-  function SignIn() {
-    setIsSubmitted(true)
-    setAttemptsCount(attemptsCount + 1)
-
-    if (validationError) return
-
-    // Make a request to your server to get an authentication token.
-    // If successful, reset the fields and set the token.
-    setIsSubmitted(false)
-    setAuthPassword("")
-    setAuthEmail("")
-
-    // We'll mock this with a fake token.
-    setAuthToken(String(Date.now()))
-  }
-
-  const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
-    () =>
-      function PasswordRightAccessory(props: TextFieldAccessoryProps) {
-        return (
-          <Icon
-            icon={isAuthPasswordHidden ? "view" : "hidden"}
-            color={colors.palette.neutral800}
-            containerStyle={props.style}
-            size={20}
-            onPress={() => setIsAuthPasswordHidden(!isAuthPasswordHidden)}
-          />
-        )
-      },
-    [isAuthPasswordHidden],
-  )
-
+  const qrlaLogo = assetService.qrlaLogo
+  const { height } = Dimensions.get("window")
+  const imageSize = height < 700 ? 56 : 112
+  console.log(height)
   return (
     <Screen
       preset="auto"
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text testID="SignIn-heading" tx="SignInScreen.signIn" preset="heading" style={$signIn} />
+      <View style={$headerContainer}>
+        <AutoImage source={qrlaLogo} style={{ width: imageSize, height: imageSize }} />
 
-      {attemptsCount > 2 && <Text tx="SignInScreen.hint" size="sm" weight="light" style={$hint} />}
-
-      <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="SignInScreen.emailFieldLabel"
-        placeholderTx="SignInScreen.emailFieldPlaceholder"
-        helper={error}
-        status={error ? "error" : undefined}
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-      />
-
-      <TextField
-        ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        labelTx="SignInScreen.passwordFieldLabel"
-        placeholderTx="SignInScreen.passwordFieldPlaceholder"
-        onSubmitEditing={SignIn}
-        RightAccessory={PasswordRightAccessory}
-      />
-
-      <AppleLogin />
-      <GoogleLogin />
-
-      <Button
-        testID="SignIn-button"
-        tx="SignInScreen.tapToSignIn"
-        style={$tapButton}
-        onPress={SignIn}
-      />
-      <Button
-        testID="signUp-button"
-        style={$tapButton}
-        text="Sign Up"
-        //@ts-ignore
-        onPress={() => navigation.navigate("SignUp")}
-      />
+        <View style={{ width: "100%" }}>
+          <Text
+            testID="SignIn-heading"
+            tx="SignInScreen.signIn"
+            preset="heading"
+            style={$signInHeading}
+          />
+        </View>
+      </View>
+      <View style={$buttonsContainer}>
+        <View style={$buttonsElementStyle}>{Platform.OS === "ios" && <AppleLogin />}</View>
+        <View>
+          <GoogleLogin />
+        </View>
+        <SeperatorWithText text="or" />
+        <View style={$buttonsElementStyle}>
+          <Button
+            testID="signUp-button"
+            style={$tapButton}
+            text="Sign Up"
+            //@ts-ignore
+            onPress={() => navigation.navigate("SignUp")}
+          />
+        </View>
+        <View style={$buttonsElementStyle}>
+          <Text>
+            <Text style={$termsTextStyle} tx="SignInScreen.termsAndConditions_1" />
+            <Text
+              style={{ ...$termsTextStyle, ...$termsHyperlink }}
+              tx="SignInScreen.termsAndConditions_2"
+            />
+            <Text style={$termsTextStyle} tx="SignInScreen.termsAndConditions_3" />
+            <Text
+              style={{ ...$termsTextStyle, ...$termsHyperlink }}
+              tx="SignInScreen.privacyPolicy"
+            />
+          </Text>
+          <Text />
+          <Text>
+            <Text style={$termsTextStyle} text="Already have an account? " />
+            <Text style={{ ...$termsTextStyle, ...$termsHyperlink }} text="Sign in" />
+          </Text>
+        </View>
+      </View>
     </Screen>
   )
 })
 
 const $screenContentContainer: ViewStyle = {
-  paddingVertical: spacing.xxl,
+  paddingVertical: spacing.xs,
   paddingHorizontal: spacing.lg,
+  // backgroundColor: "blue",
+  flex: 1,
+  alignItems: "center",
+  justifyContent: "space-between",
 }
 
-const $signIn: TextStyle = {
-  marginBottom: spacing.sm,
+const $headerContainer: ViewStyle = {
+  justifyContent: "center",
+  alignItems: "center",
+  // backgroundColor: "red",
+  width: "100%",
 }
-
-const $enterDetails: TextStyle = {
-  marginBottom: spacing.lg,
-}
-
-const $hint: TextStyle = {
-  color: colors.tint,
-  marginBottom: spacing.md,
-}
-
-const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
+const $signInHeading: TextStyle = {
+  // lineHeight: 48,
+  // backgroundColor: "blue",
+  textAlign: "center",
+  // width: "100%",
+  paddingTop: 8,
+  marginTop: spacing.xl2,
+  fontSize: typography.fontSizes.h2,
+  color: colors.palette.neutral100,
 }
 
 const $tapButton: ViewStyle = {
-  marginTop: spacing.xs,
+  borderRadius: 50,
+}
+
+const $buttonsContainer: ViewStyle = {
+  // backgroundColor: "red",
+  width: "100%",
+  marginTop: spacing.xl2 + 8,
+}
+
+const $buttonsElementStyle: ViewStyle = {
+  marginBottom: spacing.md,
+}
+
+const $termsTextStyle: TextStyle = {
+  fontSize: 12,
 }

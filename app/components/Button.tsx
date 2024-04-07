@@ -155,18 +155,16 @@ export function Button(props: ButtonProps) {
 }
 
 const $baseViewStyle: ViewStyle = {
-  minHeight: 56,
+  minHeight: 40,
   borderRadius: 4,
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "row",
-  paddingVertical: spacing.sm,
-  paddingHorizontal: spacing.sm,
   overflow: "hidden",
 }
 
 const $baseTextStyle: TextStyle = {
-  fontSize: 16,
+  fontSize: 14,
   lineHeight: 20,
   fontFamily: typography.primary.medium,
   textAlign: "center",

@@ -116,6 +116,7 @@ export const iconRegistry = {
   shoppingCart: require("../../assets/icons/shopping-cart.png"),
   paperPlane: require("../../assets/icons/paperPlane.png"),
   information: require("../../assets/icons/information.png"),
+  google: require("../../assets/icons/google.png"),
 } as const
 
 const $imageStyleBase: ImageStyle = {

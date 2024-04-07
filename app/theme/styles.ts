@@ -20,6 +20,12 @@ export const $title: TextStyle = {
 
 export const $hyperlink: TextStyle = {
   color: colors.palette.primary500,
-  textDecorationLine: "underline",
-  fontFamily: typography.Poppins.mediumItalic,
+  // textDecorationLine: "underline",
+  fontFamily: typography.Poppins.medium,
+}
+
+export const $termsHyperlink: TextStyle = {
+  color: colors.palette.primary500,
+  // textDecorationLine: "underline",
+  fontFamily: typography.Poppins.medium,
 }

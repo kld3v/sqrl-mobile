@@ -1,14 +1,18 @@
+import { spacing } from "app/theme"
 import * as AppleAuthentication from "expo-apple-authentication"
-import { View, StyleSheet } from "react-native"
+import { View, ViewStyle } from "react-native"
 
 export default function AppleLogin() {
   return (
-    <View style={styles.container}>
+    <View style={$appleButtonContainer}>
       <AppleAuthentication.AppleAuthenticationButton
-        buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-        buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-        cornerRadius={5}
-        style={styles.button}
+        buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+        buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE}
+        style={{
+          width: "100%",
+          height: 40,
+        }}
+        cornerRadius={50}
         onPress={async () => {
           try {
             const credential = await AppleAuthentication.signInAsync({
@@ -32,14 +36,9 @@ export default function AppleLogin() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  button: {
-    width: 200,
-    height: 44,
-  },
-})
+const $appleButtonContainer: ViewStyle = {
+  flex: 1,
+  alignItems: "stretch",
+  justifyContent: "center",
+  marginBottom: spacing.md,
+}
