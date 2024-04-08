@@ -7,11 +7,8 @@ import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
 import { $card, $container, $reticle } from "./QrScannerStyles"
-
 import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
-import LottieView from "lottie-react-native"
-import { useRef } from "react"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -33,7 +30,7 @@ export const QrScanner = observer(function QrScanner() {
       onScan(barcodeScanResult)
     }
   }
-  const animation = useRef(null)
+
   return (
     <View style={$container}>
       <Pressable style={{ flex: 1 }} onPress={updateCameraFocus}>
