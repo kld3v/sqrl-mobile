@@ -99,7 +99,8 @@ const AppStack = observer(function AppStack() {
         navigationBarHidden: true,
       }}
     >
-      {isAuthenticated ? (
+      {/* change when ready */}
+      {!isAuthenticated ? (
         <>
           {termsAndConditionsStore.userHasTermsToSign ? (
             <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />

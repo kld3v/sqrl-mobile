@@ -1,7 +1,8 @@
-import { Pressable, View } from "react-native"
+import { Platform, Pressable, View } from "react-native"
 import { observer } from "mobx-react-lite"
 
 import { BarCodeScanningResult, Camera } from "expo-camera"
+import { CameraView } from "expo-camera/next"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
@@ -36,14 +37,18 @@ export const QrScanner = observer(function QrScanner() {
   return (
     <View style={$container}>
       <Pressable style={{ flex: 1 }} onPress={updateCameraFocus}>
-        <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus}>
-          <Reticle
-            style={$reticle}
-            scanState={scanState}
-            safe={safe}
-            scanning={scanState === "scanning"}
-          />
-        </Camera>
+        {Platform.OS === "ios" ? (
+          <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus} />
+        ) : (
+          <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} />
+        )}
+
+        <Reticle
+          style={$reticle}
+          scanState={scanState}
+          safe={safe}
+          scanning={scanState === "scanning"}
+        />
       </Pressable>
 
       {scanState !== "notScanned" && (

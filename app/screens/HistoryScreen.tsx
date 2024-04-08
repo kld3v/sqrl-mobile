@@ -75,18 +75,12 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
         headingStyle={{ color: "black", maxWidth: "90%", marginTop: 8 }}
         RightComponent={
           <View style={$iconContainer}>
-            {item.trust_score > 500 ? (
-              <>
-                <Tick style={$iconStyle} />
-                <HeartIcon onPress={() => console.log("click")} />
-              </>
-            ) : (
-              <Cancel style={$iconStyle} />
-            )}
+            {item.trust_score > 500 ? <Tick style={$iconStyle} /> : <Cancel style={$iconStyle} />}
+            <HeartIcon onPress={() => console.log("click")} />
           </View>
         }
         RightComponentStyle={{ justifyContent: "center", alignItems: "center" }}
-        footer={item.date_and_time}
+        footer={`${item.date_and_time} by scanner`}
         footerStyle={{ color: "black", marginBottom: 8 }}
       />
     </Pressable>
