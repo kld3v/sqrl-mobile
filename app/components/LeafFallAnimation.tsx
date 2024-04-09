@@ -6,6 +6,7 @@ import { Text } from "app/components/Text"
 import LottieView from "lottie-react-native"
 import { useEffect, useRef } from "react"
 import { useStores } from "app/models"
+import { assetService } from "app/services/Assets/AssetService"
 
 export interface LeafFallAnimationProps {
   /**
@@ -43,7 +44,7 @@ export const LeafFallAnimation = observer(function LeafFallAnimation(
           height: 400,
         }}
         // Find more Lottie files at https://lottiefiles.com/featured
-        source={require("../../assets/animations/leafFall.json")}
+        source={assetService.leafFallAnimation}
       />
     </View>
   )

@@ -16,6 +16,9 @@ import { useStores } from "app/models"
 import { colors, spacing, typography } from "app/theme"
 import { assetService } from "app/services/Assets/AssetService"
 import { api } from "app/services/api"
+import { ApiResponse } from "apisauce"
+import { RegistrationApiResponse } from "../Auth.types"
+import { authService } from "app/services/Auth"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
@@ -27,7 +30,6 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
   const authPasswordConfirmInput = useRef<TextInput>(null)
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [attemptsCount, setAttemptsCount] = useState(0)
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
 
@@ -38,19 +40,17 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
     authenticationStore: {
       authEmail,
       setAuthEmail,
-      setAuthUsername,
       authUsername,
+      setAuthUsername,
       setAuthToken,
-      validationError,
+      emailValidationError,
+      usernameValidationError,
+      authError,
+      setAuthError,
     },
   } = useStores()
 
   useEffect(() => {
-    // Here is where you could fetch credentials from keychain or storage
-    // and pre-fill the form fields.
-    // setAuthEmail("branchManager@qrla.io")
-    // setAuthPassword("stayPawsitive")
-
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
       setPassword("")
@@ -58,28 +58,43 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
     }
   }, [])
 
-  const error = isSubmitted ? validationError : ""
+  const emailError = isSubmitted ? emailValidationError : ""
+  const usernameError = isSubmitted ? usernameValidationError : ""
 
   async function Register() {
     setIsSubmitted(true)
-    setAttemptsCount(attemptsCount + 1)
+    if (emailError || usernameError) return
 
-    if (validationError) return
+    if (password !== passwordConfirm) {
+      setAuthError("Passwords don't match!")
+      return
+    }
 
     // Make a request to your server to get an authentication token.
-    let res = await api.apisauce.post("/auth/register", {
+    let res: RegistrationApiResponse = await api.apisauce.post("/auth/register", {
       username: authUsername,
       email: authEmail,
       password,
     })
 
+    if (!res.ok) {
+      res.data?.message
+        ? setAuthError(res.data!.message)
+        : setAuthError("Something went wrong - please try again :) ")
+      return
+    }
+
+    if (res.data && res.data.token) {
+      await api.setIdentityToken(res.data.token)
+      authService.setToken("qrla_token", res.data.token)
+      setAuthToken(res.data.token)
+    }
+
     // If successful, reset the fields and set the token.
     setIsSubmitted(false)
     setPassword("")
+    setPasswordConfirm("")
     setAuthEmail("")
-
-    // We'll mock this with a fake token.
-    setAuthToken(String(Date.now()))
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -117,7 +132,7 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
           />
         </View>
       </View>
-      {attemptsCount > 2 && <Text tx="SignInScreen.hint" size="sm" weight="light" style={$hint} />}
+      {authError && <Text text={authError} size="sm" weight="light" style={$hint} />}
       <TextField
         value={authEmail}
         onChangeText={setAuthEmail}
@@ -127,8 +142,9 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
         autoCorrect={false}
         keyboardType="email-address"
         placeholder="Email"
-        helper={error}
-        status={error ? "error" : undefined}
+        helper={emailError}
+        status={emailError ? "error" : undefined}
+        onChange={() => setAuthError("")}
       />
       <TextField
         value={authUsername}
@@ -136,9 +152,10 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
         containerStyle={$textField}
         autoCorrect={false}
         placeholder="Username"
-        helper={error}
-        status={error ? "error" : undefined}
+        helper={usernameError}
+        status={usernameError ? "error" : undefined}
         onSubmitEditing={() => authPasswordInput.current?.focus()}
+        onChange={() => setAuthError("")}
       />
       <TextField
         ref={authPasswordInput}
@@ -151,6 +168,7 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
         secureTextEntry={isAuthPasswordHidden}
         placeholder="Password"
         RightAccessory={PasswordRightAccessory}
+        onChange={() => setAuthError("")}
       />
       <TextField
         ref={authPasswordConfirmInput}
@@ -163,9 +181,22 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
         secureTextEntry={isAuthPasswordHidden}
         placeholder="Confirm Password"
         RightAccessory={PasswordRightAccessory}
+        onChange={() => setAuthError("")}
       />
       <Button
         text="Create Account"
+        disabled={
+          password.length === 0 ||
+          password !== passwordConfirm ||
+          authEmail.length > 0 ||
+          authUsername.length > 0
+        }
+        disabledStyle={{
+          borderColor: colors.palette.neutral500,
+        }}
+        disabledTextStyle={{
+          color: colors.palette.neutral500,
+        }}
         //@ts-ignore
         onPress={Register}
       />

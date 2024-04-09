@@ -6,16 +6,21 @@ export const AuthenticationStoreModel = types
     authToken: types.maybe(types.string),
     authEmail: "",
     authUsername: "",
+    authError: types.maybe(types.string),
   })
   .views((store) => ({
     get isAuthenticated() {
       return !!store.authToken
     },
-    get validationError() {
+    get emailValidationError() {
       if (store.authEmail.length === 0) return "can't be blank"
       if (store.authEmail.length < 6) return "must be at least 6 characters"
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(store.authEmail))
         return "must be a valid email address"
+      return ""
+    },
+    get usernameValidationError() {
+      if (store.authUsername.length === 0) return "can't be blank"
       return ""
     },
   }))
@@ -28,6 +33,9 @@ export const AuthenticationStoreModel = types
     },
     setAuthUsername(value: string) {
       store.authUsername = value.replace(/ /g, "")
+    },
+    setAuthError(value: string) {
+      store.authError = value
     },
     logout() {
       store.authToken = undefined

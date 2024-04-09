@@ -51,6 +51,8 @@ export const ScoreIncreaseAnimationText = observer(function ScoreIncreaseAnimati
         withTiming(1, { duration: 600, easing: Easing.elastic(1) }), // Return to normal smoothly
       ),
     )
+
+    // If someone's looking over this in my absence, well je ne regrette rien.
     ;(() => {
       new Promise((resolve) => {
         setTimeout(() => resolve(leaderboardStore.userScore), 3300)

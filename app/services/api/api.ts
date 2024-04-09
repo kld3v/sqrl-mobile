@@ -9,6 +9,8 @@ import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
 import type { ApiConfig, ApiFeedResponse } from "./api.types"
+import { secureStoreInstance } from "../SecureStore/SecureStorageService"
+import { authService } from "../Auth"
 
 /**
  * Configuring the apisauce instance.
@@ -31,6 +33,7 @@ export class Api {
   apisauce: ApisauceInstance
   config: ApiConfig
   apisauceForPushNotifications: ApisauceInstance
+  identityToken: string | null = ""
 
   /**
    * Set up our API instance. Keep this lightweight!
@@ -51,6 +54,13 @@ export class Api {
         "Content-Type": "application/json",
       },
     })
+  }
+
+  async setIdentityToken(token?: string) {
+    if (token) {
+      this.identityToken = token
+    }
+    this.identityToken = authService.validToken
   }
 }
 

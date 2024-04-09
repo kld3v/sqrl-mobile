@@ -14,6 +14,11 @@ class AuthService implements IAuthService {
       setInStorage: (value: string) =>
         secureStoreInstance.setValueInSecureStore("google_token", value),
     },
+    qrla_token: {
+      getFromStorage: () => secureStoreInstance.getValueFromSecureStore("google_token"),
+      setInStorage: (value: string) =>
+        secureStoreInstance.setValueInSecureStore("google_token", value),
+    },
     // Add more tokens here as needed...
   }
 
@@ -21,6 +26,7 @@ class AuthService implements IAuthService {
   tokens: Record<TokenType, string | null> = {
     apple_token: null,
     google_token: null,
+    qrla_token: null,
   }
 
   userCredentials: any = {}
@@ -55,14 +61,14 @@ class AuthService implements IAuthService {
   }
 
   // Utility methods to get/set tokens
-  async setToken(type: "apple_token" | "google_token", value: string) {
+  async setToken(type: TokenType, value: string) {
     if (this.tokenStrategies[type]) {
       await this.tokenStrategies[type].setInStorage(value)
       this.tokens[type] = value
     }
   }
 
-  async getToken(type: "apple_token" | "google_token"): Promise<string | null> {
+  async getSpecificToken(type: TokenType): Promise<string | null> {
     if (this.tokens[type]) {
       return this.tokens[type]
     }
@@ -83,6 +89,22 @@ class AuthService implements IAuthService {
 
   async getUsername() {
     return await secureStoreInstance.getValueFromSecureStore("username")
+  }
+
+  async logout() {
+    // Iterate over each token type and remove it from secure storage
+    await Promise.all(
+      (Object.keys(this.tokenStrategies) as TokenType[]).map(async (key: TokenType) => {
+        await secureStoreInstance.clearFromSecureStore(key)
+      }),
+    )
+
+    // Reset the tokens in memory
+    this.tokens = {
+      apple_token: null,
+      google_token: null,
+      qrla_token: null,
+    }
   }
 }
 

@@ -9,18 +9,18 @@ import {
   Text,
   TextField,
   TextFieldAccessoryProps,
-} from "../components"
-import { useStores } from "../models"
-import { AppStackScreenProps } from "../navigators"
-import { colors, spacing, typography } from "../theme"
+} from "../../../components"
+import { useStores } from "../../../models"
+import { AppStackScreenProps } from "../../../navigators"
+import { colors, spacing, typography } from "../../../theme"
 import { useNavigation } from "@react-navigation/native"
 import AppleLogin from "app/components/CustomComponents/AppleLogin/AppleLogin"
 import GoogleLogin from "app/components/CustomComponents/GoogleLogin/GoogleLogin"
 import { Platform } from "react-native"
 import { assetService } from "app/services/Assets/AssetService"
 
-import { $termsHyperlink } from "../theme"
-import SeperatorWithText from "../components/SeperatorWithText"
+import { $termsHyperlink } from "../../../theme"
+import SeperatorWithText from "../../../components/SeperatorWithText"
 import { Dimensions } from "react-native"
 import LoadingOverlay from "app/components/LoadingOverlay"
 

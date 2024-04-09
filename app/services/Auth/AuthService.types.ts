@@ -6,7 +6,7 @@ export interface IAuthService {
 }
 
 // Define token types as a union of string literals
-export type TokenType = "apple_token" | "google_token"
+export type TokenType = "apple_token" | "google_token" | "qrla_token"
 
 // Define the shape of a token strategy
 export interface TokenStrategy {
