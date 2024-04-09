@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, View, ViewStyle } from "react-native"
+import { Image, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import {
   AutoImage,
   Button,
@@ -22,78 +22,89 @@ import { assetService } from "app/services/Assets/AssetService"
 import { $termsHyperlink } from "../theme"
 import SeperatorWithText from "../components/SeperatorWithText"
 import { Dimensions } from "react-native"
+import LoadingOverlay from "app/components/LoadingOverlay"
 
 interface SignInProps extends AppStackScreenProps<"SignIn"> {}
 
 export const SignInScreen: FC<SignInProps> = observer(function SignIn(_props) {
   const navigation = useNavigation()
-
+  const [loading, setLoading] = useState(false)
   const qrlaLogo = assetService.qrlaLogo
   const { height } = Dimensions.get("window")
   const imageSize = height < 700 ? 56 : 112
-  console.log(height)
-  return (
-    <Screen
-      preset="auto"
-      contentContainerStyle={$screenContentContainer}
-      safeAreaEdges={["top", "bottom"]}
-    >
-      <View style={$headerContainer}>
-        <AutoImage source={qrlaLogo} style={{ width: imageSize, height: imageSize }} />
 
-        <View style={{ width: "100%" }}>
-          <Text
-            testID="SignIn-heading"
-            tx="SignInScreen.signIn"
-            preset="heading"
-            style={$signInHeading}
-          />
-        </View>
-      </View>
-      <View style={$buttonsContainer}>
-        <View style={$buttonsElementStyle}>{Platform.OS === "ios" && <AppleLogin />}</View>
-        <View>
-          <GoogleLogin />
-        </View>
-        <SeperatorWithText text="or" />
-        <View style={$buttonsElementStyle}>
-          <Button
-            testID="signUp-button"
-            style={$tapButton}
-            text="Sign Up"
-            //@ts-ignore
-            onPress={() => navigation.navigate("SignUp")}
-          />
-        </View>
-        <View style={$buttonsElementStyle}>
-          <Text>
-            <Text style={$termsTextStyle} tx="SignInScreen.termsAndConditions_1" />
+  return (
+    <Screen preset="auto" safeAreaEdges={["top", "bottom"]} contentContainerStyle={$ScreenStyle}>
+      {loading && <LoadingOverlay />}
+      <View style={$screenContentContainer}>
+        <View style={$headerContainer}>
+          <AutoImage source={qrlaLogo} style={{ width: imageSize, height: imageSize }} />
+
+          <View style={{ width: "100%" }}>
             <Text
-              style={{ ...$termsTextStyle, ...$termsHyperlink }}
-              tx="SignInScreen.termsAndConditions_2"
+              testID="SignIn-heading"
+              tx="SignInScreen.signIn"
+              preset="heading"
+              style={$signInHeading}
             />
-            <Text style={$termsTextStyle} tx="SignInScreen.termsAndConditions_3" />
-            <Text
-              style={{ ...$termsTextStyle, ...$termsHyperlink }}
-              tx="SignInScreen.privacyPolicy"
+          </View>
+        </View>
+        <View style={$buttonsContainer}>
+          <View style={$buttonsElementStyle}>
+            {Platform.OS === "ios" && <AppleLogin setLoading={setLoading} />}
+          </View>
+          <View>
+            <GoogleLogin />
+          </View>
+          <SeperatorWithText text="or" />
+          <View style={$buttonsElementStyle}>
+            <Button
+              testID="signUp-button"
+              style={$tapButton}
+              text="Sign Up"
+              //@ts-ignore
+              onPress={() => navigation.navigate("Registration")}
             />
-          </Text>
-          <Text />
-          <Text>
-            <Text style={$termsTextStyle} text="Already have an account? " />
-            <Text style={{ ...$termsTextStyle, ...$termsHyperlink }} text="Sign in" />
-          </Text>
+          </View>
+          <View style={$buttonsElementStyle}>
+            <Text>
+              <Text style={$termsTextStyle} tx="SignInScreen.termsAndConditions_1" />
+              <Text
+                style={{ ...$termsTextStyle, ...$termsHyperlink }}
+                tx="SignInScreen.termsAndConditions_2"
+              />
+              <Text style={$termsTextStyle} tx="SignInScreen.termsAndConditions_3" />
+              <Text
+                style={{ ...$termsTextStyle, ...$termsHyperlink }}
+                tx="SignInScreen.privacyPolicy"
+              />
+            </Text>
+            <Text />
+            <Text>
+              <Text style={$termsTextStyle} text="Already have an account? " />
+              <Text
+                style={{ ...$termsTextStyle, ...$termsHyperlink }}
+                text="Log in"
+                onPress={() => navigation.navigate("LogIn")}
+              />
+            </Text>
+          </View>
         </View>
       </View>
     </Screen>
   )
 })
 
+const $ScreenStyle: ViewStyle = {
+  height: "100%",
+  // backgroundColor: "red",
+}
+
 const $screenContentContainer: ViewStyle = {
-  paddingVertical: spacing.xs,
+  paddingVertical: spacing.xxl,
   paddingHorizontal: spacing.lg,
   // backgroundColor: "blue",
-  flex: 1,
+  height: "100%",
   alignItems: "center",
   justifyContent: "space-between",
 }

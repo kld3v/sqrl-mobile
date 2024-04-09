@@ -21,6 +21,7 @@ import { MainNavigator, TabParamList } from "./MainNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import * as Screens from "app/screens"
+import { authService } from "app/services/Auth"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -47,7 +48,9 @@ export type AppStackParamList = {
   Information: undefined
   Leaderboard: undefined
   History: undefined
-  SignUp: undefined
+  Registration: undefined
+  Username: undefined
+  LogIn: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -70,7 +73,7 @@ const AppStack = observer(function AppStack() {
     locationStore,
     termsAndConditionsStore,
     debugStore,
-    authenticationStore: { isAuthenticated },
+    authenticationStore: { isAuthenticated, setAuthToken },
   } = useStores()
 
   const recurringlyUpdateLocation = async () => {
@@ -87,10 +90,17 @@ const AppStack = observer(function AppStack() {
       locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
       debugStore.addInfoMessage("Started location updates")
     }
+    ;(async () => {
+      if (await authService.tokenDoesExist()) {
+        authService.validToken && setAuthToken(authService.validToken)
+      }
+    })()
+
     // cleanup function
     return () => clearInterval(locationIntervalId)
   }, [locationStore.permission])
 
+  console.log("render app navigator")
   return (
     <Stack.Navigator
       screenOptions={{
@@ -100,7 +110,7 @@ const AppStack = observer(function AppStack() {
       }}
     >
       {/* change when ready */}
-      {!isAuthenticated ? (
+      {isAuthenticated ? (
         <>
           {termsAndConditionsStore.userHasTermsToSign ? (
             <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
@@ -111,7 +121,7 @@ const AppStack = observer(function AppStack() {
       ) : (
         <>
           <Stack.Screen name="SignIn" component={Screens.SignInScreen} />
-          <Stack.Screen name="SignUp" component={Screens.SignUpScreen} />
+          <Stack.Screen name="Registration" component={Screens.Registration} />
         </>
       )}
 
@@ -122,6 +132,8 @@ const AppStack = observer(function AppStack() {
       <Stack.Screen name="Leaderboard" component={Screens.LeaderboardScreen} />
       <Stack.Screen name="History" component={Screens.HistoryScreen} />
 
+      <Stack.Screen name="Username" component={Screens.UsernameScreen} />
+      <Stack.Screen name="LogIn" component={Screens.LogIn} />
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )

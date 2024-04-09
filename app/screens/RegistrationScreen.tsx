@@ -15,18 +15,22 @@ import { useNavigation } from "@react-navigation/native"
 import { useStores } from "app/models"
 import { colors, spacing, typography } from "app/theme"
 import { assetService } from "app/services/Assets/AssetService"
+import { api } from "app/services/api"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
-interface SignUpScreenProps extends AppStackScreenProps<"SignUp"> {}
+interface RegistrationProps extends AppStackScreenProps<"Registration"> {}
 
-export const SignUpScreen: FC<SignUpScreenProps> = observer(function SignUpScreen() {
+export const Registration: FC<RegistrationProps> = observer(function Registration() {
   const navigation = useNavigation()
   const authPasswordInput = useRef<TextInput>(null)
+  const authPasswordConfirmInput = useRef<TextInput>(null)
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
-  const [authPassword, setAuthPassword] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordConfirm, setPasswordConfirm] = useState("")
+
   const qrlaLogo = assetService.qrlaLogo
   const { height } = Dimensions.get("window")
   const imageSize = height < 700 ? 64 : 112
@@ -34,8 +38,8 @@ export const SignUpScreen: FC<SignUpScreenProps> = observer(function SignUpScree
     authenticationStore: {
       authEmail,
       setAuthEmail,
-      authUsername,
       setAuthUsername,
+      authUsername,
       setAuthToken,
       validationError,
     },
@@ -49,23 +53,29 @@ export const SignUpScreen: FC<SignUpScreenProps> = observer(function SignUpScree
 
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
-      setAuthPassword("")
+      setPassword("")
       setAuthEmail("")
     }
   }, [])
 
   const error = isSubmitted ? validationError : ""
 
-  function SignIn() {
+  async function Register() {
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
 
     if (validationError) return
 
     // Make a request to your server to get an authentication token.
+    let res = await api.apisauce.post("/auth/register", {
+      username: authUsername,
+      email: authEmail,
+      password,
+    })
+
     // If successful, reset the fields and set the token.
     setIsSubmitted(false)
-    setAuthPassword("")
+    setPassword("")
     setAuthEmail("")
 
     // We'll mock this with a fake token.
@@ -101,7 +111,7 @@ export const SignUpScreen: FC<SignUpScreenProps> = observer(function SignUpScree
         <View style={{ width: "100%" }}>
           <Text
             testID="SignIn-heading"
-            text="Better than a ham sandwich."
+            text="Free from nasty QR scammers."
             preset="heading"
             style={$signInHeading}
           />
@@ -119,7 +129,6 @@ export const SignUpScreen: FC<SignUpScreenProps> = observer(function SignUpScree
         placeholder="Email"
         helper={error}
         status={error ? "error" : undefined}
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
       />
       <TextField
         value={authUsername}
@@ -133,21 +142,32 @@ export const SignUpScreen: FC<SignUpScreenProps> = observer(function SignUpScree
       />
       <TextField
         ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
+        value={password}
+        onChangeText={setPassword}
         containerStyle={$textField}
         autoCapitalize="none"
         autoComplete="password"
         autoCorrect={false}
         secureTextEntry={isAuthPasswordHidden}
         placeholder="Password"
-        onSubmitEditing={SignIn}
+        RightAccessory={PasswordRightAccessory}
+      />
+      <TextField
+        ref={authPasswordConfirmInput}
+        value={passwordConfirm}
+        onChangeText={setPasswordConfirm}
+        containerStyle={$textField}
+        autoCapitalize="none"
+        autoComplete="password"
+        autoCorrect={false}
+        secureTextEntry={isAuthPasswordHidden}
+        placeholder="Confirm Password"
         RightAccessory={PasswordRightAccessory}
       />
       <Button
         text="Create Account"
         //@ts-ignore
-        onPress={() => navigation.navigate("SignIn")}
+        onPress={Register}
       />
     </Screen>
   )
