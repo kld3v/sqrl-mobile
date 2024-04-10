@@ -24,9 +24,9 @@ import SeperatorWithText from "../../../components/SeperatorWithText"
 import { Dimensions } from "react-native"
 import LoadingOverlay from "app/components/LoadingOverlay"
 
-interface SignInProps extends AppStackScreenProps<"SignIn"> {}
+interface SignUpProps extends AppStackScreenProps<"SignUp"> {}
 
-export const SignInScreen: FC<SignInProps> = observer(function SignIn(_props) {
+export const SignUpScreen: FC<SignUpProps> = observer(function SignUp(_props) {
   const navigation = useNavigation()
   const [loading, setLoading] = useState(false)
   const qrlaLogo = assetService.qrlaLogo
@@ -42,8 +42,8 @@ export const SignInScreen: FC<SignInProps> = observer(function SignIn(_props) {
 
           <View style={{ width: "100%" }}>
             <Text
-              testID="SignIn-heading"
-              tx="SignInScreen.signIn"
+              testID="SignUp-heading"
+              tx="SignUpScreen.signIn"
               preset="heading"
               style={$signInHeading}
             />
@@ -68,15 +68,15 @@ export const SignInScreen: FC<SignInProps> = observer(function SignIn(_props) {
           </View>
           <View style={$buttonsElementStyle}>
             <Text>
-              <Text style={$termsTextStyle} tx="SignInScreen.termsAndConditions_1" />
+              <Text style={$termsTextStyle} tx="SignUpScreen.termsAndConditions_1" />
               <Text
                 style={{ ...$termsTextStyle, ...$termsHyperlink }}
-                tx="SignInScreen.termsAndConditions_2"
+                tx="SignUpScreen.termsAndConditions_2"
               />
-              <Text style={$termsTextStyle} tx="SignInScreen.termsAndConditions_3" />
+              <Text style={$termsTextStyle} tx="SignUpScreen.termsAndConditions_3" />
               <Text
                 style={{ ...$termsTextStyle, ...$termsHyperlink }}
-                tx="SignInScreen.privacyPolicy"
+                tx="SignUpScreen.privacyPolicy"
               />
             </Text>
             <Text />
@@ -85,6 +85,7 @@ export const SignInScreen: FC<SignInProps> = observer(function SignIn(_props) {
               <Text
                 style={{ ...$termsTextStyle, ...$termsHyperlink }}
                 text="Log in"
+                //@ts-ignore
                 onPress={() => navigation.navigate("LogIn")}
               />
             </Text>

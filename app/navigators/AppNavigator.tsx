@@ -22,6 +22,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import * as Screens from "app/screens"
 import { authService } from "app/services/Auth"
+import { api } from "app/services/api"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -38,7 +39,7 @@ import { authService } from "app/services/Auth"
  */
 export type AppStackParamList = {
   Welcome: undefined
-  SignIn: undefined
+  SignUp: undefined
   Main: NavigatorScreenParams<TabParamList>
   // 🔥 Your screens go here
   PushNotifications: undefined
@@ -92,11 +93,12 @@ const AppStack = observer(function AppStack() {
     }
     ;(async () => {
       if (await authService.tokenDoesExist()) {
+        await api.setIdentityToken()
         authService.validToken && setAuthToken(authService.validToken)
       }
     })()
 
-    // cleanup function
+    // cleanup
     return () => clearInterval(locationIntervalId)
   }, [locationStore.permission])
 
@@ -109,31 +111,28 @@ const AppStack = observer(function AppStack() {
         navigationBarHidden: true,
       }}
     >
-      {/* change when ready */}
       {isAuthenticated ? (
         <>
           {termsAndConditionsStore.userHasTermsToSign ? (
             <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
           ) : (
-            <Stack.Screen name="Main" component={MainNavigator} />
+            <>
+              <Stack.Screen name="Main" component={MainNavigator} />
+              <Stack.Screen name="Debug" component={Screens.DebugScreen} />
+              <Stack.Screen name="Information" component={Screens.InformationScreen} />
+              <Stack.Screen name="Leaderboard" component={Screens.LeaderboardScreen} />
+              <Stack.Screen name="History" component={Screens.HistoryScreen} />
+            </>
           )}
         </>
       ) : (
         <>
-          <Stack.Screen name="SignIn" component={Screens.SignInScreen} />
+          <Stack.Screen name="SignUp" component={Screens.SignUpScreen} />
           <Stack.Screen name="Registration" component={Screens.Registration} />
+          <Stack.Screen name="Username" component={Screens.UsernameScreen} />
+          <Stack.Screen name="LogIn" component={Screens.LogIn} />
         </>
       )}
-
-      {/** 🔥 Your screens go here */}
-      <Stack.Screen name="Debug" component={Screens.DebugScreen} />
-
-      <Stack.Screen name="Information" component={Screens.InformationScreen} />
-      <Stack.Screen name="Leaderboard" component={Screens.LeaderboardScreen} />
-      <Stack.Screen name="History" component={Screens.HistoryScreen} />
-
-      <Stack.Screen name="Username" component={Screens.UsernameScreen} />
-      <Stack.Screen name="LogIn" component={Screens.LogIn} />
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )

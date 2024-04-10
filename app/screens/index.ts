@@ -1,6 +1,6 @@
 export * from "./WelcomeScreen"
 
-export * from "./AuthFlow/SignInScreen/SignInScreen"
+export * from "./AuthFlow/SignUpScreen/SignUpScreen"
 export * from "./CommunityScreen"
 export * from "./DebugScreen/DebugScreen"
 export * from "./MapScreen"

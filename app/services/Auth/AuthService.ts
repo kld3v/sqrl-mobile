@@ -84,7 +84,8 @@ class AuthService implements IAuthService {
   }
 
   async setUsername(value: string) {
-    await secureStoreInstance.setValueInSecureStore("username", value)
+    if (!(await this.getUsername()))
+      await secureStoreInstance.setValueInSecureStore("username", value)
   }
 
   async getUsername() {

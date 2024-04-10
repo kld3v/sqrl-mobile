@@ -61,6 +61,8 @@ export class Api {
       this.identityToken = token
     }
     this.identityToken = authService.validToken
+
+    this.apisauce.setHeader("Authorization", `Bearer ${this.identityToken}`)
   }
 }
 
