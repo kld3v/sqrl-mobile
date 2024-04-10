@@ -31,6 +31,7 @@ export const DEFAULT_API_CONFIG: ApiConfig = {
  */
 export class Api {
   apisauce: ApisauceInstance
+  auth: ApisauceInstance
   config: ApiConfig
   apisauceForPushNotifications: ApisauceInstance
   identityToken: string | null = ""
@@ -45,6 +46,13 @@ export class Api {
       timeout: this.config.timeout,
       headers: this.config.headers,
     })
+    this.auth = create({
+      baseURL: Config.AUTH_URL,
+      timeout: this.config.timeout,
+      headers: this.config.headers,
+    })
+    const authMonitor = (res: any) => console.log(res)
+    this.auth.addMonitor(authMonitor)
     this.apisauceForPushNotifications = create({
       baseURL: "https://exp.host/--/api/v2/push",
       timeout: 10000,

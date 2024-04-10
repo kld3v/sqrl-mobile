@@ -29,3 +29,8 @@ export const $termsHyperlink: TextStyle = {
   // textDecorationLine: "underline",
   fontFamily: typography.Poppins.medium,
 }
+
+export const $hint: TextStyle = {
+  color: colors.tint,
+  marginBottom: spacing.md,
+}

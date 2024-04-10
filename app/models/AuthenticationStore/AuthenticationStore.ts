@@ -21,6 +21,8 @@ export const AuthenticationStoreModel = types
     },
     get usernameValidationError() {
       if (store.authUsername.length === 0) return "can't be blank"
+      if (!/^[A-Za-z]\w{3,19}$/.test(store.authUsername))
+        return "Username must start with a letter, and can only contain letters, numbers, and underscores, with 4 to 20 characters."
       return ""
     },
   }))

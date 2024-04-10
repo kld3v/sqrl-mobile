@@ -1,9 +1,11 @@
+import { useNavigation } from "@react-navigation/native"
 import { Button, Icon } from "app/components"
 import config from "app/config"
 import { colors, typography } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
 
 export default function GoogleLogin() {
+  const navigation = useNavigation()
   const openGoogleAuth = async () => {
     try {
       await WebBrowser.openAuthSessionAsync(config.GOOGLE_AUTH_URL)
@@ -31,7 +33,9 @@ export default function GoogleLogin() {
       LeftAccessory={(props) => (
         <Icon style={{ marginRight: 6, marginBottom: 2 }} size={12} icon="google" />
       )}
-      onPress={openGoogleAuth}
+      // onPress={openGoogleAuth}
+      //@ts-ignore
+      onPress={() => navigation.navigate("Username")}
     />
   )
 }

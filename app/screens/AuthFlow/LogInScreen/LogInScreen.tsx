@@ -24,6 +24,8 @@ interface LogInProps extends AppStackScreenProps<"LogIn"> {}
 export const LogIn: FC<LogInProps> = observer(function LogIn() {
   const navigation = useNavigation()
   const authPasswordInput = useRef<TextInput>(null)
+  const [error, setError] = useState("")
+
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
@@ -33,7 +35,7 @@ export const LogIn: FC<LogInProps> = observer(function LogIn() {
   const { height } = Dimensions.get("window")
   const imageSize = height < 700 ? 64 : 112
   const {
-    authenticationStore: { authEmail, setAuthEmail, authUsername, setAuthToken, validationError },
+    authenticationStore: { authEmail, setAuthEmail, authUsername, setAuthToken },
   } = useStores()
 
   useEffect(() => {
@@ -44,16 +46,12 @@ export const LogIn: FC<LogInProps> = observer(function LogIn() {
     }
   }, [])
 
-  const error = isSubmitted ? validationError : ""
-
   async function LogIn() {
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
 
-    if (validationError) return
-
     // Make a request to your server to get an authentication token.
-    let res = await api.apisauce.post("/auth/login", {
+    let res = await api.auth.post("/login", {
       email: authEmail,
       password,
     })
@@ -97,7 +95,7 @@ export const LogIn: FC<LogInProps> = observer(function LogIn() {
           <Text text="Welcome Back" preset="heading" style={$signInHeading} />
         </View>
       </View>
-      {attemptsCount > 2 && <Text tx="SignInScreen.hint" size="sm" weight="light" style={$hint} />}
+      {error && <Text text={error} size="sm" weight="light" style={$hint} />}
       <TextField
         value={authEmail}
         onChangeText={setAuthEmail}
@@ -107,8 +105,6 @@ export const LogIn: FC<LogInProps> = observer(function LogIn() {
         autoCorrect={false}
         keyboardType="email-address"
         placeholder="Email"
-        helper={error}
-        status={error ? "error" : undefined}
       />
 
       <TextField

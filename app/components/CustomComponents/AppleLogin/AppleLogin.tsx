@@ -6,6 +6,7 @@ import { View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { useStores } from "app/models"
 import { useNavigation } from "@react-navigation/native"
+import { RegistrationApiResponse } from "app/screens/AuthFlow/Auth.types"
 
 export const AppleLogin = observer(function AppleLogin(props: { setLoading: any }) {
   const { setLoading } = props
@@ -32,23 +33,26 @@ export const AppleLogin = observer(function AppleLogin(props: { setLoading: any 
             setLoading(true)
             console.log(credential.identityToken)
             //api call with identity token
-            // const appleTokenRes = await api.apisauce.post("/auth/apple/login", {
-            //   identity_token: credential.identityToken,
-            // })
+            const appleResponse: RegistrationApiResponse = await api.auth.post("/apple", {
+              identity_token: credential.identityToken,
+            })
 
-            // if (!appleTokenRes.ok) {
-            //   alert("Failed to log in - Please Try Again")
-            //   return
-            // }
-            // // Don't set to state till we've figured out what's going on with username
-            // authService.setToken("apple_token", appleTokenRes.data.identity_token)
+            if (!appleResponse.ok) {
+              alert("Failed to log in - Please Try Again")
+              return
+            }
+            // Don't set to state till we've figured out what's going on with username
 
-            // if (!appleTokenRes.data.username) {
-            //   // check secureStore for username right?
-            //   // Come back handle expiration at some point
-            //   //@ts-ignore
-            // }
+            if (!appleResponse.token) {
+              alert("Failed to sign in, please try again. ")
+              return
+            }
 
+            await authService.setToken("apple_token", appleResponse.token)
+
+            await api.setIdentityToken(appleResponse.token)
+
+            //@ts-ignore
             navigation.navigate("Username")
             // signed in
             setLoading(false)

@@ -13,7 +13,7 @@ import {
 } from "app/components"
 import { useNavigation } from "@react-navigation/native"
 import { useStores } from "app/models"
-import { colors, spacing, typography } from "app/theme"
+import { $hint, colors, spacing, typography } from "app/theme"
 import { assetService } from "app/services/Assets/AssetService"
 import { api } from "app/services/api"
 import { ApiResponse } from "apisauce"
@@ -71,7 +71,7 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
     }
 
     // Make a request to your server to get an authentication token.
-    let res: RegistrationApiResponse = await api.apisauce.post("/auth/register", {
+    let res: RegistrationApiResponse = await api.auth.post("/register", {
       username: authUsername,
       email: authEmail,
       password,
@@ -211,11 +211,6 @@ const $root: ViewStyle = {
 const $screenContentContainer: ViewStyle = {
   paddingVertical: spacing.xl,
   paddingHorizontal: spacing.lg,
-}
-
-const $hint: TextStyle = {
-  color: colors.tint,
-  marginBottom: spacing.md,
 }
 
 const $textField: ViewStyle = {
