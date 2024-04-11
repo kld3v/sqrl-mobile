@@ -1,25 +1,15 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
-import {
-  Alert,
-  ImageStyle,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  View,
-  ViewStyle,
-} from "react-native"
+import { Alert, ImageStyle, Pressable, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Button, Card, Icon, ListView, Screen, Text } from "app/components"
+import { Button, Card, ListView, Screen, Text } from "app/components"
 import { $rootScreen, $title } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
 import Tick from "app/components/Svg/Tick"
 import Cancel from "app/components/Svg/Cancel"
 import { Scan } from "app/services/History/HistoryService.types"
 import { historyService } from "app/services/History"
-import LottieView from "lottie-react-native"
 import HeartIcon from "app/components/CustomComponents/HeartIcon"
-import { useNavigation } from "@react-navigation/native"
 import { useStores } from "app/models"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
@@ -27,11 +17,12 @@ interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistoryScreen() {
   const [history, setHistory] = useState<Scan[]>([])
   const [refreshing, setRefreshing] = useState(false)
-  const navigation = useNavigation()
   const { authenticationStore } = useStores()
+
   const fetchHistory = useCallback(async () => {
     setRefreshing(true)
-    let res = await historyService.getTestHistory()
+    let res = await historyService.getHistory()
+    console.log(res)
     if (res) {
       setHistory(res)
     }
@@ -69,9 +60,9 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     )
   }, [history])
 
-  const renderItem = ({ item, index }: { item: Scan; index: number }) => (
+  const renderItem = ({ item }: { item: Scan }) => (
     // <Pressable key={index} style={$scanCard} onPress={takeUserToScanUrl(item)}>
-    <Pressable key={index} style={$scanCard}>
+    <Pressable key={item.url_id} style={$scanCard}>
       <Card
         style={{ paddingVertical: 16, paddingHorizontal: 16 }}
         heading={item.url.length > 36 ? `${item.url.substring(0, 36)}...` : item.url}
@@ -83,7 +74,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
           </View>
         }
         RightComponentStyle={{ justifyContent: "center", alignItems: "center" }}
-        footer={`${item.date_and_time} by scanner`}
+        footer={`${item.date_and_time} by ${item.scan_type}`}
         footerStyle={{ color: "black", marginBottom: 8 }}
       />
     </Pressable>

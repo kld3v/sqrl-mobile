@@ -6,10 +6,14 @@ import { View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { useNavigation } from "@react-navigation/native"
 import { AuthAPIResponse } from "app/screens/AuthFlow/Auth.types"
+import { useStores } from "app/models"
 
 export const AppleLogin = observer(function AppleLogin(props: { setLoading: any }) {
   const { setLoading } = props
   const navigation = useNavigation()
+  const {
+    authenticationStore: { setAuthToken, setAuthUsername },
+  } = useStores()
 
   return (
     <View style={$appleButtonContainer}>
@@ -40,16 +44,22 @@ export const AppleLogin = observer(function AppleLogin(props: { setLoading: any 
             }
             // Don't set to state till we've figured out what's going on with username
 
-            if (!res.data?.token) {
+            if (res.ok && !res.data?.token) {
               alert("Failed to get token from Apple, please try again. ")
             }
 
             if (res.ok && res.data?.token) {
               try {
-                await authService.setToken("apple_token", res.data.token)
-                await api.setIdentityToken(res.data.token)
+                const { token } = res.data
+                await authService.setToken("apple_token", token)
+                api.setIdentityToken(token)
                 //@ts-ignore
-                navigation.navigate("Username")
+                if (!res.data?.username) {
+                  navigation.navigate("Username")
+                } else {
+                  setAuthUsername(res.data.username)
+                  setAuthToken(token)
+                }
               } catch (error) {
                 alert("ooops - something went wrong")
               }
@@ -61,6 +71,8 @@ export const AppleLogin = observer(function AppleLogin(props: { setLoading: any 
             } else {
               // handle other errors
             }
+
+            setLoading(false)
           }
         }}
       />

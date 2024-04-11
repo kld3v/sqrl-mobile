@@ -232,15 +232,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         <View style={$buttonContainer}>
           <Button style={$button} text="NukeLeaderboardData " onPress={nukeLeaderboardData} />
         </View>
-        <View style={$buttonContainer}>
-          <Button
-            style={$button}
-            text="Test Sentry Error"
-            onPress={() => {
-              throw new Error("Hello Sentry")
-            }}
-          />
-        </View>
+
         <View style={$buttonContainer}>
           <Button style={$button} text="Get History" onPress={getHistory} />
         </View>

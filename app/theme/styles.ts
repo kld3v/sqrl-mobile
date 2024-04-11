@@ -3,6 +3,16 @@ import { colors } from "./colors"
 import { typography } from "./typography"
 import { spacing } from "./spacing"
 
+export const $ScreenStyle: ViewStyle = {
+  height: "100%",
+  // backgroundColor: "red",
+}
+
+export const $screenContentContainer: ViewStyle = {
+  paddingVertical: spacing.xl,
+  paddingHorizontal: spacing.lg,
+}
+
 export const $rootScreen: ViewStyle = {
   paddingVertical: spacing.xl,
   paddingHorizontal: spacing.md,

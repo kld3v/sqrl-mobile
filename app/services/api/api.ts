@@ -50,8 +50,10 @@ export class Api {
       timeout: this.config.timeout,
       headers: this.config.headers,
     })
-    const authMonitor = (res: any) => console.log(res)
+    const authMonitor = (res: any) => console.log("authMonitor", res)
     this.auth.addMonitor(authMonitor)
+    this.apisauce.addMonitor(authMonitor)
+
     this.apisauceForPushNotifications = create({
       baseURL: "https://exp.host/--/api/v2/push",
       timeout: 10000,
@@ -63,12 +65,12 @@ export class Api {
     })
   }
 
-  async setIdentityToken(token?: string) {
+  setIdentityToken(token?: string) {
     if (token) {
       this.identityToken = token
-    } else {
-      this.identityToken = authService.validToken
     }
+    this.identityToken = authService.validToken
+
     if (this.userHasSignedUpWithEmailAndPassword) {
       this.apisauce.setHeader("Authorization", `Bearer ${this.identityToken}`)
     }

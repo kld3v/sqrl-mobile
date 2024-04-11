@@ -2,7 +2,7 @@ import React, { FC, useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Screen, Text } from "app/components"
+import { Button, Screen, Text } from "app/components"
 import { $rootScreen, $title, colors, spacing, typography } from "app/theme"
 import { leaderboardServiceInstance } from "app/services/Leaderboard"
 import { useStores } from "app/models"
@@ -66,6 +66,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
         )
     }
   }
+
   const renderLeaderboard = (): React.ReactNode => {
     return sortedLeaderboardData.map((el, index) => {
       return (
@@ -93,20 +94,28 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
     })
   }
 
+  const notSignedIn = (
+    <View>
+      <Text preset="heading" text="You need to be signed in to use history!" style={$title} />
+      <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
+    </View>
+  )
+
+  if (authenticationStore.authToken === "scannerOnly") return notSignedIn
+
   useEffect(() => {
     ;(async () => {
       try {
         await leaderboardServiceInstance.waitForInitToComplete()
         let dummyData = await leaderboardServiceInstance.getDummyLeaderboardDataFromStorage()
         let userData = await leaderboardServiceInstance.getUserScoreAndUserNameFromStorage()
-
+        if (!userData || !dummyData) return
         let userDataFormatted = {
           username: authenticationStore.authUsername,
           score: parseInt(userData.score),
           isUser: true,
         }
         let leaderboardData = [...dummyData, userDataFormatted]
-
         setLeaderboardData(leaderboardData)
       } catch (error) {
         console.log(error, "error setting the data for leaderboard - check leaderboard screen ")

@@ -80,7 +80,6 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
 
     if (!res.ok) {
       console.log(res)
-      let errorToDisplay: string = ""
       if (res.data?.errors) {
         let errorMessages = [] // Use an array to collect error messages
 
@@ -109,17 +108,21 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
       return
     }
 
-    if (res.data && res.data.token) {
-      await api.setIdentityToken(res.data.token)
+    if (res.data && res.data.token && res.data?.username) {
+      api.setIdentityToken(res.data.token)
       authService.setToken("qrla_token", res.data.token)
+      authService.setUsername(res.data.username)
+      setAuthUsername(res.data.username)
       setAuthToken(res.data.token)
-    }
+      setPassword("")
+      setPasswordConfirm("")
+      setAuthEmail("")
+      setIsSubmitted(false)
+    } else {
+      setIsSubmitted(false)
 
-    // If successful, reset the fields and set the token.
-    setIsSubmitted(false)
-    setPassword("")
-    setPasswordConfirm("")
-    setAuthEmail("")
+      alert("Failed to get token or username - please try again!")
+    }
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(

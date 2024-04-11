@@ -8,5 +8,5 @@
 export default {
   API_URL: "https://app.qrla.io/api",
   AUTH_URL: "https://app.qrla.io/auth",
-  GOOGLE_AUTH_URL: "https://app.qrla.io/auth/google",
+  GOOGLE_AUTH_URL: "https://app.qrla.io/auth/google/signin",
 }
