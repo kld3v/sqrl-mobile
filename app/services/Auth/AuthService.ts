@@ -1,4 +1,5 @@
 import { secureStoreInstance } from "../SecureStore/SecureStorageService"
+import { api } from "../api"
 import { IAuthService, TokenStrategies, TokenType } from "./AuthService.types"
 
 class AuthService implements IAuthService {
@@ -99,7 +100,7 @@ class AuthService implements IAuthService {
         await secureStoreInstance.clearFromSecureStore(key)
       }),
     )
-
+    api.setIdentityToken("")
     // Reset the tokens in memory
     this.tokens = {
       apple_token: null,

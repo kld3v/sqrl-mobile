@@ -14,11 +14,13 @@ import { $termsHyperlink } from "../../../theme"
 import SeperatorWithText from "../../../components/SeperatorWithText"
 import { Dimensions } from "react-native"
 import LoadingOverlay from "app/components/LoadingOverlay"
+import { useStores } from "app/models"
 
 interface SignUpProps extends AppStackScreenProps<"SignUp"> {}
 
 export const SignUpScreen: FC<SignUpProps> = observer(function SignUp(_props) {
   const navigation = useNavigation()
+  const { authenticationStore } = useStores()
   const [loading, setLoading] = useState(false)
   const qrlaLogo = assetService.qrlaLogo
   const { height } = Dimensions.get("window")
@@ -78,6 +80,15 @@ export const SignUpScreen: FC<SignUpProps> = observer(function SignUp(_props) {
                 text="Log in"
                 //@ts-ignore
                 onPress={() => navigation.navigate("LogIn")}
+              />
+              <Text style={$termsTextStyle} text=" or " />
+              <Text
+                style={{ ...$termsTextStyle, ...$termsHyperlink }}
+                text="just scan."
+                //@ts-ignore
+                onPress={() => {
+                  authenticationStore.setAuthToken("scannerOnly")
+                }}
               />
             </Text>
           </View>

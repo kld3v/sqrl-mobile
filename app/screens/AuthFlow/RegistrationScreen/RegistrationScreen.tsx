@@ -61,12 +61,10 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
   async function Register() {
     setIsSubmitted(true)
     if (emailError || usernameError) return
-
     if (password !== passwordConfirm) {
       setAuthError("Passwords don't match!")
       return
     }
-
     if (password.length < 9) {
       setAuthError("Password must be at least 8 characters")
       return
@@ -82,7 +80,6 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
 
     if (!res.ok) {
       console.log(res)
-
       let errorToDisplay: string = ""
       if (res.data?.errors) {
         let errorMessages = [] // Use an array to collect error messages

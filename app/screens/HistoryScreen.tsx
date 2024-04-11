@@ -10,7 +10,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Card, Icon, ListView, Screen, Text } from "app/components"
+import { Button, Card, Icon, ListView, Screen, Text } from "app/components"
 import { $rootScreen, $title } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
 import Tick from "app/components/Svg/Tick"
@@ -19,13 +19,16 @@ import { Scan } from "app/services/History/HistoryService.types"
 import { historyService } from "app/services/History"
 import LottieView from "lottie-react-native"
 import HeartIcon from "app/components/CustomComponents/HeartIcon"
+import { useNavigation } from "@react-navigation/native"
+import { useStores } from "app/models"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
 export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistoryScreen() {
   const [history, setHistory] = useState<Scan[]>([])
   const [refreshing, setRefreshing] = useState(false)
-
+  const navigation = useNavigation()
+  const { authenticationStore } = useStores()
   const fetchHistory = useCallback(async () => {
     setRefreshing(true)
     let res = await historyService.getTestHistory()
@@ -92,6 +95,15 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
       <Text style={{ textAlign: "center" }} preset="subheading" text="Get Scanning!" />
     </View>
   )
+
+  const notSignedIn = (
+    <View>
+      <Text preset="heading" text="You need to be signed in to use history!" style={$title} />
+      <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
+    </View>
+  )
+
+  if (authenticationStore.authToken === "scannerOnly") return notSignedIn
 
   return (
     <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>

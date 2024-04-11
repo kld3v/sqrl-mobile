@@ -5,11 +5,9 @@
  * See the [Backend API Integration](https://github.com/infinitered/ignite/blob/master/docs/Backend-API-Integration.md)
  * documentation for more details.
  */
-import { ApiResponse, ApisauceInstance, create } from "apisauce"
+import { ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
-import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiFeedResponse } from "./api.types"
-import { secureStoreInstance } from "../SecureStore/SecureStorageService"
+import type { ApiConfig } from "./api.types"
 import { authService } from "../Auth"
 
 /**
@@ -35,6 +33,7 @@ export class Api {
   config: ApiConfig
   apisauceForPushNotifications: ApisauceInstance
   identityToken: string | null = ""
+  userHasSignedUpWithEmailAndPassword: boolean = true
 
   /**
    * Set up our API instance. Keep this lightweight!
@@ -70,8 +69,9 @@ export class Api {
     } else {
       this.identityToken = authService.validToken
     }
-
-    this.apisauce.setHeader("Authorization", `Bearer ${this.identityToken}`)
+    if (this.userHasSignedUpWithEmailAndPassword) {
+      this.apisauce.setHeader("Authorization", `Bearer ${this.identityToken}`)
+    }
   }
 }
 

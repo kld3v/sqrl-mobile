@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect } from "react"
+import React, { FC, useCallback } from "react"
 import * as Application from "expo-application"
 import { Linking, Platform, TextStyle, View, ViewStyle } from "react-native"
 import { AutoImage, Button, ListItem, Screen, Text } from "../../components"
