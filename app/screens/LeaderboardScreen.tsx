@@ -25,7 +25,7 @@ type UserScore = {
 
 export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function LeaderboardScreen() {
   // Pull in one of our MST stores
-  const { leaderboardStore, debugStore } = useStores()
+  const { leaderboardStore, debugStore, authenticationStore } = useStores()
 
   // Pull in navigation via hook
   // const navigation = useNavigation()
@@ -99,12 +99,9 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
         await leaderboardServiceInstance.waitForInitToComplete()
         let dummyData = await leaderboardServiceInstance.getDummyLeaderboardDataFromStorage()
         let userData = await leaderboardServiceInstance.getUserScoreAndUserNameFromStorage()
-        if (!dummyData || !userData) {
-          console.log("dummyData", dummyData, "userData", userData)
-          return
-        }
+
         let userDataFormatted = {
-          username: userData.username,
+          username: authenticationStore.authUsername,
           score: parseInt(userData.score),
           isUser: true,
         }

@@ -162,6 +162,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
   const logout = useCallback(async () => {
     await authService.logout()
     authenticationStore.setAuthToken("")
+    authenticationStore.setAuthUsername("")
   }, [])
 
   return (
