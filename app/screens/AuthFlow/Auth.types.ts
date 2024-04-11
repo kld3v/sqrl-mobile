@@ -1,12 +1,16 @@
 import { ApiResponse } from "apisauce"
 
 export type AuthApiOKResponse = {
-  user: { id: number; name?: string; username: string }
+  username: string
   token: string
 }
 
 export type AuthApiErrorResponse = {
-  message: string
+  errors: {
+    username?: string[]
+    email?: string[]
+    password?: string[]
+  }
 }
 
-export type RegistrationApiResponse = ApiResponse<AuthApiOKResponse, AuthApiErrorResponse>
+export type AuthAPIResponse = ApiResponse<AuthApiOKResponse, AuthApiErrorResponse>

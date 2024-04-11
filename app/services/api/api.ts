@@ -67,8 +67,9 @@ export class Api {
   async setIdentityToken(token?: string) {
     if (token) {
       this.identityToken = token
+    } else {
+      this.identityToken = authService.validToken
     }
-    this.identityToken = authService.validToken
 
     this.apisauce.setHeader("Authorization", `Bearer ${this.identityToken}`)
   }

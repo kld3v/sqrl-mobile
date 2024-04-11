@@ -4,9 +4,8 @@ import { spacing } from "app/theme"
 import * as AppleAuthentication from "expo-apple-authentication"
 import { View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { useStores } from "app/models"
 import { useNavigation } from "@react-navigation/native"
-import { RegistrationApiResponse } from "app/screens/AuthFlow/Auth.types"
+import { AuthAPIResponse } from "app/screens/AuthFlow/Auth.types"
 
 export const AppleLogin = observer(function AppleLogin(props: { setLoading: any }) {
   const { setLoading } = props
@@ -31,30 +30,30 @@ export const AppleLogin = observer(function AppleLogin(props: { setLoading: any 
               ],
             })
             setLoading(true)
-            console.log(credential.identityToken)
             //api call with identity token
-            const appleResponse: RegistrationApiResponse = await api.auth.post("/apple", {
+            const res: AuthAPIResponse = await api.auth.post("/apple/signin", {
               identity_token: credential.identityToken,
             })
 
-            if (!appleResponse.ok) {
+            if (!res.ok) {
               alert("Failed to log in - Please Try Again")
-              return
             }
             // Don't set to state till we've figured out what's going on with username
 
-            if (!appleResponse.token) {
-              alert("Failed to sign in, please try again. ")
-              return
+            if (!res.data?.token) {
+              alert("Failed to get token from Apple, please try again. ")
             }
 
-            await authService.setToken("apple_token", appleResponse.token)
-
-            await api.setIdentityToken(appleResponse.token)
-
-            //@ts-ignore
-            navigation.navigate("Username")
-            // signed in
+            if (res.ok && res.data?.token) {
+              try {
+                await authService.setToken("apple_token", res.data.token)
+                await api.setIdentityToken(res.data.token)
+                //@ts-ignore
+                navigation.navigate("Username")
+              } catch (error) {
+                alert("ooops - something went wrong")
+              }
+            }
             setLoading(false)
           } catch (e: any) {
             if (e.code === "ERR_REQUEST_CANCELED") {

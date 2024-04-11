@@ -1,16 +1,7 @@
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { Image, TextInput, TextStyle, View, ViewStyle } from "react-native"
-import {
-  AutoImage,
-  Button,
-  Icon,
-  Screen,
-  Text,
-  TextField,
-  TextFieldAccessoryProps,
-} from "../../../components"
-import { useStores } from "../../../models"
+import React, { FC, useState } from "react"
+import { TextStyle, View, ViewStyle } from "react-native"
+import { AutoImage, Button, Screen, Text } from "../../../components"
 import { AppStackScreenProps } from "../../../navigators"
 import { colors, spacing, typography } from "../../../theme"
 import { useNavigation } from "@react-navigation/native"

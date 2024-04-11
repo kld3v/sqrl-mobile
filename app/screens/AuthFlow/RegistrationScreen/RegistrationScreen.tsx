@@ -11,13 +11,11 @@ import {
   Button,
   AutoImage,
 } from "app/components"
-import { useNavigation } from "@react-navigation/native"
 import { useStores } from "app/models"
 import { $hint, colors, spacing, typography } from "app/theme"
 import { assetService } from "app/services/Assets/AssetService"
 import { api } from "app/services/api"
-import { ApiResponse } from "apisauce"
-import { RegistrationApiResponse } from "../Auth.types"
+import { AuthAPIResponse } from "../Auth.types"
 import { authService } from "app/services/Auth"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
@@ -25,7 +23,6 @@ import { authService } from "app/services/Auth"
 interface RegistrationProps extends AppStackScreenProps<"Registration"> {}
 
 export const Registration: FC<RegistrationProps> = observer(function Registration() {
-  const navigation = useNavigation()
   const authPasswordInput = useRef<TextInput>(null)
   const authPasswordConfirmInput = useRef<TextInput>(null)
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
@@ -70,17 +67,48 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
       return
     }
 
+    if (password.length < 9) {
+      setAuthError("Password must be at least 8 characters")
+      return
+    }
+
     // Make a request to your server to get an authentication token.
-    let res: RegistrationApiResponse = await api.auth.post("/register", {
+    let res: AuthAPIResponse = await api.auth.post("/register", {
       username: authUsername,
       email: authEmail,
       password,
+      password_confirmation: passwordConfirm,
     })
 
     if (!res.ok) {
-      res.data?.message
-        ? setAuthError(res.data!.message)
-        : setAuthError("Something went wrong - please try again :) ")
+      console.log(res)
+
+      let errorToDisplay: string = ""
+      if (res.data?.errors) {
+        let errorMessages = [] // Use an array to collect error messages
+
+        // Iterate over properties in errors object
+        for (let property in res.data.errors) {
+          if (res.data.errors.hasOwnProperty(property)) {
+            // Ensure the property is not from the prototype chain
+            // Add the first error message of each property to the array
+            errorMessages.push(res.data.errors[property][0])
+          }
+        }
+
+        // Set the authentication error message
+        // Join the array of messages into a single string, separated by a space or newline, depending on your preference
+        const errorMessageString = errorMessages.join(". ") + "" // Ending with a period for proper punctuation
+        setAuthError(
+          errorMessageString.length > 0
+            ? errorMessageString
+            : "Something went wrong - please try again :)",
+        )
+      } else {
+        // Handle case where there are no error messages in the expected format
+        setAuthError("Something went wrong - please try again :)")
+      }
+
       return
     }
 
@@ -185,12 +213,6 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
       />
       <Button
         text="Create Account"
-        disabled={
-          password.length === 0 ||
-          password !== passwordConfirm ||
-          authEmail.length > 0 ||
-          authUsername.length > 0
-        }
         disabledStyle={{
           borderColor: colors.palette.neutral500,
         }}

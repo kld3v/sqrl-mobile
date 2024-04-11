@@ -14,6 +14,7 @@ import { pushNotificationService } from "app/services/PushNotifications"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
 import { historyService } from "app/services/History/HistoryService"
 import { leaderboardServiceInstance } from "app/services/Leaderboard"
+import { authService } from "app/services/Auth"
 
 const copyToClipboard = async (message: any) => {
   await Clipboard.setStringAsync(message)
@@ -27,6 +28,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     pushNotificationsStore,
     onboardingStore,
     leaderboardStore,
+    authenticationStore,
   } = useStores()
 
   useOnboarding()
@@ -157,6 +159,11 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     )
   }, [])
 
+  const logout = useCallback(async () => {
+    await authService.logout()
+    authenticationStore.setAuthToken("")
+  }, [])
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
@@ -238,6 +245,9 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         </View>
         <View style={$buttonContainer}>
           <Button style={$button} text="Bump User Score" onPress={bumpUserScore} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="logout" onPress={logout} />
         </View>
         <ListItem
           LeftComponent={

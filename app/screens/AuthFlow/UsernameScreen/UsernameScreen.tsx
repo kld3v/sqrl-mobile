@@ -7,6 +7,9 @@ import { useStores } from "app/models"
 import { $hint, colors, spacing, typography } from "app/theme"
 import { assetService } from "app/services/Assets/AssetService"
 import { api } from "app/services/api"
+import { AuthAPIResponse } from "../Auth.types"
+import { authService } from "app/services/Auth"
+import LoadingOverlay from "app/components/LoadingOverlay"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
@@ -20,20 +23,32 @@ export const UsernameScreen: FC<UsernameScreenProps> = observer(function Usernam
   const { height } = Dimensions.get("window")
   const imageSize = height < 700 ? 64 : 112
   const {
-    authenticationStore: { setAuthUsername, authUsername, usernameValidationError },
+    authenticationStore: { setAuthUsername, authUsername, usernameValidationError, setAuthToken },
   } = useStores()
 
   const usernameError = isSubmitted ? usernameValidationError : ""
 
-  function SubmitUsername() {
+  async function SubmitUsername() {
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
 
     if (usernameValidationError) return
 
     // Make a request to your server to get an authentication token.
-    let res = api.apisauce.post("/auth/username", { username: authUsername })
-    // If successful, reset the fields and set the token.
+    let res = await api.apisauce.post("/user/update-username", {
+      username: authUsername,
+    })
+    console.log(res)
+    if (!res.ok) {
+      res.data?.error
+        ? setError(res.data?.error)
+        : setError("Error setting username - please try again!")
+    } else {
+      await authService.setUsername(authUsername)
+      // Setting the authtoken in global state below is key as this is what tells react to render the logged in user state.
+      let token = authService.validToken
+      if (token) setAuthToken(token)
+    }
 
     setIsSubmitted(false)
   }
@@ -45,6 +60,7 @@ export const UsernameScreen: FC<UsernameScreenProps> = observer(function Usernam
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
     >
+      {isSubmitted && <LoadingOverlay />}
       <View style={$headerContainer}>
         <AutoImage source={qrlaLogo} style={{ width: imageSize, height: imageSize }} />
 
