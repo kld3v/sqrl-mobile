@@ -87,17 +87,8 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     </View>
   )
 
-  const notSignedIn = (
-    <View>
-      <Text preset="heading" text="You need to be signed in to use history!" style={$title} />
-      <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
-    </View>
-  )
-
-  if (authenticationStore.authToken === "scannerOnly") return notSignedIn
-
-  return (
-    <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>
+  const historyScreenContent = (
+    <>
       <Text preset="heading" tx="historyScreen.title" style={$title} />
 
       {history.length === 0 && noHistory}
@@ -113,6 +104,19 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
           refreshing={refreshing}
         />
       </View>
+    </>
+  )
+
+  const notSignedIn = (
+    <View>
+      <Text preset="heading" text="You need to be signed in to use history!" style={$title} />
+      <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
+    </View>
+  )
+
+  return (
+    <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>
+      {authenticationStore.authToken === "scannerOnly" ? notSignedIn : historyScreenContent}
     </Screen>
   )
 })

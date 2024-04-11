@@ -96,12 +96,42 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
 
   const notSignedIn = (
     <View>
-      <Text preset="heading" text="You need to be signed in to use history!" style={$title} />
+      <Text
+        preset="heading"
+        text="You need to be signed in to use Leaderboard!"
+        style={{ ...$title, fontSize: typography.fontSizes.h2 }}
+      />
       <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
     </View>
   )
 
-  if (authenticationStore.authToken === "scannerOnly") return notSignedIn
+  const leaderboardScreenContent = (
+    <>
+      <Text preset={"heading"} tx="leaderboardScreen.title" style={$title} />
+      <Text
+        preset={"subheading"}
+        tx="leaderboardScreen.subHeader"
+        style={{
+          textAlign: "center",
+          paddingBottom: spacing.lg,
+          color: colors.palette.neutral800,
+        }}
+      />
+      <View
+        style={{
+          marginBottom: 48,
+        }}
+      >
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+          }}
+        ></View>
+        {renderLeaderboard()}
+      </View>
+    </>
+  )
 
   useEffect(() => {
     ;(async () => {
@@ -126,29 +156,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
 
   return (
     <Screen style={$rootScreen} preset="scroll" safeAreaEdges={["top"]}>
-      <Text preset={"heading"} tx="leaderboardScreen.title" style={$title} />
-      <Text
-        preset={"subheading"}
-        tx="leaderboardScreen.subHeader"
-        style={{
-          textAlign: "center",
-          paddingBottom: spacing.lg,
-          color: colors.palette.neutral800,
-        }}
-      />
-      <View
-        style={{
-          marginBottom: 48,
-        }}
-      >
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-          }}
-        ></View>
-        {renderLeaderboard()}
-      </View>
+      {authenticationStore.authToken === "scannerOnly" ? notSignedIn : leaderboardScreenContent}
     </Screen>
   )
 })
