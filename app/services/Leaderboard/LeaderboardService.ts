@@ -57,7 +57,7 @@ export class LeaderboardService {
   }
 
   async getUserScoreAndUserNameFromStorage(): Promise<false | { username: string; score: string }> {
-    let username = await secureStoreInstance.getValueFromSecureStore("userName")
+    let username = await secureStoreInstance.getValueFromSecureStore("username")
     let score = await secureStoreInstance.getValueFromSecureStore("userScore")
     console.log(username, score)
     if (username === null || score === null) return false
@@ -67,9 +67,9 @@ export class LeaderboardService {
     }
   }
 
-  async initUserNameInStorage(userName: string): Promise<boolean> {
+  async initUserNameInStorage(username: string): Promise<boolean> {
     try {
-      await secureStoreInstance.setValueInSecureStore("userName", userName)
+      await secureStoreInstance.setValueInSecureStore("username", username)
     } catch (error) {
       console.log("error init user score")
       return false
@@ -138,7 +138,7 @@ export class LeaderboardService {
 
   async nukeLeaderboardData(): Promise<boolean> {
     try {
-      await secureStoreInstance.clearFromSecureStore("userName")
+      await secureStoreInstance.clearFromSecureStore("username")
       await secureStoreInstance.clearFromSecureStore("userScore")
       await AsyncStorage.clear()
     } catch (error) {

@@ -65,11 +65,8 @@ export class Api {
     })
   }
 
-  setIdentityToken(token?: string) {
-    if (token) {
-      this.identityToken = token
-    }
-    this.identityToken = authService.validToken
+  setIdentityToken(token: string) {
+    this.identityToken = token
 
     if (this.userHasSignedUpWithEmailAndPassword) {
       this.apisauce.setHeader("Authorization", `Bearer ${this.identityToken}`)

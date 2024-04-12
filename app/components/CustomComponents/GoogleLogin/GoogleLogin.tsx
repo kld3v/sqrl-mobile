@@ -17,7 +17,7 @@ export default function GoogleLogin() {
       const res = await WebBrowser.openAuthSessionAsync(config.GOOGLE_AUTH_URL)
       WebBrowser.dismissAuthSession()
 
-      console.log(res)
+      console.log("google login", res)
       if (res.type === "success") {
         // Assuming the token is directly in the URI query parameters
         const redirectUrl = res.url

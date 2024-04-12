@@ -1,32 +1,39 @@
 import React, { useCallback, useState } from "react"
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  withSequence,
-} from "react-native-reanimated"
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated"
 import { View, StyleSheet } from "react-native"
 import { Icon } from "../Icon" // Ensure proper import path
 import { colors } from "app/theme" // Ensure proper import path
+import { Scan, historyService } from "app/services/History"
 
 const ICON_SIZE = 36
 
-const HeartIcon: React.FC<{ onPress: () => void }> = ({ onPress }) => {
-  const [isFavorite, setIsFavorite] = useState(false)
+const HeartIcon: React.FC<{
+  setHistory: React.Dispatch<React.SetStateAction<Scan[]>>
+  isFavorite: boolean
+  url_id: number
+}> = ({ setHistory, url_id, isFavorite }) => {
   const scale = useSharedValue(1)
 
-  const handlePress = useCallback(() => {
-    setIsFavorite(!isFavorite)
+  const setFavoriteStatus = async (id: number, isFave: boolean) => {
+    if (!isFave) {
+      await historyService.addToFavorite(id)
+    } else {
+      await historyService.deleteFavorite(id)
+    }
+  }
+  const handlePress = useCallback(async () => {
     // Heart animation
+
+    setHistory((currentHistory) =>
+      currentHistory.map((item) =>
+        item.url_id === url_id ? { ...item, is_favorite: !item.is_favorite } : item,
+      ),
+    )
     scale.value = withSpring(isFavorite ? 1 : 1.2, { damping: 5, stiffness: 150 }, () => {
       scale.value = withSpring(1)
     })
-
-    if (onPress) {
-      onPress()
-    }
-  }, [isFavorite, onPress])
+    await setFavoriteStatus(url_id, isFavorite)
+  }, [isFavorite])
 
   const heartAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

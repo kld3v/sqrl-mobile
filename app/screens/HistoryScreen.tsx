@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { Alert, ImageStyle, Pressable, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Button, Card, ListView, Screen, Text } from "app/components"
+import { Button, Card, ListView, Screen, Text, Toggle } from "app/components"
 import { $rootScreen, $title } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
 import Tick from "app/components/Svg/Tick"
@@ -11,16 +11,20 @@ import { Scan } from "app/services/History/HistoryService.types"
 import { historyService } from "app/services/History"
 import HeartIcon from "app/components/CustomComponents/HeartIcon"
 import { useStores } from "app/models"
+import { authService } from "app/services/Auth"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
 export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistoryScreen() {
   const [history, setHistory] = useState<Scan[]>([])
+  const [favoritesOnly, setFavoritesOnly] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const { authenticationStore } = useStores()
 
   const fetchHistory = useCallback(async () => {
     setRefreshing(true)
+    console.log(authService.validToken)
+    console.log("token exists??", await authService.tokenDoesExist())
     let res = await historyService.getHistory()
     console.log(res)
     if (res) {
@@ -29,11 +33,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     setRefreshing(false)
   }, [])
 
-  useEffect(() => {
-    fetchHistory()
-  }, [])
-
-  const takeUserToScanUrl = (el: Scan) => async () => {
+  const curried_takeUserToScanUrl = (el: Scan) => async () => {
     if (el.trust_score > 500) {
       await WebBrowser.openBrowserAsync(el.url)
       return
@@ -55,14 +55,18 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   }
 
   const sortedHistory = useMemo(() => {
-    return [...history].sort(
+    // Filter the history based on the favoritesOnly flag.
+    // If favoritesOnly is true, filter out non-favorite items.
+    const filteredHistory = favoritesOnly ? history.filter((item) => item.is_favorite) : history
+
+    // Sort the potentially filtered history by date.
+    return filteredHistory.sort(
       (a, b) => new Date(b.date_and_time).getTime() - new Date(a.date_and_time).getTime(),
     )
-  }, [history])
+  }, [history, favoritesOnly])
 
   const renderItem = ({ item }: { item: Scan }) => (
-    // <Pressable key={index} style={$scanCard} onPress={takeUserToScanUrl(item)}>
-    <Pressable key={item.url_id} style={$scanCard}>
+    <Pressable key={item.url_id} style={$scanCard} onPress={curried_takeUserToScanUrl(item)}>
       <Card
         style={{ paddingVertical: 16, paddingHorizontal: 16 }}
         heading={item.url.length > 36 ? `${item.url.substring(0, 36)}...` : item.url}
@@ -70,7 +74,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
         RightComponent={
           <View style={$iconContainer}>
             {item.trust_score > 500 ? <Tick style={$iconStyle} /> : <Cancel style={$iconStyle} />}
-            <HeartIcon onPress={() => console.log("click")} />
+            <HeartIcon setHistory={setHistory} url_id={item.url_id} isFavorite={item.is_favorite} />
           </View>
         }
         RightComponentStyle={{ justifyContent: "center", alignItems: "center" }}
@@ -87,9 +91,26 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     </View>
   )
 
-  const historyScreenContent = (
+  const notSignedIn = (
+    <View>
+      <Text preset="heading" text="You need to be signed in to use history!" style={$title} />
+      <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
+    </View>
+  )
+
+  const renderHistory = (
     <>
       <Text preset="heading" tx="historyScreen.title" style={$title} />
+      <Toggle
+        value={favoritesOnly}
+        onValueChange={setFavoritesOnly}
+        variant="checkbox"
+        label="Show Favourites Only"
+        labelPosition="left"
+        labelStyle={{
+          textAlign: "right",
+        }}
+      />
 
       {history.length === 0 && noHistory}
       {refreshing && <Text style={{ textAlign: "center" }}>Loading...</Text>}
@@ -99,7 +120,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
           data={sortedHistory}
           renderItem={renderItem}
           estimatedItemSize={200}
-          keyExtractor={(item, index) => `history-${index}`}
+          keyExtractor={(item, index) => `history-${item.url_id}`}
           onRefresh={fetchHistory}
           refreshing={refreshing}
         />
@@ -107,16 +128,13 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     </>
   )
 
-  const notSignedIn = (
-    <View>
-      <Text preset="heading" text="You need to be signed in to use history!" style={$title} />
-      <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
-    </View>
-  )
+  useEffect(() => {
+    fetchHistory()
+  }, [])
 
   return (
     <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>
-      {authenticationStore.authToken === "scannerOnly" ? notSignedIn : historyScreenContent}
+      {authenticationStore.authToken === "scannerOnly" ? notSignedIn : renderHistory}
     </Screen>
   )
 })

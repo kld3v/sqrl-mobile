@@ -98,9 +98,10 @@ const AppStack = observer(function AppStack() {
       debugStore.addInfoMessage("Started location updates")
     }
     ;(async () => {
+      await authService.initializeTokens()
       let tokenDoesExist = await authService.tokenDoesExist()
       if (tokenDoesExist) {
-        api.setIdentityToken()
+        authService.validToken && api.setIdentityToken(authService.validToken)
         console.log("identity token in api on load is:", api.identityToken)
         let username = await authService.getUsername()
         username && setAuthUsername(username)

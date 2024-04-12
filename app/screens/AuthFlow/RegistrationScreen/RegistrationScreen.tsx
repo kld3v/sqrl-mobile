@@ -110,6 +110,9 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
 
     if (res.data && res.data.token && res.data?.username) {
       api.setIdentityToken(res.data.token)
+      console.log(res.data.token)
+      console.log("token set in api", api.identityToken)
+
       authService.setToken("qrla_token", res.data.token)
       authService.setUsername(res.data.username)
       setAuthUsername(res.data.username)
