@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native"
 import { Button, Icon } from "app/components"
+import Config from "app/config"
 import config from "app/config"
 import { useStores } from "app/models"
 import { authService } from "app/services/Auth"
@@ -14,8 +15,13 @@ export default function GoogleLogin() {
   } = useStores()
   const openGoogleAuth = async () => {
     try {
-      const res = await WebBrowser.openAuthSessionAsync(config.GOOGLE_AUTH_URL)
-      WebBrowser.dismissAuthSession()
+      const res = await WebBrowser.openAuthSessionAsync(
+        Config.GOOGLE_AUTH_URL,
+        "qrla://app.qrla.io/auth/google",
+        {
+          dismissButtonStyle: "done",
+        },
+      )
 
       console.log("google login", res)
       if (res.type === "success") {
@@ -47,23 +53,16 @@ export default function GoogleLogin() {
     }
   }
 
-  function extractUsername(url: string) {
-    let username = null
+  function extractUsername(url: string): string | null {
     const match = url.match(/[?&]username=([^&]*)/)
-    if (match && match.length > 1) {
-      username = match[0]
-    }
-    return username
+    return match && match.length > 1 ? decodeURIComponent(match[1]) : null
   }
 
-  function extractToken(url: string) {
-    let token = null
+  function extractToken(url: string): string | null {
     const matches = url.match(/[?&]token=([^&#]*)/)
-    if (matches && matches.length > 1) {
-      token = matches[1]
-    }
-    return token
+    return matches && matches.length > 1 ? decodeURIComponent(matches[1]) : null
   }
+
   return (
     <Button
       text="Continue with Google"

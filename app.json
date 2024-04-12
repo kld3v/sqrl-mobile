@@ -5,7 +5,7 @@
     "owner": "qrlalabs",
     "name": "QRLA",
     "slug": "qrlaApp",
-    "scheme": "qrlaapp",
+    "scheme": "qrla",
     "version": "2.3.0",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
