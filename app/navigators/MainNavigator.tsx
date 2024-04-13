@@ -11,6 +11,7 @@ import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { locationService } from "app/services/Location"
 import { useStores } from "app/models"
 import { HistoryScreen, LeaderboardScreen } from "app/screens"
+import * as Haptics from "expo-haptics"
 
 export type TabParamList = {
   Community: undefined
@@ -71,6 +72,9 @@ export function MainNavigator() {
             <Icon icon="more" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
+        listeners={{
+          focus: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+        }}
       />
       <Tab.Screen
         name="Scan"
@@ -81,6 +85,9 @@ export function MainNavigator() {
           tabBarIcon: ({ focused }) => (
             <Icon icon="qrCode" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
+        }}
+        listeners={{
+          focus: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
         }}
       />
       <Tab.Screen
@@ -93,6 +100,9 @@ export function MainNavigator() {
             <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
+        listeners={{
+          focus: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+        }}
       />
     </Tab.Navigator>
   )
@@ -100,7 +110,8 @@ export function MainNavigator() {
 
 const $tabBar: ViewStyle = {
   backgroundColor: colors.background,
-  borderTopColor: colors.transparent,
+  borderTopColor: colors.palette.mattColorsBlue,
+  borderTopWidth: 3,
 }
 
 const $tabBarItem: ViewStyle = {

@@ -43,6 +43,10 @@ const palette = {
   tableBorder: "rgba(215, 242, 194, 0.5)",
 
   heartRed: "#ea3b52",
+
+  mattColorsBlue: "#1A2E3D",
+  mattColorsDarkGreen: "#2c4e26",
+  mattColorsTeaGreen: "#E1f0C1",
 } as const
 
 export const colors = {

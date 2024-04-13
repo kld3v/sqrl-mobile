@@ -99,11 +99,11 @@ const AppStack = observer(function AppStack() {
     }
     ;(async () => {
       await authService.initializeTokens()
-      let tokenDoesExist = await authService.tokenDoesExist()
+      const tokenDoesExist = await authService.tokenDoesExist()
       if (tokenDoesExist) {
         authService.validToken && api.setIdentityToken(authService.validToken)
         console.log("identity token in api on load is:", api.identityToken)
-        let username = await authService.getUsername()
+        const username = await authService.getUsername()
         username && setAuthUsername(username)
         authService.validToken && setAuthToken(authService.validToken)
       } else {
