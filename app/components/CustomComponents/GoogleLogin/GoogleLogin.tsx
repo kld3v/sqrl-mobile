@@ -7,49 +7,40 @@ import { authService } from "app/services/Auth"
 import { api } from "app/services/api"
 import { colors, typography } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
+import * as AuthSession from "expo-auth-session"
+import { useEffect, useState } from "react"
+import { Linking } from "react-native"
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin"
 
 export default function GoogleLogin() {
   const navigation = useNavigation()
+  const [state, setState] = useState({})
   const {
     authenticationStore: { setAuthToken, setAuthUsername },
   } = useStores()
   const openGoogleAuth = async () => {
     try {
-      const res = await WebBrowser.openAuthSessionAsync(
-        Config.GOOGLE_AUTH_URL,
-        "qrla://app.qrla.io/auth/google",
-        {
-          dismissButtonStyle: "done",
-        },
-      )
-
-      console.log("google login", res)
-      if (res.type === "success") {
-        // Assuming the token is directly in the URI query parameters
-        const redirectUrl = res.url
-        const token = extractToken(redirectUrl)
-        const username = extractUsername(redirectUrl)
-        // Use the token as needed
-
-        if (token) {
-          await authService.setToken("google_token", token)
-          api.setIdentityToken(token)
-          if (username) {
-            setAuthUsername(username)
-            setAuthToken(token)
-          } else {
-            //@ts-ignore
-            navigation.navigate("Username")
-          }
-        } else {
-          alert("token invalid")
+      await GoogleSignin.hasPlayServices()
+      const userInfo = await GoogleSignin.signIn()
+      setState({ userInfo, error: undefined })
+    } catch (error) {
+      if (error) {
+        switch (error.code) {
+          case statusCodes.SIGN_IN_CANCELLED:
+            // user cancelled the login flow
+            break
+          case statusCodes.IN_PROGRESS:
+            // operation (eg. sign in) already in progress
+            break
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            // play services not available or outdated
+            break
+          default:
+          // some other error happened
         }
       } else {
-        alert("Failed to get Google token")
+        // an error that's not related to google sign in occurred
       }
-    } catch (error) {
-      alert("failed to sign in, please try again")
-      console.error("An error occurred during authentication", error)
     }
   }
 

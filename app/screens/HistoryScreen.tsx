@@ -104,7 +104,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
       <Toggle
         value={favoritesOnly}
         onValueChange={setFavoritesOnly}
-        variant="checkbox"
+        variant="switch"
         label="Show Favourites Only"
         labelPosition="left"
         labelStyle={{
