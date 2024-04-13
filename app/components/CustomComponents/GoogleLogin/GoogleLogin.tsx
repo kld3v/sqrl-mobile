@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native"
 import { Button, Icon } from "app/components"
 import Config from "app/config"
-import config from "app/config"
 import { useStores } from "app/models"
 import { authService } from "app/services/Auth"
 import { api } from "app/services/api"
@@ -13,6 +12,7 @@ export default function GoogleLogin() {
   const {
     authenticationStore: { setAuthToken, setAuthUsername },
   } = useStores()
+  
   const openGoogleAuth = async () => {
     try {
       const res = await WebBrowser.openAuthSessionAsync(
@@ -25,11 +25,15 @@ export default function GoogleLogin() {
 
       console.log("google login", res)
       if (res.type === "success") {
-        // Assuming the token is directly in the URI query parameters
         const redirectUrl = res.url
         const token = extractToken(redirectUrl)
         const username = extractUsername(redirectUrl)
-        // Use the token as needed
+        const shouldClose = extractShouldClose(redirectUrl)
+
+        if (shouldClose) {
+          WebBrowser.dismissBrowser(); // Close the browser if instructed by the backend
+          return; // Stop further processing
+        }
 
         if (token) {
           await authService.setToken("google_token", token)
@@ -38,17 +42,16 @@ export default function GoogleLogin() {
             setAuthUsername(username)
             setAuthToken(token)
           } else {
-            //@ts-ignore
             navigation.navigate("Username")
           }
         } else {
-          alert("token invalid")
+          alert("Token invalid")
         }
       } else {
         alert("Failed to get Google token")
       }
     } catch (error) {
-      alert("failed to sign in, please try again")
+      alert("Failed to sign in, please try again")
       console.error("An error occurred during authentication", error)
     }
   }
@@ -61,6 +64,11 @@ export default function GoogleLogin() {
   function extractToken(url: string): string | null {
     const matches = url.match(/[?&]token=([^&#]*)/)
     return matches && matches.length > 1 ? decodeURIComponent(matches[1]) : null
+  }
+
+  function extractShouldClose(url: string): boolean {
+    const match = url.match(/[?&]shouldClose=true/)
+    return !!match;
   }
 
   return (
