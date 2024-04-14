@@ -12,7 +12,7 @@ import {
   $bodyStyle,
   $toggleAndButtonContainer,
   $toggleContainerStyle,
-} from "./TermsAndConditionsStyles"
+} from "./TermsAndConditions.styles"
 import { useStores } from "app/models"
 
 interface TermsAndConditionsScreenProps extends AppStackScreenProps<"TermsAndConditions"> {}

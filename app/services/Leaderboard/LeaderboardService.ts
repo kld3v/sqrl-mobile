@@ -2,6 +2,7 @@ import { secureStoreInstance } from "../SecureStore/SecureStorageService"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { api } from "../api"
 import { LeaderboardEntry } from "./LeaderboardService.types"
+import { authService } from "../Auth"
 
 export class LeaderboardService {
   public initialised: Promise<boolean> | null = null
@@ -13,7 +14,12 @@ export class LeaderboardService {
     try {
       if (!(await this.userHasScoreInStorage())) {
         await this.initUserScoreInStorage()
-        await this.initUserNameInStorage("You")
+        let username = await authService.getUsername()
+        if (username) {
+          await this.initUserNameInStorage(username)
+        } else {
+          await this.initUserNameInStorage("You")
+        }
       }
       if (!(await this.dummyLeaderboardDataExists())) {
         let data = await this.getDummyLeaderboardDataForFirstTime()
@@ -56,7 +62,7 @@ export class LeaderboardService {
     return true
   }
 
-  async getUserScoreAndUserNameFromStorage(): Promise<false | { username: string; score: string }> {
+  async getUserScoreAndUsernameFromStorage(): Promise<false | { username: string; score: string }> {
     let username = await secureStoreInstance.getValueFromSecureStore("username")
     let score = await secureStoreInstance.getValueFromSecureStore("userScore")
     console.log(username, score)
