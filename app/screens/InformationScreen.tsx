@@ -59,7 +59,8 @@ export const InformationScreen: FC<InformationScreenProps> = observer(function I
           justifyContent: "center",
           alignItems: "center",
           // paddingHorizontal: 30,
-          paddingLeft: spacing.lg,
+          // paddingLeft: spacing.lg,
+          paddingRight: spacing.xs,
           marginTop: spacing.xl,
           borderWidth: 0,
         }}
@@ -71,6 +72,7 @@ export const InformationScreen: FC<InformationScreenProps> = observer(function I
           fontSize: 22,
           fontFamily: typography.primary.bold,
           paddingTop: 8,
+          marginLeft: spacing.md,
         }}
         //@ts-ignore
         onPress={() => Navigation.navigate("Main")}
