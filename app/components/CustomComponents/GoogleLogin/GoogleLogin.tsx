@@ -1,97 +1,47 @@
-import { useNavigation } from "@react-navigation/native"
-import { Button, Icon } from "app/components"
-import Config from "app/config"
-import { useStores } from "app/models"
-import { authService } from "app/services/Auth"
-import { api } from "app/services/api"
-import { colors, typography } from "app/theme"
-import * as WebBrowser from "expo-web-browser"
+import * as React from 'react';
+import * as Google from 'expo-auth-session/providers/google';
+import { Button } from 'react-native';
 
-export default function GoogleLogin() {
-  const navigation = useNavigation()
-  const {
-    authenticationStore: { setAuthToken, setAuthUsername },
-  } = useStores()
-  
-  const openGoogleAuth = async () => {
-    try {
-      const res = await WebBrowser.openAuthSessionAsync(
-        Config.GOOGLE_AUTH_URL,
-        "qrla://app.qrla.io/auth/google",
-        {
-          dismissButtonStyle: "done",
-        },
-      )
+export default function App() {
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId: '176571807676-nnel138rrmf5t41gkaf31549klndj4ae.apps.googleusercontent.com',
+    iosClientId: '176571807676-nnel138rrmf5t41gkaf31549klndj4ae.apps.googleusercontent.com',
+    androidClientId: '176571807676-nnel138rrmf5t41gkaf31549klndj4ae.apps.googleusercontent.com',
+    webClientId: '176571807676-nnel138rrmf5t41gkaf31549klndj4ae.apps.googleusercontent.com'
+  });
 
-      console.log("google login", res)
-      if (res.type === "success") {
-        const redirectUrl = res.url
-        const token = extractToken(redirectUrl)
-        const username = extractUsername(redirectUrl)
-        const shouldClose = extractShouldClose(redirectUrl)
-
-        if (shouldClose) {
-          WebBrowser.dismissBrowser(); // Close the browser if instructed by the backend
-          return; // Stop further processing
-        }
-
-        if (token) {
-          await authService.setToken("google_token", token)
-          api.setIdentityToken(token)
-          if (username) {
-            setAuthUsername(username)
-            setAuthToken(token)
-          } else {
-            navigation.navigate("Username")
-          }
-        } else {
-          alert("Token invalid")
-        }
-      } else {
-        alert("Failed to get Google token")
-      }
-    } catch (error) {
-      alert("Failed to sign in, please try again")
-      console.error("An error occurred during authentication", error)
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      const { accessToken } = response.authentication;
+      verifyTokenWithBackend(accessToken);
     }
-  }
+  }, [response]);
 
-  function extractUsername(url: string): string | null {
-    const match = url.match(/[?&]username=([^&]*)/)
-    return match && match.length > 1 ? decodeURIComponent(match[1]) : null
-  }
+  const verifyTokenWithBackend = async (accessToken) => {
+    const response = await fetch('https://app.qrla.io/auth/google/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ accessToken: accessToken })
+    });
 
-  function extractToken(url: string): string | null {
-    const matches = url.match(/[?&]token=([^&#]*)/)
-    return matches && matches.length > 1 ? decodeURIComponent(matches[1]) : null
-  }
-
-  function extractShouldClose(url: string): boolean {
-    const match = url.match(/[?&]shouldClose=true/)
-    return !!match;
-  }
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Login successful:', data.token);
+      // Proceed to use the token within your app
+    } else {
+      console.error('Failed to log in');
+    }
+  };
 
   return (
     <Button
-      text="Continue with Google"
-      style={{
-        backgroundColor: "white",
-        borderRadius: 50,
-        borderWidth: 0,
-        padding: 0,
+      disabled={!request}
+      title="Login with Google"
+      onPress={() => {
+        promptAsync();
       }}
-      pressedStyle={{
-        backgroundColor: colors.palette.neutral900,
-      }}
-      textStyle={{
-        fontSize: 14,
-        color: "black",
-        fontFamily: typography.Poppins.medium,
-      }}
-      LeftAccessory={(props) => (
-        <Icon style={{ marginRight: 6, marginBottom: 2 }} size={12} icon="google" />
-      )}
-      onPress={openGoogleAuth}
     />
-  )
+  );
 }
