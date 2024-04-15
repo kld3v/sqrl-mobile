@@ -85,6 +85,10 @@ export interface ButtonProps extends PressableProps {
    * An optional style override for the disabled state
    */
   disabledStyle?: StyleProp<ViewStyle>
+
+  streak?: boolean
+
+  streakColor?: string
 }
 
 /**
@@ -109,6 +113,8 @@ export function Button(props: ButtonProps) {
     LeftAccessory,
     disabled,
     disabledStyle: $disabledViewStyleOverride,
+    streak,
+    streakColor,
     ...rest
   } = props
 
@@ -133,6 +139,12 @@ export function Button(props: ButtonProps) {
     ]
   }
 
+  const ButtonText = (state: any) => (
+    <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle(state)} />
+  )
+
+  const streakColorDefault = "#B3F858" as const
+
   return (
     <View style={$viewContainerStyle()}>
       <Pressable
@@ -152,11 +164,23 @@ export function Button(props: ButtonProps) {
                 disabled={disabled}
               />
             )}
-
-            <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle(state)}>
-              {children}
-            </Text>
-
+            {children ? children : ButtonText(state)}
+            {streak && (
+              <>
+                <View
+                  style={{
+                    ...$streak,
+                    backgroundColor: streakColor ? streakColor : streakColorDefault,
+                  }}
+                />
+                <View
+                  style={{
+                    ...$streak2,
+                    backgroundColor: streakColor ? streakColor : streakColorDefault,
+                  }}
+                />
+              </>
+            )}
             {!!RightAccessory && (
               <RightAccessory
                 style={$rightAccessoryStyle}
@@ -193,7 +217,7 @@ const $baseTextStyle: TextStyle = {
   textAlign: "center",
   flexShrink: 1,
   flexGrow: 0,
-  zIndex: 2,
+  zIndex: 5,
 }
 
 const $rightAccessoryStyle: ViewStyle = { marginStart: spacing.xs, zIndex: 1 }
@@ -263,4 +287,24 @@ const $pressedTextPresets: Record<Presets, StyleProp<TextStyle>> = {
   default: { opacity: 0.9 },
   filled: { opacity: 0.9 },
   reversed: { opacity: 0.9 },
+}
+
+const $streak: ViewStyle = {
+  position: "absolute",
+  height: 48,
+
+  top: "90%",
+  left: 0,
+  right: 0,
+
+  transform: [{ rotate: "-45deg" }, { scaleX: 4 }],
+}
+const $streak2: ViewStyle = {
+  position: "absolute",
+  height: 64,
+
+  top: -64,
+  left: 10,
+  right: 0,
+  transform: [{ rotate: "-45deg" }, { scaleX: 4 }],
 }

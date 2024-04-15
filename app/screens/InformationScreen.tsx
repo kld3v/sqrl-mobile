@@ -55,19 +55,14 @@ export const InformationScreen: FC<InformationScreenProps> = observer(function I
         RightAccessory={() => <Icon icon="caretRight" />}
         style={{
           backgroundColor: colors.palette.primary500,
-          borderRadius: 25, // Half of the height
-          justifyContent: "center",
-          alignItems: "center",
-          paddingRight: spacing.xs,
-          marginTop: spacing.xl,
-          borderWidth: 0,
+          paddingRight: 8,
         }}
-        pressedStyle={{
-          backgroundColor: colors.palette.primary600,
+        raisedButtonEdgeStyle={{
+          backgroundColor: "#5D862C",
         }}
         textStyle={{
           color: colors.palette.neutral200,
-          fontSize: 22,
+          fontSize: typography.fontSizes.h5,
           fontFamily: typography.primary.bold,
           paddingTop: 8,
           marginLeft: spacing.md,

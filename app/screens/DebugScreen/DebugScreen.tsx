@@ -142,7 +142,7 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
   }, [])
 
   const getHistory = useCallback(async () => {
-    let history = await historyService.getTestHistory()
+    let history = await historyService.getHistory()
     debugStore.addInfoMessage(JSON.stringify(history))
   }, [])
 
@@ -342,9 +342,7 @@ const $itemsContainer: ViewStyle = {
   marginBottom: spacing.xl,
 }
 
-const $button: ViewStyle = {
-  marginBottom: spacing.xs,
-}
+const $button: ViewStyle = {}
 
 const $buttonContainer: ViewStyle = {
   marginBottom: spacing.md,

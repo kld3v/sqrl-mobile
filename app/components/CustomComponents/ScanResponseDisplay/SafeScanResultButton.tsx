@@ -1,7 +1,11 @@
+import { AutoImage } from "app/components/AutoImage"
 import { Button } from "app/components/Button"
 import OnScanHaptic from "app/components/Haptics/OnScanHaptic"
-import { colors, typography } from "app/theme"
+import Proceed from "app/components/Svg/Proceed"
+import { assetService } from "app/services/Assets/AssetService"
+import { colors, spacing, typography } from "app/theme"
 import React from "react"
+import { Image, View } from "react-native"
 import { ScanStateOptions } from "types"
 
 const SafeScanResultButton: React.FC<{
@@ -11,31 +15,43 @@ const SafeScanResultButton: React.FC<{
   safe: boolean
 }> = ({ setDelayedLeaving, setPressed, scanState, safe }) => {
   return (
-    <>
+    <View style={{ marginTop: spacing.xxxl }}>
       <Button
-        tx="scannerScreen.proceedButton"
+        text="Proceed"
         onPress={setDelayedLeaving}
         style={{
           backgroundColor: colors.palette.primary500,
-          borderRadius: 25, // Half of the height
+          borderRadius: 32, // Half of the height
           justifyContent: "center",
           alignItems: "center",
-          paddingHorizontal: 30,
+          // paddingHorizontal: 64,
+          height: 64,
+          width: 230,
+          marginTop: -12,
         }}
         onPressIn={() => setPressed(true)}
         onPressOut={() => setPressed(false)}
         raisedButtonEdgeStyle={{
-          backgroundColor: colors.palette.primary600,
+          backgroundColor: "#5D862C",
+          height: 64,
+          width: 230,
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 32, // Half of the height
         }}
         textStyle={{
           color: "#442b48",
-          fontSize: typography.fontSizes.h5,
+          fontSize: typography.fontSizes.h3,
           fontFamily: typography.primary.bold,
-          paddingTop: 12,
+
+          // backgroundColor: "#fff",
         }}
-      />
+        streak
+      >
+        <Proceed style={{ zIndex: 2 }} />
+      </Button>
       <OnScanHaptic scanState={scanState} safe={safe} />
-    </>
+    </View>
   )
 }
 

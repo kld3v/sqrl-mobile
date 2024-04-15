@@ -92,6 +92,8 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           onPressOut={() => setpressed(false)}
           raisedButtonEdgeStyle={{ backgroundColor: colors.palette.angry500Pressed }}
           textStyle={{ fontFamily: typography.primary.bold }}
+          streak
+          streakColor="#DA4E4E"
         />
       )}
     </>

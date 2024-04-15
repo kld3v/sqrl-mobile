@@ -8,7 +8,7 @@ import { ScanStateOptions } from "types"
 
 export default () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [safe, setSafe] = useState<boolean>(true)
+  const [safe, setSafe] = useState<boolean>(false)
   const [url, setUrl] = useState<string>("")
   const [scanState, setScanState] = useState<ScanStateOptions>("scanned")
   const readyToScan = useRef(true)
