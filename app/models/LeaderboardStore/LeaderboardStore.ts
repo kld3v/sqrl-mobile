@@ -18,7 +18,7 @@ export const LeaderboardStoreModel = types
   })) // eslint-disable-line @typescript-eslint/no-unused-vars
   .actions((store) => ({
     async setUserScoreFromSecureStorage() {
-      let userData = await leaderboardServiceInstance.getUserScoreAndUserNameFromStorage()
+      let userData = await leaderboardServiceInstance.getUserScoreAndUsernameFromStorage()
       if (!userData) {
         return
       }

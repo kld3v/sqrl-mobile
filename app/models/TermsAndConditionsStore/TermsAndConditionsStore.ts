@@ -2,7 +2,6 @@ import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { DocumentResponseObject, termsService } from "../../services/Terms"
 import { TermsModel } from "./Terms"
-import { quintonTheCybear } from "../../utils/QuintonTheCybear"
 
 /**
  * Model description here for TypeScript hints.
@@ -19,7 +18,6 @@ export const TermsAndConditionsStoreModel = types
     // },
 
     get userHasTermsToSign(): boolean {
-      quintonTheCybear.log("Checking if user has terms to sign:", self.terms.length > 0)
       return self.terms.length > 0
     },
 

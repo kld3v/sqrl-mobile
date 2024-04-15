@@ -16,7 +16,7 @@ export const InformationScreen: FC<InformationScreenProps> = observer(function I
     "1. Point your camera at the QR code, trying to get it inside the frame.",
     "2. Wait for the camera to focus and scan the QR code.",
     "3. Once the QR code is scanned, the app will display the result.",
-    "4. If the QR code is a valid QRLA QR code, the app will display the result.",
+    "4. If all looks good, click ‘Proceed’ to go through to your QR code destination!",
   ]
   const Navigation = useNavigation()
   return (

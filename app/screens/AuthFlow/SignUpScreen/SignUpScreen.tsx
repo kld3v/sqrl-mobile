@@ -15,6 +15,7 @@ import SeperatorWithText from "../../../components/SeperatorWithText"
 import { Dimensions } from "react-native"
 import LoadingOverlay from "app/components/LoadingOverlay"
 import { useStores } from "app/models"
+import * as WebBrowser from "expo-web-browser"
 
 interface SignUpProps extends AppStackScreenProps<"SignUp"> {}
 
@@ -65,11 +66,21 @@ export const SignUpScreen: FC<SignUpProps> = observer(function SignUp(_props) {
               <Text
                 style={{ ...$termsTextStyle, ...$termsHyperlink }}
                 tx="SignUpScreen.termsAndConditions_2"
+                onPress={() =>
+                  WebBrowser.openBrowserAsync(
+                    "https://app.termly.io/document/terms-of-service/e64123bf-73e9-4931-9513-4b5c5239e742",
+                  )
+                }
               />
               <Text style={$termsTextStyle} tx="SignUpScreen.termsAndConditions_3" />
               <Text
                 style={{ ...$termsTextStyle, ...$termsHyperlink }}
                 tx="SignUpScreen.privacyPolicy"
+                onPress={() =>
+                  WebBrowser.openBrowserAsync(
+                    "https://app.termly.io/document/privacy-policy/512bce2e-3988-4d22-a896-1382e94ddbe3",
+                  )
+                }
               />
             </Text>
             <Text />

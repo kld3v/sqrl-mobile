@@ -24,7 +24,7 @@ import useLeaderboardData from "./useLeaderboardData"
 
 interface LeaderboardScreenProps extends AppStackScreenProps<"Leaderboard"> {}
 
-const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function LeaderboardScreen() {
+export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function LeaderboardScreen() {
   const { leaderboardStore, debugStore, authenticationStore } = useStores()
   const { setLeaderboardData, sortedLeaderboardData } = useLeaderboardData()
 
@@ -155,5 +155,3 @@ const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function Leaderbo
     </Screen>
   )
 })
-
-export default LeaderboardScreen
