@@ -92,9 +92,11 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   )
 
   const notSignedIn = (
-    <View>
+    <View style={{ alignItems: "center" }}>
       <Text preset="heading" text="You need to be signed in to use history!" style={$title} />
-      <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
+      <View style={{ width: "80%" }}>
+        <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
+      </View>
     </View>
   )
 

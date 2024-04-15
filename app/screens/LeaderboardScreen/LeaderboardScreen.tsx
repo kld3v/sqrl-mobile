@@ -85,13 +85,15 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
   }
 
   const notSignedIn = (
-    <View>
+    <View style={{ alignItems: "center" }}>
       <Text
         preset="heading"
-        text="You need to be signed in to use Leaderboard!"
-        style={{ ...$title, fontSize: typography.fontSizes.h2 }}
+        text="You need to be signed in to use the leaderboard!"
+        style={$title}
       />
-      <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
+      <View style={{ width: "80%" }}>
+        <Button text="Sign In" onPress={() => authenticationStore.setAuthToken(undefined)} />
+      </View>
     </View>
   )
 

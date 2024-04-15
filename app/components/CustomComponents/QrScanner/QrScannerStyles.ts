@@ -42,7 +42,7 @@ export const $reticle: ViewStyle = {
   width: 200,
   height: 200,
   marginLeft: -100, // half of width to center
-  marginTop: -100, // half of height to center
+  marginTop: -72,
   zIndex: 3,
 }
 

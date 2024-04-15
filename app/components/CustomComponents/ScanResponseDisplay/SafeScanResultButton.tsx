@@ -16,7 +16,7 @@ const SafeScanResultButton: React.FC<{
         tx="scannerScreen.proceedButton"
         onPress={setDelayedLeaving}
         style={{
-          backgroundColor: colors.palette.primary600,
+          backgroundColor: colors.palette.primary500,
           borderRadius: 25, // Half of the height
           justifyContent: "center",
           alignItems: "center",
@@ -24,18 +24,14 @@ const SafeScanResultButton: React.FC<{
         }}
         onPressIn={() => setPressed(true)}
         onPressOut={() => setPressed(false)}
-        pressedStyle={{
-          backgroundColor: colors.palette.neutral200,
-          borderColor: colors.palette.neutral500,
-        }}
-        pressedTextStyle={{
-          color: colors.palette.neutral100,
+        raisedButtonEdgeStyle={{
+          backgroundColor: colors.palette.primary600,
         }}
         textStyle={{
-          color: colors.palette.neutral200,
-          fontSize: 22,
+          color: "#442b48",
+          fontSize: typography.fontSizes.h5,
           fontFamily: typography.primary.bold,
-          paddingTop: 8,
+          paddingTop: 12,
         }}
       />
       <OnScanHaptic scanState={scanState} safe={safe} />

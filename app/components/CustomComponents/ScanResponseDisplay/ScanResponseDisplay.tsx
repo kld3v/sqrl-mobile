@@ -90,10 +90,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           onPress={() => resetScanState()}
           onPressIn={() => setpressed(true)}
           onPressOut={() => setpressed(false)}
-          pressedStyle={{
-            backgroundColor: colors.palette.neutral200,
-            borderColor: colors.palette.neutral500,
-          }}
+          raisedButtonEdgeStyle={{ backgroundColor: colors.palette.angry500Pressed }}
           textStyle={{ fontFamily: typography.primary.bold }}
         />
       )}
