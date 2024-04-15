@@ -23,8 +23,8 @@ export const $messageBoxContainer: ViewStyle = {
 
 export const $messageBoxIcon: ImageStyle = {
   position: "absolute",
-  bottom: -62,
-  right: -62,
+  bottom: -30,
+  right: -28,
   transform: [{ scale: 1.2 }],
 }
 

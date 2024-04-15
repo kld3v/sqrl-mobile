@@ -58,8 +58,6 @@ export const InformationScreen: FC<InformationScreenProps> = observer(function I
           borderRadius: 25, // Half of the height
           justifyContent: "center",
           alignItems: "center",
-          // paddingHorizontal: 30,
-          // paddingLeft: spacing.lg,
           paddingRight: spacing.xs,
           marginTop: spacing.xl,
           borderWidth: 0,

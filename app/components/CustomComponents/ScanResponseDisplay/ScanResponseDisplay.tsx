@@ -54,7 +54,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
         resetScanState()
       } catch (error) {
         console.error(error)
-        setErrorMessage("Not a valid URL. Soz. Try again.")
+        setErrorMessage("Not a valid URL. Please try again.")
       }
     }, 2000)
   }
@@ -85,7 +85,6 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            paddingTop: 16,
             paddingHorizontal: 30,
           }}
           onPress={() => resetScanState()}
