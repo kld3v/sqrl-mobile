@@ -191,13 +191,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
             fontFamily: typography.Poppins.mediumItalic,
           }}
         />
-        <AutoImage
-          source={require("../../../assets/images/shep.jpg")}
-          style={{
-            width: 200,
-            height: 200,
-          }}
-        />
       </View>
       <View style={$itemsContainer}>
         {{ __DEV__ } && (
