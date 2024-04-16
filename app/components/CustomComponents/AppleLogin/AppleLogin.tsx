@@ -53,8 +53,8 @@ export const AppleLogin = observer(function AppleLogin(props: { setLoading: any 
                 const { token } = res.data
                 await authService.setToken("apple_token", token)
                 api.setIdentityToken(token)
-                //@ts-ignore
                 if (!res.data?.username) {
+                  //@ts-ignore
                   navigation.navigate("Username")
                 } else {
                   setAuthUsername(res.data.username)

@@ -3,7 +3,7 @@ import React, { FC, useState } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { AutoImage, Button, Screen, Text } from "../../../components"
 import { AppStackScreenProps } from "../../../navigators"
-import { colors, spacing, typography } from "../../../theme"
+import { $hint, colors, spacing, typography } from "../../../theme"
 import { useNavigation } from "@react-navigation/native"
 import AppleLogin from "app/components/CustomComponents/AppleLogin/AppleLogin"
 import GoogleLogin from "app/components/CustomComponents/GoogleLogin/GoogleLogin"
@@ -21,7 +21,9 @@ interface SignUpProps extends AppStackScreenProps<"SignUp"> {}
 
 export const SignUpScreen: FC<SignUpProps> = observer(function SignUp(_props) {
   const navigation = useNavigation()
-  const { authenticationStore } = useStores()
+  const {
+    authenticationStore: { authError, setAuthToken },
+  } = useStores()
   const [loading, setLoading] = useState(false)
   const qrlaLogo = assetService.qrlaLogo
   const { height } = Dimensions.get("window")
@@ -43,6 +45,7 @@ export const SignUpScreen: FC<SignUpProps> = observer(function SignUp(_props) {
             />
           </View>
         </View>
+        {authError && <Text text={authError} size="sm" weight="light" style={$hint} />}
         <View style={$buttonsContainer}>
           <View style={$buttonsElementStyle}>
             {Platform.OS === "ios" && <AppleLogin setLoading={setLoading} />}
@@ -98,7 +101,7 @@ export const SignUpScreen: FC<SignUpProps> = observer(function SignUp(_props) {
                 text="just scan."
                 //@ts-ignore
                 onPress={() => {
-                  authenticationStore.setAuthToken("scannerOnly")
+                  setAuthToken("scannerOnly")
                 }}
               />
             </Text>

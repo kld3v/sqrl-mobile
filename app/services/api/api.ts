@@ -50,7 +50,7 @@ export class Api {
       timeout: this.config.timeout,
       headers: this.config.headers,
     })
-    const authMonitor = (res: any) => console.log("authMonitor", res)
+    const authMonitor = (res: any) => console.log("Request Observer---> ", res)
     this.auth.addMonitor(authMonitor)
     this.apisauce.addMonitor(authMonitor)
 

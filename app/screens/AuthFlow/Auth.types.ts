@@ -13,4 +13,11 @@ export type AuthApiErrorResponse = {
   }
 }
 
-export type AuthAPIResponse = ApiResponse<AuthApiOKResponse, AuthApiErrorResponse>
+export type OAuthApiErrorResponse = {
+  errors: string
+}
+
+export type AuthAPIResponse = ApiResponse<
+  AuthApiOKResponse,
+  AuthApiErrorResponse | OAuthApiErrorResponse
+>

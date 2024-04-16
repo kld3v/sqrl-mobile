@@ -1,58 +1,77 @@
 import { useNavigation } from "@react-navigation/native"
 import { Button, Icon } from "app/components"
-import Config from "app/config"
-import config from "app/config"
+
 import { useStores } from "app/models"
 import { authService } from "app/services/Auth"
 import { api } from "app/services/api"
 import { colors, typography } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
-import * as AuthSession from "expo-auth-session"
 import { useEffect, useState } from "react"
-import { Linking } from "react-native"
-import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin"
+import * as Google from "expo-auth-session/providers/google"
+import { AuthAPIResponse, OAuthApiErrorResponse } from "app/screens/AuthFlow/Auth.types"
+
+WebBrowser.maybeCompleteAuthSession()
 
 export default function GoogleLogin() {
   const navigation = useNavigation()
-  const [state, setState] = useState({})
+
   const {
-    authenticationStore: { setAuthToken, setAuthUsername },
+    authenticationStore: { setAuthToken, setAuthUsername, setAuthError },
   } = useStores()
-  const openGoogleAuth = async () => {
-    try {
-      await GoogleSignin.hasPlayServices()
-      const userInfo = await GoogleSignin.signIn()
-      setState({ userInfo, error: undefined })
-    } catch (error) {
-      if (error) {
-        switch (error.code) {
-          case statusCodes.SIGN_IN_CANCELLED:
-            // user cancelled the login flow
-            break
-          case statusCodes.IN_PROGRESS:
-            // operation (eg. sign in) already in progress
-            break
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            // play services not available or outdated
-            break
-          default:
-          // some other error happened
-        }
-      } else {
-        // an error that's not related to google sign in occurred
-      }
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: "262749291664-fe269s3him1mn6kk9hsd8aglhrid5ncp.apps.googleusercontent.com",
+  })
+
+  const handleGoogleSignIn = async () => {
+    console.log(response)
+    if (response?.type !== "success") {
+      setAuthError("Failed To Login with Google")
+      return
+    }
+
+    let identity_token = response.authentication?.accessToken
+
+    if (!identity_token) {
+      setAuthError("Invalid token from Google :((")
+      return
+    }
+
+    let res: AuthAPIResponse = await api.auth.post("/google/signin", {
+      identity_token,
+    })
+
+    if (!res.ok || !res.data) {
+      setAuthError("Failed to talk to Qrla HQ, please try again later. Sorry. ")
+      return
+    }
+
+    if (res.ok && !res.data?.token) {
+      setAuthError("Invalid token from QRLA :((")
+      return
+    }
+
+    const { token } = res.data
+    await authService.setToken("google_token", token)
+    api.setIdentityToken(token)
+
+    if (res.ok && !res.data?.username) {
+      //@ts-ignore
+      navigation.navigate("Username")
+      return
+    }
+
+    if (res.ok && res.data) {
+      setAuthUsername(res.data?.username)
+      //Takes user to main tabs
+      setAuthToken(identity_token)
     }
   }
 
-  function extractUsername(url: string): string | null {
-    const match = url.match(/[?&]username=([^&]*)/)
-    return match && match.length > 1 ? decodeURIComponent(match[1]) : null
-  }
-
-  function extractToken(url: string): string | null {
-    const matches = url.match(/[?&]token=([^&#]*)/)
-    return matches && matches.length > 1 ? decodeURIComponent(matches[1]) : null
-  }
+  useEffect(() => {
+    handleGoogleSignIn()
+    setAuthError("")
+  }, [response])
 
   return (
     <Button
@@ -74,7 +93,8 @@ export default function GoogleLogin() {
       LeftAccessory={(props) => (
         <Icon style={{ marginRight: 6, marginBottom: 2 }} size={12} icon="google" />
       )}
-      onPress={openGoogleAuth}
+      onPress={() => promptAsync()}
+      preset="defaultNoLift"
     />
   )
 }
