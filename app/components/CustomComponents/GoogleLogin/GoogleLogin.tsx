@@ -21,6 +21,7 @@ export default function GoogleLogin() {
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: "262749291664-fe269s3him1mn6kk9hsd8aglhrid5ncp.apps.googleusercontent.com",
+    iosClientId: "262749291664-e7f2hlt6b1v71f4hnpk03htnmkpgtbm3.apps.googleusercontent.com",
   })
 
   const handleGoogleSignIn = async () => {
