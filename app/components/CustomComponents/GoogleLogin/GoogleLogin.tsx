@@ -12,7 +12,10 @@ import { AuthAPIResponse, OAuthApiErrorResponse } from "app/screens/AuthFlow/Aut
 
 WebBrowser.maybeCompleteAuthSession()
 
-export default function GoogleLogin() {
+export default function GoogleLogin(props: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+}) {
+  const { setLoading } = props
   const navigation = useNavigation()
 
   const {
@@ -25,9 +28,10 @@ export default function GoogleLogin() {
   })
 
   const handleGoogleSignIn = async () => {
-    console.log(response)
+    setLoading(true)
     if (response?.type !== "success") {
       setAuthError("Failed To Login with Google")
+      setLoading(false)
       return
     }
 
@@ -35,6 +39,7 @@ export default function GoogleLogin() {
 
     if (!identity_token) {
       setAuthError("Invalid token from Google :((")
+      setLoading(false)
       return
     }
 
@@ -44,11 +49,13 @@ export default function GoogleLogin() {
 
     if (!res.ok || !res.data) {
       setAuthError("Failed to talk to Qrla HQ, please try again later. Sorry. ")
+      setLoading(false)
       return
     }
 
     if (res.ok && !res.data?.token) {
       setAuthError("Invalid token from QRLA :((")
+      setLoading(false)
       return
     }
 
@@ -59,6 +66,7 @@ export default function GoogleLogin() {
     if (res.ok && !res.data?.username) {
       //@ts-ignore
       navigation.navigate("Username")
+      setLoading(false)
       return
     }
 
@@ -67,6 +75,7 @@ export default function GoogleLogin() {
       //Takes user to main tabs
       setAuthToken(identity_token)
     }
+    setLoading(false)
   }
 
   useEffect(() => {

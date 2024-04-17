@@ -12,11 +12,12 @@ import {
   AutoImage,
 } from "app/components"
 import { useStores } from "app/models"
-import { $hint, colors, spacing, typography } from "app/theme"
+import { $ScreenStyle, $hint, colors, spacing, typography } from "app/theme"
 import { assetService } from "app/services/Assets/AssetService"
 import { api } from "app/services/api"
 import { AuthAPIResponse } from "../Auth.types"
 import { authService } from "app/services/Auth"
+import LoadingOverlay from "app/components/LoadingOverlay"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
@@ -27,6 +28,7 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
   const authPasswordConfirmInput = useRef<TextInput>(null)
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
 
@@ -40,10 +42,10 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
       authUsername,
       setAuthUsername,
       setAuthToken,
-      emailValidationError,
-      usernameValidationError,
       authError,
       setAuthError,
+      usernameValidationError,
+      emailValidationError,
     },
   } = useStores()
 
@@ -54,19 +56,24 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
       setAuthEmail("")
     }
   }, [])
-
   const emailError = isSubmitted ? emailValidationError : ""
   const usernameError = isSubmitted ? usernameValidationError : ""
-
   async function Register() {
     setIsSubmitted(true)
-    if (emailError || usernameError) return
+    setIsLoading(true)
+
+    if (emailValidationError || usernameValidationError) {
+      setIsLoading(false)
+      return
+    }
     if (password !== passwordConfirm) {
       setAuthError("Passwords don't match!")
+      setIsLoading(false)
       return
     }
     if (password.length < 9) {
       setAuthError("Password must be at least 8 characters")
+      setIsLoading(false)
       return
     }
 
@@ -78,17 +85,19 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
       password_confirmation: passwordConfirm,
     })
 
+    // TODO Tidy up at some point
     if (!res.ok) {
       console.log(res)
       if (res.data?.errors) {
         let errorMessages = [] // Use an array to collect error messages
+        let errorArray = res.data.errors
 
         // Iterate over properties in errors object
-        for (let property in res.data.errors) {
-          if (res.data.errors.hasOwnProperty(property)) {
+        for (let property in errorArray) {
+          if (errorArray.hasOwnProperty(property)) {
             // Ensure the property is not from the prototype chain
             // Add the first error message of each property to the array
-            errorMessages.push(res.data.errors[property][0])
+            errorMessages.push(errorArray[property][0])
           }
         }
 
@@ -104,28 +113,26 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
         // Handle case where there are no error messages in the expected format
         setAuthError("Something went wrong - please try again :)")
       }
-
+      setIsLoading(false)
       return
     }
 
     if (res.data && res.data.token && res.data?.username) {
       api.setIdentityToken(res.data.token)
-      console.log(res.data.token)
-      console.log("token set in api", api.identityToken)
 
       authService.setToken("qrla_token", res.data.token)
       authService.setUsername(res.data.username)
+
       setAuthUsername(res.data.username)
       setAuthToken(res.data.token)
       setPassword("")
       setPasswordConfirm("")
       setAuthEmail("")
-      setIsSubmitted(false)
-    } else {
-      setIsSubmitted(false)
 
-      alert("Failed to get token or username - please try again!")
+      setIsLoading(false)
+      return
     }
+    setIsSubmitted(false)
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -145,97 +152,92 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
   )
 
   return (
-    <Screen
-      style={$root}
-      preset="auto"
-      contentContainerStyle={$screenContentContainer}
-      safeAreaEdges={["top", "bottom"]}
-    >
-      <View style={$headerContainer}>
-        <AutoImage source={qrlaLogo} style={{ width: imageSize, height: imageSize }} />
+    <Screen preset="auto" contentContainerStyle={$ScreenStyle} safeAreaEdges={["top"]}>
+      {isLoading && <LoadingOverlay />}
+      <View style={$screenContentContainer}>
+        <View style={$headerContainer}>
+          <AutoImage source={qrlaLogo} style={{ width: imageSize, height: imageSize }} />
 
-        <View style={{ width: "100%" }}>
-          <Text
-            testID="SignIn-heading"
-            text="Free from nasty QR scammers."
-            preset="heading"
-            style={$signInHeading}
-          />
+          <View style={{ width: "100%" }}>
+            <Text
+              testID="SignIn-heading"
+              text="Free from nasty QR scammers."
+              preset="heading"
+              style={$signInHeading}
+            />
+          </View>
         </View>
+        {authError && <Text text={authError} size="sm" weight="light" style={$hint} />}
+        <TextField
+          value={authEmail}
+          onChangeText={setAuthEmail}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          placeholder="Email"
+          helper={emailError}
+          status={emailError ? "error" : undefined}
+          onChange={() => setAuthError("")}
+        />
+        <TextField
+          value={authUsername}
+          onChangeText={setAuthUsername}
+          containerStyle={$textField}
+          autoCorrect={false}
+          placeholder="Username"
+          helper={usernameError}
+          status={usernameError ? "error" : undefined}
+          onSubmitEditing={() => authPasswordInput.current?.focus()}
+          onChange={() => setAuthError("")}
+        />
+        <TextField
+          ref={authPasswordInput}
+          value={password}
+          onChangeText={setPassword}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          placeholder="Password"
+          RightAccessory={PasswordRightAccessory}
+          onChange={() => setAuthError("")}
+        />
+        <TextField
+          ref={authPasswordConfirmInput}
+          value={passwordConfirm}
+          onChangeText={setPasswordConfirm}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          placeholder="Confirm Password"
+          RightAccessory={PasswordRightAccessory}
+          onChange={() => setAuthError("")}
+        />
+        <Button
+          text="Create Account"
+          disabledStyle={{
+            borderColor: colors.palette.neutral500,
+          }}
+          disabledTextStyle={{
+            color: colors.palette.neutral500,
+          }}
+          //@ts-ignore
+          onPress={Register}
+        />
       </View>
-      {authError && <Text text={authError} size="sm" weight="light" style={$hint} />}
-      <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        placeholder="Email"
-        helper={emailError}
-        status={emailError ? "error" : undefined}
-        onChange={() => setAuthError("")}
-      />
-      <TextField
-        value={authUsername}
-        onChangeText={setAuthUsername}
-        containerStyle={$textField}
-        autoCorrect={false}
-        placeholder="Username"
-        helper={usernameError}
-        status={usernameError ? "error" : undefined}
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-        onChange={() => setAuthError("")}
-      />
-      <TextField
-        ref={authPasswordInput}
-        value={password}
-        onChangeText={setPassword}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        placeholder="Password"
-        RightAccessory={PasswordRightAccessory}
-        onChange={() => setAuthError("")}
-      />
-      <TextField
-        ref={authPasswordConfirmInput}
-        value={passwordConfirm}
-        onChangeText={setPasswordConfirm}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        placeholder="Confirm Password"
-        RightAccessory={PasswordRightAccessory}
-        onChange={() => setAuthError("")}
-      />
-      <Button
-        text="Create Account"
-        disabledStyle={{
-          borderColor: colors.palette.neutral500,
-        }}
-        disabledTextStyle={{
-          color: colors.palette.neutral500,
-        }}
-        //@ts-ignore
-        onPress={Register}
-      />
     </Screen>
   )
 })
 
-const $root: ViewStyle = {
-  flex: 1,
-}
-
 const $screenContentContainer: ViewStyle = {
   paddingVertical: spacing.xl,
   paddingHorizontal: spacing.lg,
+  height: "100%",
 }
 
 const $textField: ViewStyle = {

@@ -51,7 +51,7 @@ export const SignUpScreen: FC<SignUpProps> = observer(function SignUp(_props) {
             {Platform.OS === "ios" && <AppleLogin setLoading={setLoading} />}
           </View>
           <View>
-            <GoogleLogin />
+            <GoogleLogin setLoading={setLoading} />
           </View>
           <SeperatorWithText text="or" />
           <View style={$buttonsElementStyle}>

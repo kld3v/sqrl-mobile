@@ -9,8 +9,8 @@ import { ScanStateOptions } from "types"
 export default () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [safe, setSafe] = useState<boolean>(false)
-  const [url, setUrl] = useState<string>("Some big long piece of text")
-  const [scanState, setScanState] = useState<ScanStateOptions>("scanned")
+  const [url, setUrl] = useState<string>("")
+  const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
   const readyToScan = useRef(true)
   const { locationStore, debugStore, leaderboardStore } = useStores()
 

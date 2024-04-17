@@ -8,7 +8,9 @@ import { useNavigation } from "@react-navigation/native"
 import { AuthAPIResponse } from "app/screens/AuthFlow/Auth.types"
 import { useStores } from "app/models"
 
-export const AppleLogin = observer(function AppleLogin(props: { setLoading: any }) {
+export const AppleLogin = observer(function AppleLogin(props: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+}) {
   const { setLoading } = props
   const navigation = useNavigation()
   const {
