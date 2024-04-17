@@ -21,12 +21,17 @@ import {
   $scoreColEntryTextOnlyStyle,
 } from "./LeaderboardScreen.styles"
 import useLeaderboardData from "./useLeaderboardData"
+import useCustomSwiper from "app/utils/useCustomSwiper"
+import { useNavigation } from "@react-navigation/native"
+import { PanGestureHandler } from "react-native-gesture-handler"
 
 interface LeaderboardScreenProps extends AppStackScreenProps<"Leaderboard"> {}
 
 export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function LeaderboardScreen() {
   const { leaderboardStore, debugStore, authenticationStore } = useStores()
   const { setLeaderboardData, sortedLeaderboardData } = useLeaderboardData()
+  const navigation = useNavigation()
+  const { onSwipeEvent } = useCustomSwiper({ onSwipeRight: () => navigation.navigate("Scan") })
 
   const displayMedalOrRankNumber = (index: number): React.JSX.Element => {
     switch (index) {
@@ -64,10 +69,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
           {displayMedalOrRankNumber(index)}
 
           <View style={$userNameColStyle}>
-            <Text
-              style={{ ...$userNameColStyle, ...$tableRowUsernameAndIndexStyle }}
-              text={el.username}
-            />
+            <Text style={{ ...$tableRowUsernameAndIndexStyle, width: "90%" }} text={el.username} />
           </View>
 
           <View style={$scoreColContainer}>
@@ -98,31 +100,33 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
   )
 
   const leaderboardScreenContent = (
-    <>
-      <Text preset={"heading"} tx="leaderboardScreen.title" style={$title} />
-      <Text
-        preset={"subheading"}
-        tx="leaderboardScreen.subHeader"
-        style={{
-          textAlign: "center",
-          paddingBottom: spacing.lg,
-          color: colors.palette.neutral800,
-        }}
-      />
-      <View
-        style={{
-          marginBottom: 48,
-        }}
-      >
+    <PanGestureHandler onHandlerStateChange={onSwipeEvent} activeOffsetX={[-10, 10]}>
+      <View style={{ overflow: "scroll" }}>
+        <Text preset={"heading"} tx="leaderboardScreen.title" style={$title} />
+        <Text
+          preset={"subheading"}
+          tx="leaderboardScreen.subHeader"
+          style={{
+            textAlign: "center",
+            paddingBottom: spacing.lg,
+            color: colors.palette.neutral800,
+          }}
+        />
         <View
           style={{
-            width: "100%",
-            flexDirection: "row",
+            marginBottom: 48,
           }}
-        ></View>
-        {renderLeaderboard()}
+        >
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+            }}
+          ></View>
+          {renderLeaderboard()}
+        </View>
       </View>
-    </>
+    </PanGestureHandler>
   )
 
   useEffect(() => {

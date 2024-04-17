@@ -7,7 +7,7 @@ interface SwipeOptions {
 
 export default (options: SwipeOptions = {}) => {
   const { onSwipeRight, onSwipeLeft } = options
-  const swipeThreshold = 20 // Minimum pixels the user must swipe to trigger the action
+  const swipeThreshold = 60 // Minimum pixels the user must swipe to trigger the action
   const velocityThreshold = 500 // Minimum velocity of the swipe
 
   const onSwipeEvent = (event: GestureEvent<Record<string, number>>) => {

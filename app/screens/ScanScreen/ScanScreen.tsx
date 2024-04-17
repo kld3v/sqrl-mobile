@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
-import { ViewStyle } from "react-native"
+import { View, ViewStyle } from "react-native"
 import { Carousel, Icon, ScanScreenScore } from "../../components"
 
 import { QrScanner, Screen } from "../../components"
@@ -15,12 +15,18 @@ import { useStores } from "app/models"
 import { useNavigation } from "@react-navigation/native"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
 import QrlaButton from "app/components/CustomComponents/QrScanner/QrlaButton"
+import useCustomSwiper from "app/utils/useCustomSwiper"
+import { PanGestureHandler } from "react-native-gesture-handler"
 
 export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScreen(_props) {
   const [permission, requestPermission] = useCameraPermissions()
   const { onboardingStore, leaderboardStore } = useStores()
   const navigation = useNavigation()
   useOnboarding()
+  const { onSwipeEvent } = useCustomSwiper({
+    onSwipeLeft: () => navigation.navigate("Leaderboard"),
+    onSwipeRight: () => navigation.navigate("History"),
+  })
 
   useEffect(() => {
     // Request permission if it hasn't been determined yet
@@ -45,32 +51,36 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
   )
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      <ScanScreenScore />
-      <QrlaButton />
-      {!onboardingStore.hasOnboarded && (
-        <Carousel
-          style={{
-            position: "absolute",
-            justifyContent: "center",
-            alignItems: "center",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            top: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 5,
-          }}
-        />
-      )}
-      <Icon
-        icon="information"
-        color={colors.palette.primary300}
-        containerStyle={$informationIcon}
-        size={32}
-        // @ts-ignore
-        onPress={() => navigation.navigate("Information")}
-      />
-      {content}
+      <PanGestureHandler onHandlerStateChange={onSwipeEvent}>
+        <View style={$screenContentContainer}>
+          <ScanScreenScore />
+          <QrlaButton />
+          {!onboardingStore.hasOnboarded && (
+            <Carousel
+              style={{
+                position: "absolute",
+                justifyContent: "center",
+                alignItems: "center",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                top: 0,
+                backgroundColor: "rgba(0,0,0,0.5)",
+                zIndex: 5,
+              }}
+            />
+          )}
+          <Icon
+            icon="information"
+            color={colors.palette.primary300}
+            containerStyle={$informationIcon}
+            size={32}
+            // @ts-ignore
+            onPress={() => navigation.navigate("Information")}
+          />
+          {content}
+        </View>
+      </PanGestureHandler>
     </Screen>
   )
 })

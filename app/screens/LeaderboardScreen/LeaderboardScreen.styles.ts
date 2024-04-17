@@ -32,7 +32,7 @@ export const $positionColStyle: TextStyle = {
 }
 
 export const $userNameColStyle: TextStyle = {
-  width: "60%",
+  width: "64%",
   flexDirection: "row",
   alignItems: "center",
 }
