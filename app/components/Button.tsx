@@ -85,7 +85,9 @@ export interface ButtonProps extends PressableProps {
    * An optional style override for the disabled state
    */
   disabledStyle?: StyleProp<ViewStyle>
-
+  /**
+   * Do you want a streak?
+   */
   streak?: boolean
 
   streakColor?: string
@@ -115,6 +117,7 @@ export function Button(props: ButtonProps) {
     disabledStyle: $disabledViewStyleOverride,
     streak,
     streakColor,
+
     ...rest
   } = props
 
@@ -130,6 +133,7 @@ export function Button(props: ButtonProps) {
   function $viewContainerStyle() {
     return [$viewContainerStylePresets[preset], $viewContainerStyleOverride]
   }
+
   function $textStyle({ pressed }: PressableStateCallbackType) {
     return [
       $textPresets[preset],
@@ -292,17 +296,15 @@ const $pressedTextPresets: Record<Presets, StyleProp<TextStyle>> = {
 const $streak: ViewStyle = {
   position: "absolute",
   height: 48,
-
   top: "90%",
   left: 0,
   right: 0,
-
   transform: [{ rotate: "-45deg" }, { scaleX: 4 }],
 }
+
 const $streak2: ViewStyle = {
   position: "absolute",
   height: 64,
-
   top: -64,
   left: 10,
   right: 0,

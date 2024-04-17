@@ -24,6 +24,7 @@ import {
 } from "./ScanResponseDisplayStyles"
 import SafeScanResultButton from "./SafeScanResultButton"
 import DisplayUrlText from "../QrScanner/DisplayUrlText"
+import UnSafeScanResultButton from "./UnSafeScanResultButton"
 
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
@@ -66,7 +67,6 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
     readyToScan.current = true
   }, [])
 
-  const deviceIsAndroid = Platform.OS === "android"
   const scanCompleteContent = (
     <>
       {safe ? (
@@ -77,27 +77,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           safe={safe}
         />
       ) : (
-        <View style={{ marginTop: spacing.md, marginBottom: spacing.xxl }}>
-          <Button
-            text="Cancel"
-            tx="common.cancel"
-            style={{
-              backgroundColor: colors.palette.angry500,
-              borderRadius: 25, // Half of the height
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 30,
-            }}
-            onPress={() => resetScanState()}
-            onPressIn={() => setpressed(true)}
-            onPressOut={() => setpressed(false)}
-            raisedButtonEdgeStyle={{ backgroundColor: colors.palette.angry500Pressed }}
-            textStyle={{ fontFamily: typography.primary.bold }}
-            streak
-            streakColor="#DA4E4E"
-          />
-        </View>
+        <UnSafeScanResultButton resetScanState={resetScanState} />
       )}
     </>
   )
