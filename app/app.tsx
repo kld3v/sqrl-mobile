@@ -25,6 +25,8 @@ import { ViewStyle } from "react-native"
 import { quintonTheCybear } from "./utils/QuintonTheCybear"
 import { leaderboardServiceInstance } from "./services/Leaderboard"
 import { QrVenueNotificationsManager } from "./components"
+import { authService } from "./services/Auth"
+import { api } from "./services/api"
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
 // Web linking configuration
@@ -64,7 +66,11 @@ function App(props: AppProps) {
   } = useNavigationPersistence(storage, NAVIGATION_PERSISTENCE_KEY)
 
   const [areFontsLoaded] = useFonts(customFontsToLoad)
-  const { termsAndConditionsStore, debugStore } = useStores()
+  const {
+    termsAndConditionsStore,
+    debugStore,
+    authenticationStore: { setAuthToken, setAuthUsername, authToken, authUsername },
+  } = useStores()
 
   const { rehydrated } = useInitialRootStore(async () => {
     // This runs after the root store has been initialized and rehydrated.
@@ -83,6 +89,24 @@ function App(props: AppProps) {
       )
       debugStore.addInfoMessage("Checked to see if user needed to sign up to date contract.")
       await leaderboardServiceInstance.incrementDummyLeadboardData()
+      ;(async () => {
+        await authService.initializeTokens()
+        const tokenDoesExist = await authService.tokenDoesExist()
+        if (tokenDoesExist) {
+          // Set Auth: Bearer Token...
+          authService.validToken && api.setIdentityToken(authService.validToken)
+
+          // Set username from phone secure store...
+          const username = await authService.getUsername()
+          username && setAuthUsername(username)
+
+          // Set token to global state to take user to main screens...
+          authService.validToken && setAuthToken(authService.validToken)
+        } else {
+          console.log("no token")
+          console.log(authToken, authUsername)
+        }
+      })()
     } catch (error) {
       __DEV__ && console.error(`Failed to init some app functions: ${error}`)
       debugStore.addErrorMessage(`Failed to init some app functions: ${error}`)

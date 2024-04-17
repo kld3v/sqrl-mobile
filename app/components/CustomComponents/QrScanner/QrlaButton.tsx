@@ -14,6 +14,7 @@ const QrlaButton = () => {
       // @ts-ignore
       onLongPress={() => navigation.navigate("Debug")}
       onPress={async () => await WebBrowser.openBrowserAsync("https://www.qrla.io")}
+      delayLongPress={10000}
     >
       <AutoImage
         style={{

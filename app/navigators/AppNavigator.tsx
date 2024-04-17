@@ -74,13 +74,7 @@ const AppStack = observer(function AppStack() {
     locationStore,
     termsAndConditionsStore,
     debugStore,
-    authenticationStore: {
-      isAuthenticated,
-      setAuthToken,
-      setAuthUsername,
-      authToken,
-      authUsername,
-    },
+    authenticationStore: { isAuthenticated },
   } = useStores()
 
   const recurringlyUpdateLocation = async () => {
@@ -97,21 +91,6 @@ const AppStack = observer(function AppStack() {
       locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
       debugStore.addInfoMessage("Started location updates")
     }
-    ;(async () => {
-      await authService.initializeTokens()
-      const tokenDoesExist = await authService.tokenDoesExist()
-      if (tokenDoesExist) {
-        authService.validToken && api.setIdentityToken(authService.validToken)
-        console.log("identity token in api on load is:", api.identityToken)
-        const username = await authService.getUsername()
-        username && setAuthUsername(username)
-        authService.validToken && setAuthToken(authService.validToken)
-      } else {
-        console.log("no token")
-        console.log(authToken, authUsername)
-      }
-    })()
-
     // cleanup
     return () => clearInterval(locationIntervalId)
   }, [locationStore.permission])

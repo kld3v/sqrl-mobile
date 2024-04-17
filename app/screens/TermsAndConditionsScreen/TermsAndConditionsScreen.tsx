@@ -106,12 +106,7 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
                 setLoading(false)
               }}
               text={loading ? "Loading..." : "Continue"}
-              style={{ flex: 1 }}
               disabled={!value}
-              disabledStyle={{
-                backgroundColor: colors.palette.neutral200,
-                borderColor: colors.palette.neutral300,
-              }}
               disabledTextStyle={{ color: colors.palette.neutral500 }}
             />
           </View>

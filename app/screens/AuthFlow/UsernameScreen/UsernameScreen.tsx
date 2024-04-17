@@ -66,7 +66,7 @@ export const UsernameScreen: FC<UsernameScreenProps> = observer(function Usernam
         <View style={{ width: "100%" }}>
           <Text
             testID="SignIn-heading"
-            text="QR'la is better with a username!"
+            text="QRLA is better with a username!"
             preset="heading"
             style={$signInHeading}
           />

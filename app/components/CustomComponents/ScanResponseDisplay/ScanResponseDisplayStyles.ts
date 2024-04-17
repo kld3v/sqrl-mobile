@@ -10,6 +10,7 @@ export const $unsafeText = {
 
 export const screenHeight = Dimensions.get("window").height
 export const messageBoxPosition = screenHeight * 0.05
+
 export const $messageBoxContainer: ViewStyle = {
   zIndex: 99,
   marginTop: messageBoxPosition,
@@ -43,11 +44,12 @@ export const $infoBoxCustom: TextStyle = {
   minWidth: 200,
   maxWidth: "100%",
   paddingHorizontal: 32,
-  paddingVertical: spacing.md,
+  paddingVertical: spacing.xxl,
   borderRadius: 28,
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
+  // backgroundColor: "blue",
 }
 
 export const $infoBoxTopWithMessage: TextStyle = {
@@ -60,12 +62,13 @@ export const $infoBoxTopWithMessage: TextStyle = {
 export const $infoBoxPositioningContainer: ViewStyle = {
   zIndex: 99,
   position: "absolute",
-  bottom: spacing.xxxl,
-  height: 100,
+  bottom: spacing.xxl,
+  height: 40,
   width: "100%",
-  flexDirection: "row",
+  flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
+  // backgroundColor: "red",
 }
 
 export const $koalaGif: ImageStyle = {

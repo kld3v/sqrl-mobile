@@ -100,7 +100,8 @@ class AuthService implements IAuthService {
       }),
     )
     api.setIdentityToken("")
-    await this.setUsername("")
+    await secureStoreInstance.clearFromSecureStore("username")
+
     // Reset the tokens in memory
     this.tokens = {
       apple_token: null,

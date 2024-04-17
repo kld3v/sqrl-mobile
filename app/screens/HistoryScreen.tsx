@@ -12,6 +12,9 @@ import { historyService } from "app/services/History"
 import HeartIcon from "app/components/CustomComponents/HeartIcon"
 import { useStores } from "app/models"
 import { authService } from "app/services/Auth"
+import { PanGestureHandler } from "react-native-gesture-handler"
+import useCustomSwiper from "app/utils/useCustomSwiper"
+import { useNavigation } from "@react-navigation/native"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
@@ -20,6 +23,8 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   const [favoritesOnly, setFavoritesOnly] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const { authenticationStore } = useStores()
+  const navigation = useNavigation()
+  const { onSwipeEvent } = useCustomSwiper({ onSwipeLeft: () => navigation.navigate("Scan") })
 
   const fetchHistory = useCallback(async () => {
     setRefreshing(true)
@@ -66,7 +71,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   }, [history, favoritesOnly])
 
   const renderItem = ({ item }: { item: Scan }) => (
-    <Pressable key={item.url_id} style={$scanCard} onPress={curried_takeUserToScanUrl(item)}>
+    <Pressable key={`${item.url_id}`} style={$scanCard} onPress={curried_takeUserToScanUrl(item)}>
       <Card
         style={{ paddingVertical: 16, paddingHorizontal: 16 }}
         heading={item.url.length > 36 ? `${item.url.substring(0, 36)}...` : item.url}
@@ -117,12 +122,12 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
       {history.length === 0 && noHistory}
       {refreshing && <Text style={{ textAlign: "center" }}>Loading...</Text>}
 
-      <View style={{ width: "100%", height: "90%" }}>
+      <View style={{ width: "100%", height: "80%" }}>
         <ListView
           data={sortedHistory}
           renderItem={renderItem}
           estimatedItemSize={200}
-          keyExtractor={(item, index) => `history-${item.url_id}`}
+          keyExtractor={(item, index) => `history-${item.url_id}-${index}`}
           onRefresh={fetchHistory}
           refreshing={refreshing}
         />
@@ -136,7 +141,9 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
 
   return (
     <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>
-      {authenticationStore.authToken === "scannerOnly" ? notSignedIn : renderHistory}
+      <PanGestureHandler onHandlerStateChange={onSwipeEvent}>
+        <View>{authenticationStore.authToken === "scannerOnly" ? notSignedIn : renderHistory}</View>
+      </PanGestureHandler>
     </Screen>
   )
 })

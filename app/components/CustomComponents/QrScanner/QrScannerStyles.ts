@@ -46,15 +46,6 @@ export const $reticle: ViewStyle = {
   zIndex: 3,
 }
 
-export const $subReticuleUrlStyle: TextStyle = {
-  position: "absolute",
-  left: 0,
-  right: 0,
-  top: "68%",
-  zIndex: 3,
-  textAlign: "center",
-}
-
 export const $refresh: ViewStyle = {
   position: "absolute",
   bottom: 16,

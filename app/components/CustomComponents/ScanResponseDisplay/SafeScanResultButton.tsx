@@ -1,11 +1,9 @@
-import { AutoImage } from "app/components/AutoImage"
 import { Button } from "app/components/Button"
 import OnScanHaptic from "app/components/Haptics/OnScanHaptic"
 import Proceed from "app/components/Svg/Proceed"
-import { assetService } from "app/services/Assets/AssetService"
 import { colors, spacing, typography } from "app/theme"
 import React from "react"
-import { Image, View } from "react-native"
+import { View } from "react-native"
 import { ScanStateOptions } from "types"
 
 const SafeScanResultButton: React.FC<{
@@ -15,7 +13,7 @@ const SafeScanResultButton: React.FC<{
   safe: boolean
 }> = ({ setDelayedLeaving, setPressed, scanState, safe }) => {
   return (
-    <View style={{ marginTop: spacing.xxxl }}>
+    <View style={{ marginTop: spacing.md }}>
       <Button
         text="Proceed"
         onPress={setDelayedLeaving}
