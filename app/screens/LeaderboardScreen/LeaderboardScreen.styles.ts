@@ -39,7 +39,7 @@ export const $userNameColStyle: TextStyle = {
 
 export const $scoreColStyle: TextStyle = {
   textAlign: "center",
-  width: "20%",
+  width: "16%",
 }
 export const $scoreColContainer: ViewStyle = {
   ...$scoreColStyle,

@@ -1,9 +1,9 @@
-import React, { FC, useEffect } from "react"
+import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { View } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { Button, Screen, Text } from "app/components"
-import { $rootScreen, $title, colors, spacing, typography } from "app/theme"
+import { $ScreenStyle, $rootScreen, $title, colors, spacing, typography } from "app/theme"
 import { leaderboardServiceInstance } from "app/services/Leaderboard"
 import { useStores } from "app/models"
 import Leaf from "app/components/Svg/Leaf"
@@ -30,6 +30,7 @@ interface LeaderboardScreenProps extends AppStackScreenProps<"Leaderboard"> {}
 export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function LeaderboardScreen() {
   const { leaderboardStore, debugStore, authenticationStore } = useStores()
   const { setLeaderboardData, sortedLeaderboardData } = useLeaderboardData()
+  const [error, setError] = useState("")
   const navigation = useNavigation()
   const { onSwipeEvent } = useCustomSwiper({ onSwipeRight: () => navigation.navigate("Scan") })
 
@@ -100,33 +101,31 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
   )
 
   const leaderboardScreenContent = (
-    <PanGestureHandler onHandlerStateChange={onSwipeEvent} activeOffsetX={[-10, 10]}>
-      <View style={{ overflow: "scroll" }}>
-        <Text preset={"heading"} tx="leaderboardScreen.title" style={$title} />
-        <Text
-          preset={"subheading"}
-          tx="leaderboardScreen.subHeader"
-          style={{
-            textAlign: "center",
-            paddingBottom: spacing.lg,
-            color: colors.palette.neutral800,
-          }}
-        />
+    <>
+      <Text preset={"heading"} tx="leaderboardScreen.title" style={$title} />
+      <Text
+        preset={"subheading"}
+        tx="leaderboardScreen.subHeader"
+        style={{
+          textAlign: "center",
+          paddingBottom: spacing.lg,
+          color: colors.palette.neutral800,
+        }}
+      />
+      <View
+        style={{
+          marginBottom: 48,
+        }}
+      >
         <View
           style={{
-            marginBottom: 48,
+            width: "100%",
+            flexDirection: "row",
           }}
-        >
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "row",
-            }}
-          ></View>
-          {renderLeaderboard()}
-        </View>
+        ></View>
+        {renderLeaderboard()}
       </View>
-    </PanGestureHandler>
+    </>
   )
 
   useEffect(() => {
@@ -136,12 +135,30 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
 
         let dummyData = await leaderboardServiceInstance.getDummyLeaderboardDataFromStorage()
 
-        let userData = await leaderboardServiceInstance.getUserScoreAndUsernameFromStorage()
+        let score = await leaderboardServiceInstance.getUserScoreFromStorage()
 
-        if (!userData || !dummyData) return
+        if (!dummyData) {
+          await leaderboardServiceInstance.init()
+          dummyData = await leaderboardServiceInstance.getDummyLeaderboardDataFromStorage()
+
+          if (!dummyData) {
+            setError("Failed to get leaderboard data :(")
+            return
+          }
+        }
+
+        if (!score) {
+          await leaderboardServiceInstance.initUserScoreInStorage()
+          score = await leaderboardServiceInstance.getUserScoreFromStorage()
+          if (!score) {
+            debugStore.addErrorMessage(`userscore is: ${score}, failed to get user score`)
+            score = ":("
+          }
+        }
+
         let userDataFormatted = {
           username: authenticationStore.authUsername,
-          score: parseInt(userData.score),
+          score: parseInt(score),
           isUser: true,
         }
 
@@ -157,7 +174,12 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
 
   return (
     <Screen style={$rootScreen} preset="scroll" safeAreaEdges={["top"]}>
-      {authenticationStore.authToken === "scannerOnly" ? notSignedIn : leaderboardScreenContent}
+      <PanGestureHandler onHandlerStateChange={onSwipeEvent} activeOffsetX={[-10, 10]}>
+        <View>
+          {authenticationStore.authToken === "scannerOnly" ? notSignedIn : leaderboardScreenContent}
+          {error && <Text text={error} style={{ textAlign: "center" }} preset="subheading" />}
+        </View>
+      </PanGestureHandler>
     </Screen>
   )
 })

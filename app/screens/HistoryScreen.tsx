@@ -15,7 +15,6 @@ import { authService } from "app/services/Auth"
 import { PanGestureHandler } from "react-native-gesture-handler"
 import useCustomSwiper from "app/utils/useCustomSwiper"
 import { useNavigation } from "@react-navigation/native"
-import { TabParamList } from "app/navigators/MainNavigator"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
@@ -142,8 +141,10 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
 
   return (
     <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>
-      <PanGestureHandler onHandlerStateChange={onSwipeEvent}>
-        <View>{authenticationStore.authToken === "scannerOnly" ? notSignedIn : renderHistory}</View>
+      <PanGestureHandler onHandlerStateChange={onSwipeEvent} activeOffsetX={[-10, 10]}>
+        <View style={{ height: "100%" }}>
+          {authenticationStore.authToken === "scannerOnly" ? notSignedIn : renderHistory}
+        </View>
       </PanGestureHandler>
     </Screen>
   )

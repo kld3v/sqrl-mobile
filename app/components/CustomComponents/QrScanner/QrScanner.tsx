@@ -7,7 +7,6 @@ import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
 import { $card, $container, $reticle } from "./QrScannerStyles"
-import DisplayUrlText from "./DisplayUrlText"
 import RefreshButton from "./RefreshButton"
 
 export const QrScanner = observer(function QrScanner() {
@@ -37,7 +36,9 @@ export const QrScanner = observer(function QrScanner() {
         {Platform.OS === "ios" ? (
           <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus} />
         ) : (
-          <>{/* <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} /> */}</>
+          <>
+            <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} />
+          </>
         )}
 
         <Reticle

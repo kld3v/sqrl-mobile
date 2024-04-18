@@ -62,15 +62,12 @@ export class LeaderboardService {
     return true
   }
 
-  async getUserScoreAndUsernameFromStorage(): Promise<false | { username: string; score: string }> {
-    let username = await secureStoreInstance.getValueFromSecureStore("username")
-    let score = await secureStoreInstance.getValueFromSecureStore("userScore")
-    console.log(username, score)
-    if (username === null || score === null) return false
-    return {
-      username,
-      score,
-    }
+  async getUsernameFromStorage(): Promise<null | string> {
+    return await secureStoreInstance.getValueFromSecureStore("username")
+  }
+
+  async getUserScoreFromStorage(): Promise<null | string> {
+    return await secureStoreInstance.getValueFromSecureStore("userScore")
   }
 
   async initUserNameInStorage(username: string): Promise<boolean> {

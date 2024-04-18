@@ -100,6 +100,7 @@ class AuthService implements IAuthService {
       }),
     )
     api.setIdentityToken("")
+
     await secureStoreInstance.clearFromSecureStore("username")
 
     // Reset the tokens in memory
