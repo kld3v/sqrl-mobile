@@ -5,7 +5,6 @@ import { spacing } from "./spacing"
 
 export const $ScreenStyle: ViewStyle = {
   height: "100%",
-  // backgroundColor: "red",
 }
 
 export const $screenContentContainer: ViewStyle = {

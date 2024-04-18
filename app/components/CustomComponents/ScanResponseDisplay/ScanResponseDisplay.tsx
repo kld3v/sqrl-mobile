@@ -203,7 +203,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
               </TouchableOpacity>
             )}
             <Text weight="boldItalic" size="xxl" style={safe ? $safeText : $unsafeText}>
-              {errorMessage ? "Oops!" : safe ? "Good To Go!" : "Caution!"}
+              {errorMessage ? errorMessage : safe ? "Good To Go!" : "Caution!"}
             </Text>
 
             {!safe && (

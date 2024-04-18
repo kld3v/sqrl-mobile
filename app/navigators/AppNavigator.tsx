@@ -21,8 +21,6 @@ import { MainNavigator, TabParamList } from "./MainNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import * as Screens from "app/screens"
-import { authService } from "app/services/Auth"
-import { api } from "app/services/api"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -115,6 +113,7 @@ const AppStack = observer(function AppStack() {
               <Stack.Screen name="Information" component={Screens.InformationScreen} />
               <Stack.Screen name="Leaderboard" component={Screens.LeaderboardScreen} />
               <Stack.Screen name="History" component={Screens.HistoryScreen} />
+              <Stack.Screen name="Username" component={Screens.UsernameScreen} />
             </>
           )}
         </>
