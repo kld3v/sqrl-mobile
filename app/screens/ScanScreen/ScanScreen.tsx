@@ -135,7 +135,7 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
               icon="menu"
               color={colors.palette.primary300}
               containerStyle={$informationIcon}
-              size={32}
+              size={40}
               // @ts-ignore
               onPress={toggleDrawer}
             />

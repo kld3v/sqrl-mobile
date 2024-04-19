@@ -2,7 +2,6 @@ import { Platform, Pressable, View } from "react-native"
 import { observer } from "mobx-react-lite"
 
 import { BarCodeScanningResult, Camera } from "expo-camera"
-import { CameraView } from "expo-camera/next"
 import { ScanResponseDisplay } from "../ScanResponseDisplay/ScanResponseDisplay"
 import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"

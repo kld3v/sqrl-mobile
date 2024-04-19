@@ -147,8 +147,6 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           paddingHorizontal: 30,
         }}
         onPress={() => resetScanState()}
-        onPressIn={() => setpressed(true)}
-        onPressOut={() => setpressed(false)}
         pressedStyle={{
           backgroundColor: colors.palette.neutral200,
           borderColor: colors.palette.neutral500,
@@ -203,13 +201,13 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
               </TouchableOpacity>
             )}
             <Text weight="boldItalic" size="xxl" style={safe ? $safeText : $unsafeText}>
-              {errorMessage ? errorMessage : safe ? "Good To Go!" : "Caution!"}
+              {errorMessage ? "Oops!" : safe ? "Good To Go!" : "Caution!"}
             </Text>
 
             {!safe && (
               <Text weight="mediumItalic" size="xs" style={$unsafeText}>
                 {errorMessage
-                  ? errorMessage
+                  ? `${errorMessage} sdlfsf`
                   : "This QR code looks risky.\nProceed at your own risk."}
               </Text>
             )}
