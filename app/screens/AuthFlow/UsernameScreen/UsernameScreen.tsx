@@ -32,7 +32,6 @@ export const UsernameScreen: FC<UsernameScreenProps> = observer(function Usernam
     setIsSubmitted(true)
     setIsLoading(true)
     setAttemptsCount(attemptsCount + 1)
-    api.setIdentityToken("90|NF6RaHfg9W9vwcvwwCaHVF4ZgqoCorMA7FoTIh1P3030b303")
 
     if (usernameValidationError) {
       setIsLoading(false)
@@ -53,7 +52,9 @@ export const UsernameScreen: FC<UsernameScreenProps> = observer(function Usernam
       await authService.setUsername(authUsername)
       // Setting the authtoken in global state below is key as this is what tells react to render the logged in user state.
       let token = authService.validToken
-      if (token) setAuthToken(token)
+      if (token) {
+        setAuthToken(token)
+      }
       setIsLoading(false)
       setIsSubmitted(false)
     }

@@ -51,7 +51,7 @@ export type AppStackParamList = {
   Username: undefined
   LogIn: undefined
   Profile: undefined
-	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -112,9 +112,6 @@ const AppStack = observer(function AppStack() {
               <Stack.Screen name="Main" component={MainNavigator} />
               <Stack.Screen name="Debug" component={Screens.DebugScreen} />
               <Stack.Screen name="Information" component={Screens.InformationScreen} />
-              <Stack.Screen name="Leaderboard" component={Screens.LeaderboardScreen} />
-              <Stack.Screen name="History" component={Screens.HistoryScreen} />
-              <Stack.Screen name="Username" component={Screens.UsernameScreen} />
             </>
           )}
         </>
@@ -126,8 +123,8 @@ const AppStack = observer(function AppStack() {
           <Stack.Screen name="LogIn" component={Screens.LogIn} />
         </>
       )}
-      <Stack.Screen name="Profile" component={Screens.ProfileScreen} />
-			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+
+      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 })

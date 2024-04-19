@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect, useState } from "react"
-import { ImageStyle, View, ViewStyle } from "react-native"
+import { View, ViewStyle } from "react-native"
 import { AutoImage, Carousel, Icon, ListItem, ScanScreenScore } from "../../components"
 
 import { QrScanner, Screen } from "../../components"
@@ -12,7 +12,7 @@ import CameraPermissionUndetermined from "./CamerPermissionUndetermined"
 import { $informationIcon } from "app/components/CustomComponents/QrScanner/QrScannerStyles"
 import { colors, spacing } from "app/theme"
 import { useStores } from "app/models"
-import { useNavigation } from "@react-navigation/native"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
 import QrlaButton from "app/components/CustomComponents/QrScanner/QrlaButton"
 import useCustomSwiper from "app/utils/useCustomSwiper"
@@ -30,7 +30,7 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
     onSwipeLeft: () => navigation.navigate("Leaderboard"),
     onSwipeRight: () => navigation.navigate("History"),
   })
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   useEffect(() => {
     // Request permission if it hasn't been determined yet
     if (!permission) {
@@ -43,6 +43,16 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
       await leaderboardStore.setUserScoreFromSecureStorage()
     })()
   }, [])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setOpen(false) // Closes the drawer whenever the screen is focused
+
+      return () => {
+        // Optional: Anything you might want to reset when the screen blurs
+      }
+    }, []),
+  )
 
   // Decide what to render based on the camera permission status
   const content = permission?.granted ? (

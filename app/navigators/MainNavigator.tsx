@@ -10,7 +10,7 @@ import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { locationService } from "app/services/Location"
 import { useStores } from "app/models"
-import { HistoryScreen, LeaderboardScreen } from "app/screens"
+import { HistoryScreen, LeaderboardScreen, ProfileScreen } from "app/screens"
 import * as Haptics from "expo-haptics"
 
 export type TabParamList = {
@@ -22,6 +22,7 @@ export type TabParamList = {
   Testing: undefined
   Leaderboard: undefined
   History: undefined
+  Profile: undefined
 }
 
 /**
@@ -67,7 +68,7 @@ export function MainNavigator() {
         component={HistoryScreen}
         options={{
           tabBarLabel: "",
-          tabBarAccessibilityLabel: translate("navigator.scannerTab"),
+          tabBarAccessibilityLabel: "history tab",
           tabBarIcon: ({ focused }) => (
             <Icon icon="more" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
@@ -99,6 +100,19 @@ export function MainNavigator() {
           tabBarIcon: ({ focused }) => (
             <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
+        }}
+        listeners={{
+          focus: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: "", // Hides the label
+          tabBarIcon: () => null, // Hides the icon
+          tabBarButton: (props) => null, // Disables the tab button
+          tabBarAccessibilityLabel: "None", // Accessibility label set to 'None'
         }}
         listeners={{
           focus: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
