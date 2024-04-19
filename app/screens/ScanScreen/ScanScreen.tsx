@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
-import React, { FC, useEffect } from "react"
-import { View, ViewStyle } from "react-native"
-import { Carousel, Icon, ScanScreenScore } from "../../components"
+import React, { FC, useEffect, useState } from "react"
+import { ImageStyle, View, ViewStyle } from "react-native"
+import { AutoImage, Carousel, Icon, ListItem, ScanScreenScore } from "../../components"
 
 import { QrScanner, Screen } from "../../components"
 
@@ -10,13 +10,16 @@ import CameraPermissionDenied from "./CameraPermissionDenied"
 import { useCameraPermissions } from "expo-camera/next"
 import CameraPermissionUndetermined from "./CamerPermissionUndetermined"
 import { $informationIcon } from "app/components/CustomComponents/QrScanner/QrScannerStyles"
-import { colors } from "app/theme"
+import { colors, spacing } from "app/theme"
 import { useStores } from "app/models"
 import { useNavigation } from "@react-navigation/native"
 import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
 import QrlaButton from "app/components/CustomComponents/QrScanner/QrlaButton"
 import useCustomSwiper from "app/utils/useCustomSwiper"
 import { PanGestureHandler } from "react-native-gesture-handler"
+import { Drawer } from "react-native-drawer-layout"
+import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
+import { assetService } from "app/services/Assets/AssetService"
 
 export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScreen(_props) {
   const [permission, requestPermission] = useCameraPermissions()
@@ -27,7 +30,7 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
     onSwipeLeft: () => navigation.navigate("Leaderboard"),
     onSwipeRight: () => navigation.navigate("History"),
   })
-
+  const [open, setOpen] = useState(true)
   useEffect(() => {
     // Request permission if it hasn't been determined yet
     if (!permission) {
@@ -49,45 +52,107 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
   ) : (
     <CameraPermissionDenied />
   )
+
+  const $drawerInsets = useSafeAreaInsetsStyle(["top"])
+
+  const toggleDrawer = () => {
+    if (!open) {
+      setOpen(true)
+    } else {
+      setOpen(false)
+    }
+  }
+
   return (
-    <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      <PanGestureHandler onHandlerStateChange={onSwipeEvent}>
-        <View style={$screenContentContainer}>
-          <ScanScreenScore />
-          <QrlaButton />
-          {!onboardingStore.hasOnboarded && (
-            <Carousel
+    <Drawer
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+      drawerType={"slide"}
+      renderDrawerContent={() => (
+        <View style={[$drawer, $drawerInsets]}>
+          <View style={$logoContainer}>
+            <AutoImage
               style={{
-                position: "absolute",
-                justifyContent: "center",
-                alignItems: "center",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                top: 0,
-                backgroundColor: "rgba(0,0,0,0.5)",
-                zIndex: 5,
+                height: 56,
+                width: 56,
               }}
+              source={assetService.qrlaLogo}
+              resizeMode="contain"
             />
-          )}
-          <Icon
-            icon="information"
-            color={colors.palette.primary300}
-            containerStyle={$informationIcon}
-            size={32}
-            // @ts-ignore
-            onPress={() => navigation.navigate("Information")}
-          />
-          {content}
+            <ListItem
+              style={{ marginTop: spacing.md }}
+              text="Profile"
+              onPress={() => navigation.navigate("Profile")}
+              rightIcon="caretRight"
+              rightIconColor="white"
+            />
+            <ListItem
+              text="Help"
+              onPress={() => navigation.navigate("Information")}
+              rightIcon="caretRight"
+              rightIconColor="white"
+            />
+          </View>
         </View>
-      </PanGestureHandler>
-    </Screen>
+      )}
+    >
+      <Screen
+        preset="fixed"
+        safeAreaEdges={["top"]}
+        contentContainerStyle={$screenContentContainer}
+      >
+        <PanGestureHandler onHandlerStateChange={onSwipeEvent}>
+          <View style={$screenContentContainer}>
+            <ScanScreenScore />
+            <QrlaButton />
+            {!onboardingStore.hasOnboarded && (
+              <Carousel
+                style={{
+                  position: "absolute",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  zIndex: 5,
+                }}
+              />
+            )}
+            <Icon
+              icon="menu"
+              color={colors.palette.primary300}
+              containerStyle={$informationIcon}
+              size={32}
+              // @ts-ignore
+              onPress={toggleDrawer}
+            />
+            {content}
+          </View>
+        </PanGestureHandler>
+      </Screen>
+    </Drawer>
   )
 })
 
 // #region Styles
 const $screenContentContainer: ViewStyle = {
   flex: 1,
+}
+
+const $drawer: ViewStyle = {
+  backgroundColor: colors.background,
+  flex: 1,
+}
+
+const $logoContainer: ViewStyle = {
+  height: 56,
+
+  width: "80%",
+  marginTop: spacing.xl,
+  marginLeft: spacing.xl,
 }
 
 // #endregion

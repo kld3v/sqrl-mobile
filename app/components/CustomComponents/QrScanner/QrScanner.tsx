@@ -36,9 +36,7 @@ export const QrScanner = observer(function QrScanner() {
         {Platform.OS === "ios" ? (
           <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus} />
         ) : (
-          <>
-            <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} />
-          </>
+          <>{/* <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} /> */}</>
         )}
 
         <Reticle

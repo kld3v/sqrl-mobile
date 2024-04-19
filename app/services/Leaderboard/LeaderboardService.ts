@@ -63,11 +63,21 @@ export class LeaderboardService {
   }
 
   async getUsernameFromStorage(): Promise<null | string> {
-    return await secureStoreInstance.getValueFromSecureStore("username")
+    try {
+      return await secureStoreInstance.getValueFromSecureStore("username")
+    } catch (error) {
+      console.log(error)
+      return null
+    }
   }
 
   async getUserScoreFromStorage(): Promise<null | string> {
-    return await secureStoreInstance.getValueFromSecureStore("userScore")
+    try {
+      return await secureStoreInstance.getValueFromSecureStore("userScore")
+    } catch (error) {
+      console.log(error)
+      return null
+    }
   }
 
   async initUserNameInStorage(username: string): Promise<boolean> {

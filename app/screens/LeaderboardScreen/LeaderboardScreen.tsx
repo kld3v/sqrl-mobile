@@ -150,6 +150,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
         if (!score) {
           await leaderboardServiceInstance.initUserScoreInStorage()
           score = await leaderboardServiceInstance.getUserScoreFromStorage()
+
           if (!score) {
             debugStore.addErrorMessage(`userscore is: ${score}, failed to get user score`)
             score = ":("
@@ -167,7 +168,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
         setLeaderboardData(leaderboardData)
       } catch (error) {
         console.log(error, "error setting the data for leaderboard - check leaderboard screen ")
-        debugStore.addErrorMessage("something fucked up in leaderboard screen")
+        debugStore.addErrorMessage(`something fucked up in leaderboard screen: ${error}`)
       }
     })()
   }, [leaderboardStore.userScore])
