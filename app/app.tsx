@@ -11,7 +11,7 @@ if (__DEV__) {
 import "./i18n"
 import "./utils/ignoreWarnings"
 import { useFonts } from "expo-font"
-import React from "react"
+import React, { useEffect } from "react"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 import * as Linking from "expo-linking"
 import { useInitialRootStore, useStores } from "./models"
@@ -69,6 +69,7 @@ function App(props: AppProps) {
   const {
     termsAndConditionsStore,
     debugStore,
+    locationStore,
     authenticationStore: { setAuthToken, setAuthUsername, authToken, authUsername },
   } = useStores()
 
@@ -81,13 +82,12 @@ function App(props: AppProps) {
     // Note: (vanilla iOS) You might notice the splash-screen logo change size. This happens in debug/development mode. Try building the app for release.
 
     // APP SETUP ----------->
+
     try {
       await termsAndConditionsStore.setUnsignedDocumentsToState()
-      quintonTheCybear.log(
-        "What's in the terms and conditions store?",
-        termsAndConditionsStore.termsIds,
-      )
+
       debugStore.addInfoMessage("Checked to see if user needed to sign up to date contract.")
+
       await leaderboardServiceInstance.incrementDummyLeadboardData()
       ;(async () => {
         await authService.initializeTokens()
@@ -111,9 +111,28 @@ function App(props: AppProps) {
       __DEV__ && console.error(`Failed to init some app functions: ${error}`)
       debugStore.addErrorMessage(`Failed to init some app functions: ${error}`)
     }
+
     // <----------------- APP SETUP
     hideSplashScreen()
   })
+
+  const recurringlyUpdateLocation = async () => {
+    try {
+      await locationStore.getAndSetCurrentPosition()
+    } catch (error) {
+      console.error(`Failed to get location: ${error}`)
+    }
+  }
+
+  useEffect(() => {
+    let locationIntervalId: NodeJS.Timeout
+    if (locationStore.permission) {
+      locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
+      debugStore.addInfoMessage("Started location updates")
+    }
+    // cleanup
+    return () => clearInterval(locationIntervalId)
+  }, [locationStore.permission])
 
   // Before we show the app, we have to wait for our state to be ready.
   // In the meantime, don't render anything. This will be the background
@@ -139,7 +158,6 @@ function App(props: AppProps) {
               initialState={initialNavigationState}
               onStateChange={onNavigationStateChange}
             />
-            <QrVenueNotificationsManager />
           </GestureHandlerRootView>
         </ErrorBoundary>
       </SafeAreaProvider>

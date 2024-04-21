@@ -11,7 +11,8 @@ const HeartIcon: React.FC<{
   setHistory: React.Dispatch<React.SetStateAction<Scan[]>>
   isFavorite: boolean
   url_id: number
-}> = ({ setHistory, url_id, isFavorite }) => {
+  timestamp: string
+}> = ({ setHistory, url_id, isFavorite, timestamp }) => {
   const scale = useSharedValue(1)
 
   const setFavoriteStatus = async (id: number, isFave: boolean) => {
@@ -26,7 +27,9 @@ const HeartIcon: React.FC<{
 
     setHistory((currentHistory) =>
       currentHistory.map((item) =>
-        item.url_id === url_id ? { ...item, is_favorite: !item.is_favorite } : item,
+        item.url_id === url_id && item.date_and_time === timestamp
+          ? { ...item, is_favorite: !item.is_favorite }
+          : item,
       ),
     )
     scale.value = withSpring(isFavorite ? 1 : 1.2, { damping: 5, stiffness: 150 }, () => {

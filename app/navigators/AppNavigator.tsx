@@ -70,29 +70,9 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
   const {
-    locationStore,
     termsAndConditionsStore,
-    debugStore,
     authenticationStore: { isAuthenticated },
   } = useStores()
-
-  const recurringlyUpdateLocation = async () => {
-    try {
-      await locationStore.getAndSetCurrentPosition()
-    } catch (error) {
-      console.error(`Failed to get location: ${error}`)
-    }
-  }
-
-  useEffect(() => {
-    let locationIntervalId: NodeJS.Timeout
-    if (locationStore.permission) {
-      locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
-      debugStore.addInfoMessage("Started location updates")
-    }
-    // cleanup
-    return () => clearInterval(locationIntervalId)
-  }, [locationStore.permission])
 
   console.log("render app navigator")
   return (

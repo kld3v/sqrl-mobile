@@ -1,7 +1,14 @@
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect, useState } from "react"
 import { View, ViewStyle } from "react-native"
-import { AutoImage, Carousel, Icon, ListItem, ScanScreenScore } from "../../components"
+import {
+  AutoImage,
+  Carousel,
+  Icon,
+  ListItem,
+  QrVenueNotificationsManager,
+  ScanScreenScore,
+} from "../../components"
 
 import { QrScanner, Screen } from "../../components"
 
@@ -143,6 +150,7 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
           </View>
         </PanGestureHandler>
       </Screen>
+      <QrVenueNotificationsManager />
     </Drawer>
   )
 })

@@ -83,21 +83,40 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
   )
 
   const scanningContent = (
-    <View
-      style={{
-        backgroundColor: colors.scannerInfoBox,
-        borderWidth: 4,
-        borderColor: colors.palette.neutral100,
-        height: 80,
-        paddingHorizontal: spacing.xl2,
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 28,
-      }}
-    >
-      <OnScanHaptic scanState={scanState} />
-      <Text>Inspecting your QR code...</Text>
+    <View style={{ marginBottom: spacing.md, justifyContent: "center", alignItems: "center" }}>
+      <View
+        style={{
+          backgroundColor: colors.scannerInfoBox,
+          borderWidth: 4,
+          borderColor: colors.palette.neutral100,
+          height: 80,
+          paddingHorizontal: spacing.xl2,
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 28,
+          marginBottom: spacing.md,
+        }}
+      >
+        <OnScanHaptic scanState={scanState} />
+        <Text>Inspecting your QR code...</Text>
+      </View>
+      <Button
+        text="Try Again"
+        style={{
+          backgroundColor: colors.palette.neutral300,
+          borderRadius: 25, // Half of the height
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: 30,
+        }}
+        onPress={() => resetScanState()}
+        pressedStyle={{
+          backgroundColor: colors.palette.neutral200,
+          borderColor: colors.palette.neutral500,
+        }}
+        textStyle={{ fontFamily: typography.primary.bold }}
+      />
     </View>
   )
   const koalaGif = require("../../../../assets/images/koala.gif")

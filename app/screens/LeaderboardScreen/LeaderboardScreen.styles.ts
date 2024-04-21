@@ -32,14 +32,14 @@ export const $positionColStyle: TextStyle = {
 }
 
 export const $userNameColStyle: TextStyle = {
-  width: "64%",
+  width: "62%",
   flexDirection: "row",
   alignItems: "center",
 }
 
 export const $scoreColStyle: TextStyle = {
   textAlign: "center",
-  width: "16%",
+  width: "20%",
 }
 export const $scoreColContainer: ViewStyle = {
   ...$scoreColStyle,
@@ -50,6 +50,7 @@ export const $scoreColContainer: ViewStyle = {
   alignItems: "center",
   flexDirection: "row",
   height: 40,
+  marginRight: 8,
 }
 
 export const $scoreColEntryTextOnlyStyle: TextStyle = {

@@ -38,7 +38,7 @@ export default () => {
 
     setScanState("scanning")
 
-    if (!qrScannerService.isUrl(qrCodeScan.data)) {
+    if (!qrScannerService.isValidUrl(qrCodeScan.data)) {
       setErrorMsg("That doesn't look like a valid URL.")
       setScanState("scanned")
       return

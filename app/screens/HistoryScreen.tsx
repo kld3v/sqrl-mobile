@@ -14,7 +14,7 @@ import { useStores } from "app/models"
 import { authService } from "app/services/Auth"
 import { PanGestureHandler } from "react-native-gesture-handler"
 import useCustomSwiper from "app/utils/useCustomSwiper"
-import { useNavigation } from "@react-navigation/native"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
 
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
@@ -37,6 +37,12 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     }
     setRefreshing(false)
   }, [])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchHistory()
+    }, []),
+  )
 
   const curried_takeUserToScanUrl = (el: Scan) => async () => {
     if (el.trust_score > 500) {
@@ -79,7 +85,12 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
         RightComponent={
           <View style={$iconContainer}>
             {item.trust_score > 500 ? <Tick style={$iconStyle} /> : <Cancel style={$iconStyle} />}
-            <HeartIcon setHistory={setHistory} url_id={item.url_id} isFavorite={item.is_favorite} />
+            <HeartIcon
+              setHistory={setHistory}
+              url_id={item.url_id}
+              timestamp={item.date_and_time}
+              isFavorite={item.is_favorite}
+            />
           </View>
         }
         RightComponentStyle={{ justifyContent: "center", alignItems: "center" }}
@@ -127,7 +138,7 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
           data={sortedHistory}
           renderItem={renderItem}
           estimatedItemSize={200}
-          keyExtractor={(item, index) => `history-${item.url_id}-${index}`}
+          keyExtractor={(item) => `history-${item.url_id}-${item.date_and_time}`}
           onRefresh={fetchHistory}
           refreshing={refreshing}
         />
