@@ -57,7 +57,7 @@ export default () => {
       const trustScore = response.data?.trust_score ?? null
 
       // Check if response.data is undefined and log an error message.
-      if (!response.data) {
+      if (!response.ok) {
         debugStore.addErrorMessage(`response.data is undefined: ${response.data}`)
         setErrorMsg("Oops! Didnt get a valid trust score back from the bush. Please try again.")
         return

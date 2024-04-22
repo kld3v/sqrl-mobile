@@ -40,10 +40,12 @@ export const $infoBoxCustomBg: TextStyle = {
   backgroundColor: colors.scannerInfoBox,
   borderWidth: 4,
 }
+
+const width = Dimensions.get("screen").width
 export const $infoBoxCustom: TextStyle = {
-  minWidth: 200,
-  maxWidth: "100%",
-  paddingHorizontal: 32,
+  minWidth: width,
+  // maxWidth: "100%",
+  // paddingHorizontal: 32,
   paddingVertical: spacing.xxl,
   borderRadius: 28,
   flexDirection: "column",
@@ -55,7 +57,7 @@ export const $infoBoxCustom: TextStyle = {
 export const $infoBoxTopWithMessage: TextStyle = {
   ...$infoBoxCustomBg,
   ...$infoBoxCustom,
-  paddingHorizontal: spacing.xxxl,
+  // paddingHorizontal: spacing.xxl,
   paddingVertical: spacing.lg,
 }
 
