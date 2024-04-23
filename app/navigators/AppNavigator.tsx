@@ -1,7 +1,7 @@
 /**
  * The app navigator (formerly "AppNavigator" and "MainNavigator") is used for the primary
  * navigation flows of your app.
- * Generally speaking, it will contain an auth flow (registration, login, forgot password)
+ * Generally speaking, it will contain an auth flow (registration, SignIn, forgot password)
  * and a "main" flow which the user will use once logged in.
  */
 import {
@@ -17,7 +17,7 @@ import { useColorScheme } from "react-native"
 
 import Config from "../config"
 import { useStores } from "../models"
-import { Navigator, TabParamList } from "./Navigator"
+import { MainNavigator, TabParamList } from "./MainNavigator"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import * as Screens from "app/screens"
@@ -37,13 +37,20 @@ import * as Screens from "app/screens"
  */
 export type AppStackParamList = {
   Welcome: undefined
-  Login: undefined
-  Demo: NavigatorScreenParams<TabParamList>
+  SignUp: undefined
+  Main: NavigatorScreenParams<TabParamList>
   // 🔥 Your screens go here
   PushNotifications: undefined
   MarketPlace: undefined
   TermsAndConditions: undefined
   Debug: undefined
+  Information: undefined
+  Leaderboard: undefined
+  History: undefined
+  Registration: undefined
+  Username: undefined
+  LogIn: undefined
+  Profile: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -62,26 +69,12 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
-  const { locationStore, termsAndConditionsStore, debugStore } = useStores()
+  const {
+    termsAndConditionsStore,
+    authenticationStore: { isAuthenticated },
+  } = useStores()
 
-  const recurringlyUpdateLocation = async () => {
-    try {
-      await locationStore.getAndSetCurrentPosition()
-    } catch (error) {
-      console.error(`Failed to get location: ${error}`)
-    }
-  }
-
-  useEffect(() => {
-    let locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
-    debugStore.addInfoMessage("Started location updates")
-    debugStore.addInfoMessage(
-      `User has terms to sign: ${termsAndConditionsStore.userHasTermsToSign}`,
-    )
-    // cleanup function
-    return () => clearInterval(locationIntervalId)
-  }, [])
-
+  console.log("render app navigator")
   return (
     <Stack.Navigator
       screenOptions={{
@@ -90,16 +83,26 @@ const AppStack = observer(function AppStack() {
         navigationBarHidden: true,
       }}
     >
-      {termsAndConditionsStore.userHasTermsToSign ? (
-        <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
+      {isAuthenticated ? (
+        <>
+          {termsAndConditionsStore.userHasTermsToSign ? (
+            <Stack.Screen name="TermsAndConditions" component={Screens.TermsAndConditionsScreen} />
+          ) : (
+            <>
+              <Stack.Screen name="Main" component={MainNavigator} />
+              <Stack.Screen name="Debug" component={Screens.DebugScreen} />
+              <Stack.Screen name="Information" component={Screens.InformationScreen} />
+            </>
+          )}
+        </>
       ) : (
-        <Stack.Screen name="Demo" component={Navigator} />
+        <>
+          <Stack.Screen name="SignUp" component={Screens.SignUpScreen} />
+          <Stack.Screen name="Registration" component={Screens.Registration} />
+          <Stack.Screen name="Username" component={Screens.UsernameScreen} />
+          <Stack.Screen name="LogIn" component={Screens.LogIn} />
+        </>
       )}
-
-      {/** 🔥 Your screens go here */}
-      {/* <Stack.Screen name="PushNotifications" component={Screens.TestingScreen} /> */}
-      {/* <Stack.Screen name="MarketPlace" component={Screens.MarketPlaceScreen} /> */}
-      <Stack.Screen name="Debug" component={Screens.DebugScreen} />
 
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>

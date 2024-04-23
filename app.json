@@ -5,8 +5,8 @@
     "owner": "qrlalabs",
     "name": "QRLA",
     "slug": "qrlaApp",
-    "scheme": "qrlaapp",
-    "version": "2.1.12",
+    "scheme": "qrla",
+    "version": "2.3.5",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
     "extra": {
@@ -29,7 +29,7 @@
     "jsEngine": "hermes",
     "assetBundlePatterns": ["**/*"],
     "android": {
-      "versionCode": 11,
+      "versionCode": 22,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/images/app-icon-android-legacy.png",
       "package": "com.qrlaapp",
@@ -44,10 +44,11 @@
       }
     },
     "ios": {
-      "buildNumber": "9.0.9",
+      "buildNumber": "9.1.5",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
+      "usesAppleSignIn": true,
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -68,6 +69,7 @@
       "bundler": "metro"
     },
     "plugins": [
+      ["expo-apple-authentication"],
       [
         "expo-notifications",
         {
@@ -87,7 +89,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "QRLA needs access to your camera to scan QR codes. For example, using our camera function allows us to perform our security analysis on the URL in the QR code. We do not store any images or videos from your camera."
+          "cameraPermission": "QRLA needs access to your camera to scan QR codes. For example, using our camera function allows us to perform our security analysis on the URL in the QR code. We do not store any images or videos from your camera.",
+          "microphonePermission": "This app does not require access to the microphone."
         }
       ],
       "expo-localization",

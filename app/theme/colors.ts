@@ -3,7 +3,7 @@
 const palette = {
   neutral100: "#FFFFFF",
   neutral200: "#041522",
-  neutral300: "#2C3E50",
+  neutral300: "#435F7F",
   neutral400: "#566573",
   neutral500: "#7B8A99",
   neutral600: "#99A3A4",
@@ -11,12 +11,16 @@ const palette = {
   neutral800: "#D6DBDF",
   neutral900: "#E1E5E8",
 
+  bluePressable: "#21569C",
+
   primary100: "#D7F2C2",
   primary200: "#B4E89C",
   primary300: "#92DD75",
   primary400: "#71D255",
   primary500: "#a2f732",
   primary600: "#8BC34A",
+  primary700: "#689F38",
+  primary800: "#4D7C2F",
 
   secondary100: "#E7B2C3",
   secondary200: "#D485A1",
@@ -32,9 +36,18 @@ const palette = {
 
   angry100: "#F8D7DA",
   angry500: "#D32F2F",
+  angry500Pressed: "#931F1F",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
+
+  tableBorder: "rgba(215, 242, 194, 0.5)",
+
+  heartRed: "#ea3b52",
+
+  mattColorsBlue: "#1A2E3D",
+  mattColorsDarkGreen: "#2c4e26",
+  mattColorsTeaGreen: "#E1f0C1",
 } as const
 
 export const colors = {
@@ -48,8 +61,17 @@ export const colors = {
    * A helper for making something see-thru.
    */
   transparent: "rgba(0, 0, 0, 0)",
-
+  /**
+   * The primary text color used against dark backdrop.
+  8.8:1 Wcag AAA grade
+   */
   textGreen: palette.primary600,
+  /**
+   * The primary text color used against light backdrop.
+   */
+  textLightBg: palette.neutral200,
+  //Text that is a standalone piece of text on a light background but also pressable causing some kind of event.
+  textLightBgButton: palette.bluePressable,
   /**
    * The default text color in many components.
    */
@@ -66,7 +88,7 @@ export const colors = {
   /**
    * The default border color.
    */
-  border: palette.neutral400,
+  border: palette.tableBorder,
   /**
    * The main tinting color.
    */
@@ -89,6 +111,11 @@ export const colors = {
    * The default color of the icons
    */
   icon: palette.primary500,
+
+  /**
+   * Dimmer Icon
+   */
+  dimIcon: palette.primary500,
 
   scannerInfoBox: "rgba(44, 62, 80, 0.5)",
 }

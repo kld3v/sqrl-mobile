@@ -37,6 +37,10 @@ interface CardProps extends TouchableOpacityProps {
    */
   RightComponent?: ReactElement
   /**
+   * Custom styling for the right component
+   */
+  RightComponentStyle?: StyleProp<ViewStyle>
+  /**
    * The heading text to display if not using `headingTx`.
    */
   heading?: TextProps["text"]
@@ -66,6 +70,10 @@ interface CardProps extends TouchableOpacityProps {
    * The content text to display if not using `contentTx`.
    */
   content?: TextProps["text"]
+  /**
+   * The styling for the child container.
+   */
+  childStyle?: StyleProp<ViewStyle>
   /**
    * Content text which is looked up via i18n.
    */
@@ -138,14 +146,17 @@ export function Card(props: CardProps) {
     FooterComponent,
     LeftComponent,
     RightComponent,
+    RightComponentStyle: $RightComponentStyle,
     verticalAlignment = "top",
     style: $containerStyleOverride,
+    childStyle: $childStyleOverride,
     contentStyle: $contentStyleOverride,
     headingStyle: $headingStyleOverride,
     footerStyle: $footerStyleOverride,
     ContentTextProps,
     HeadingTextProps,
     FooterTextProps,
+    children,
     ...WrapperProps
   } = props
 
@@ -167,6 +178,12 @@ export function Card(props: CardProps) {
     $headingStyleOverride,
     HeadingTextProps?.style,
   ]
+  const $childStyle = [
+    $childStyleOverride,
+    { flex: 1 },
+    isHeadingPresent && { marginTop: spacing.xxxs },
+    isContentPresent && { marginBottom: spacing.xxxs },
+  ]
   const $contentStyle = [
     $contentPresets[preset],
     isHeadingPresent && { marginTop: spacing.xxxs },
@@ -174,6 +191,7 @@ export function Card(props: CardProps) {
     $contentStyleOverride,
     ContentTextProps?.style,
   ]
+
   const $footerStyle = [
     $footerPresets[preset],
     (isHeadingPresent || isContentPresent) && { marginTop: spacing.xxxs },
@@ -209,7 +227,6 @@ export function Card(props: CardProps) {
                 style={$headingStyle}
               />
             ))}
-
           {ContentComponent ||
             (isContentPresent && (
               <Text
@@ -221,6 +238,7 @@ export function Card(props: CardProps) {
                 style={$contentStyle}
               />
             ))}
+          <View style={$childStyle}>{children}</View>
         </HeaderContentWrapper>
 
         {FooterComponent ||
@@ -237,7 +255,7 @@ export function Card(props: CardProps) {
           ))}
       </View>
 
-      {RightComponent}
+      <View style={$RightComponentStyle}>{RightComponent}</View>
     </Wrapper>
   )
 }

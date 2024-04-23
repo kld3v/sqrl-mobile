@@ -11,7 +11,7 @@ if (__DEV__) {
 import "./i18n"
 import "./utils/ignoreWarnings"
 import { useFonts } from "expo-font"
-import React from "react"
+import React, { useEffect } from "react"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 import * as Linking from "expo-linking"
 import { useInitialRootStore, useStores } from "./models"
@@ -23,6 +23,10 @@ import Config from "./config"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { ViewStyle } from "react-native"
 import { quintonTheCybear } from "./utils/QuintonTheCybear"
+import { leaderboardServiceInstance } from "./services/Leaderboard"
+import { QrVenueNotificationsManager } from "./components"
+import { authService } from "./services/Auth"
+import { api } from "./services/api"
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
 // Web linking configuration
@@ -62,7 +66,12 @@ function App(props: AppProps) {
   } = useNavigationPersistence(storage, NAVIGATION_PERSISTENCE_KEY)
 
   const [areFontsLoaded] = useFonts(customFontsToLoad)
-  const { termsAndConditionsStore, debugStore } = useStores()
+  const {
+    termsAndConditionsStore,
+    debugStore,
+    locationStore,
+    authenticationStore: { setAuthToken, setAuthUsername, authToken, authUsername },
+  } = useStores()
 
   const { rehydrated } = useInitialRootStore(async () => {
     // This runs after the root store has been initialized and rehydrated.
@@ -73,20 +82,57 @@ function App(props: AppProps) {
     // Note: (vanilla iOS) You might notice the splash-screen logo change size. This happens in debug/development mode. Try building the app for release.
 
     // APP SETUP ----------->
+
     try {
-      await termsAndConditionsStore.checkIfUserHasSignedUpToDateContract()
-      quintonTheCybear.log(
-        "What's in the terms and conditions store?",
-        termsAndConditionsStore.termsIds,
-      )
+      await termsAndConditionsStore.setUnsignedDocumentsToState()
+
       debugStore.addInfoMessage("Checked to see if user needed to sign up to date contract.")
+
+      await leaderboardServiceInstance.incrementDummyLeadboardData()
+      ;(async () => {
+        await authService.initializeTokens()
+        const tokenDoesExist = await authService.tokenDoesExist()
+        if (tokenDoesExist) {
+          // Set Auth: Bearer Token...
+          authService.validToken && api.setIdentityToken(authService.validToken)
+
+          // Set username from phone secure store...
+          const username = await authService.getUsername()
+          username && setAuthUsername(username)
+
+          // Set token to global state to take user to main screens...
+          authService.validToken && setAuthToken(authService.validToken)
+        } else {
+          console.log("no token")
+          console.log(authToken, authUsername)
+        }
+      })()
     } catch (error) {
       __DEV__ && console.error(`Failed to init some app functions: ${error}`)
       debugStore.addErrorMessage(`Failed to init some app functions: ${error}`)
     }
+
     // <----------------- APP SETUP
     hideSplashScreen()
   })
+
+  const recurringlyUpdateLocation = async () => {
+    try {
+      await locationStore.getAndSetCurrentPosition()
+    } catch (error) {
+      console.error(`Failed to get location: ${error}`)
+    }
+  }
+
+  useEffect(() => {
+    let locationIntervalId: NodeJS.Timeout
+    if (locationStore.permission) {
+      locationIntervalId = setInterval(recurringlyUpdateLocation, 10000)
+      debugStore.addInfoMessage("Started location updates")
+    }
+    // cleanup
+    return () => clearInterval(locationIntervalId)
+  }, [locationStore.permission])
 
   // Before we show the app, we have to wait for our state to be ready.
   // In the meantime, don't render anything. This will be the background

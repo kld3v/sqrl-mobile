@@ -1,7 +1,7 @@
 import * as React from "react"
 import { StyleProp, View, ViewStyle, TouchableOpacity, Platform } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
+import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
 import { useCallback, useState } from "react"
 import OnScanHaptic from "../../Haptics/OnScanHaptic"
@@ -23,6 +23,8 @@ import {
   $unsafeText,
 } from "./ScanResponseDisplayStyles"
 import SafeScanResultButton from "./SafeScanResultButton"
+import DisplayUrlText from "../QrScanner/DisplayUrlText"
+import UnSafeScanResultButton from "./UnSafeScanResultButton"
 
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
@@ -33,23 +35,15 @@ export interface ScanResponseDisplayProps {
   setScanState: React.Dispatch<React.SetStateAction<ScanStateOptions>>
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
   errorMessage: string | null
-  setReadyToScan: React.Dispatch<React.SetStateAction<boolean>>
+  readyToScan: React.MutableRefObject<boolean>
   style?: StyleProp<ViewStyle>
 }
 
 export const ScanResponseDisplay = observer(function ScanResponseDisplay(
   props: ScanResponseDisplayProps,
 ) {
-  const {
-    safe,
-    scanState,
-    setScanState,
-    url,
-    errorMessage,
-    setErrorMessage,
-    setReadyToScan,
-    style,
-  } = props
+  const { safe, scanState, setScanState, url, errorMessage, setErrorMessage, readyToScan, style } =
+    props
 
   const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
@@ -62,7 +56,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
         resetScanState()
       } catch (error) {
         console.error(error)
-        setErrorMessage("Not a valid URL. Soz. Try again.")
+        setErrorMessage("Not a valid URL. Please try again.")
       }
     }, 2000)
   }
@@ -70,10 +64,9 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
   const resetScanState = useCallback(() => {
     setScanState("notScanned")
     setErrorMessage(null)
-    setReadyToScan(true)
+    readyToScan.current = true
   }, [])
 
-  const deviceIsAndroid = Platform.OS === "android"
   const scanCompleteContent = (
     <>
       {safe ? (
@@ -84,36 +77,47 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           safe={safe}
         />
       ) : (
-        <Button
-          text="Cancel"
-          tx="common.cancel"
-          style={{
-            backgroundColor: colors.palette.angry500,
-            borderRadius: 25, // Half of the height
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: 16,
-            paddingHorizontal: 30,
-          }}
-          onPress={() => resetScanState()}
-          onPressIn={() => setpressed(true)}
-          onPressOut={() => setpressed(false)}
-          pressedStyle={{
-            backgroundColor: colors.palette.neutral200,
-            borderColor: colors.palette.neutral500,
-          }}
-          textStyle={{ fontFamily: typography.primary.bold }}
-        />
+        <UnSafeScanResultButton resetScanState={resetScanState} />
       )}
     </>
   )
 
   const scanningContent = (
-    <>
-      <OnScanHaptic scanState={scanState} />
-      <Text weight="mediumItalic">Checking your QR code...</Text>
-    </>
+    <View style={{ marginBottom: spacing.md, justifyContent: "center", alignItems: "center" }}>
+      <View
+        style={{
+          backgroundColor: colors.scannerInfoBox,
+          borderWidth: 4,
+          borderColor: colors.palette.neutral100,
+          height: 80,
+          paddingHorizontal: spacing.xl2,
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 28,
+          marginBottom: spacing.md,
+        }}
+      >
+        <OnScanHaptic scanState={scanState} />
+        <Text>Inspecting your QR code...</Text>
+      </View>
+      <Button
+        text="Try Again"
+        style={{
+          backgroundColor: colors.palette.neutral300,
+          borderRadius: 25, // Half of the height
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: 30,
+        }}
+        onPress={() => resetScanState()}
+        pressedStyle={{
+          backgroundColor: colors.palette.neutral200,
+          borderColor: colors.palette.neutral500,
+        }}
+        textStyle={{ fontFamily: typography.primary.bold }}
+      />
+    </View>
   )
   const koalaGif = require("../../../../assets/images/koala.gif")
 
@@ -122,17 +126,22 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
       <View style={$infoBoxPositioningContainer}>
         <View
           style={{
-            ...$infoBoxCustom,
+            minWidth: 200,
+            maxWidth: "100%",
+            paddingHorizontal: spacing.xl,
+            paddingVertical: spacing.sm,
+            borderRadius: 32,
+            justifyContent: "center",
+            alignItems: "center",
             ...$infoBoxCustomBg,
             borderColor: colors.palette.neutral100,
             flexDirection: "row",
-            width: "50%",
           }}
         >
           <Text
             weight="boldItalic"
             text="See you soon!"
-            style={{ fontSize: typography.fontSizes.h5 }}
+            style={{ fontSize: typography.fontSizes.h5, marginTop: 4, marginRight: 8 }}
           />
           <AutoImage
             source={koalaGif}
@@ -157,8 +166,6 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           paddingHorizontal: 30,
         }}
         onPress={() => resetScanState()}
-        onPressIn={() => setpressed(true)}
-        onPressOut={() => setpressed(false)}
         pressedStyle={{
           backgroundColor: colors.palette.neutral200,
           borderColor: colors.palette.neutral500,
@@ -176,8 +183,6 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
         return scanningContent
       case scanState === "scanned" && !leaving:
         return scanCompleteContent
-      case leaving:
-        return leavingContent
       default:
         return null
     }
@@ -221,7 +226,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
             {!safe && (
               <Text weight="mediumItalic" size="xs" style={$unsafeText}>
                 {errorMessage
-                  ? errorMessage
+                  ? `${errorMessage} sdlfsf`
                   : "This QR code looks risky.\nProceed at your own risk."}
               </Text>
             )}
@@ -229,37 +234,25 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
         </View>
       )}
       <View style={$infoBoxPositioningContainer}>
-        <View
-          style={{
-            ...$infoBoxCustom,
-            borderColor:
-              scanState === "scanning"
-                ? colors.palette.neutral100
-                : safe
-                ? colors.palette.primary500
-                : colors.palette.angry500,
-            shadowColor: pressed || deviceIsAndroid ? "transparent" : "#000",
-            shadowOffset: pressed ? { width: 0, height: 0 } : { width: 0, height: 2 },
-            elevation: pressed ? 0 : 5,
-            backgroundColor:
-              scanState === "scanning" || (scanState === "scanned" && leaving)
-                ? colors.scannerInfoBox
-                : "transparent",
-            borderWidth: scanState === "scanning" || (scanState === "scanned" && leaving) ? 4 : 0,
-          }}
-        >
-          {renderCTAState()}
-        </View>
-      </View>
-      <View style={{ ...$infoBoxPositioningContainer, bottom: -8 }}>
-        <View
-          style={{
-            ...$infoBoxCustom,
-            borderColor: safe ? colors.palette.primary500 : colors.palette.angry500,
-            paddingVertical: 4,
-          }}
-        >
-          {!safe && !errorMessage && scanState === "scanned" && ProceedAnyway}
+        {scanState === "scanning" ? (
+          scanningContent
+        ) : (
+          <>
+            <DisplayUrlText url={url} scanState={scanState} />
+            {renderCTAState()}
+          </>
+        )}
+
+        <View style={{}}>
+          <View
+            style={{
+              ...$infoBoxCustom,
+              borderColor: safe ? colors.palette.primary500 : colors.palette.angry500,
+              paddingVertical: 4,
+            }}
+          >
+            {!safe && !errorMessage && scanState === "scanned" && ProceedAnyway}
+          </View>
         </View>
       </View>
     </View>

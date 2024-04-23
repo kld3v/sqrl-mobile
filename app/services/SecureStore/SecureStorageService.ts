@@ -1,8 +1,10 @@
 import * as SecureStore from "expo-secure-store"
 import UUIDService from "../UUID/UUIDService"
+import { StorageProperties, TSecureStorageService } from "./SecureStorage.types"
 
-export default class SecureStorageService {
+export default class SecureStorageService implements TSecureStorageService {
   public device_uuid: null | string = null
+
   private initPromise: Promise<void>
 
   constructor() {
@@ -12,7 +14,6 @@ export default class SecureStorageService {
   public async initDeviceUUID(): Promise<void> {
     try {
       let uuid: string | null = await SecureStore.getItemAsync("device_uuid")
-      console.log("get uuid from store", uuid)
       if (uuid === null) {
         uuid = UUIDService.generateUUID()
         await SecureStore.setItemAsync("device_uuid", uuid)
@@ -23,14 +24,13 @@ export default class SecureStorageService {
     }
   }
 
-  async getDeviceUUID() {
+  public async getDeviceUUID() {
     await this.initPromise
     return this.device_uuid
   }
 
-  private async clearDeviceUUID() {
-    await SecureStore.deleteItemAsync("device_uuid")
-    this.device_uuid = null
+  public async clearFromSecureStore(key: StorageProperties) {
+    return SecureStore.deleteItemAsync(key)
   }
 
   public async getValueFromSecureStore(key: string) {

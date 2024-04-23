@@ -1,8 +1,9 @@
-import SafeScannedPing from "app/components/Audio/SafeScannedPing"
 import { Button } from "app/components/Button"
 import OnScanHaptic from "app/components/Haptics/OnScanHaptic"
-import { colors, typography } from "app/theme"
+import Proceed from "app/components/Svg/Proceed"
+import { colors, spacing, typography } from "app/theme"
 import React from "react"
+import { View } from "react-native"
 import { ScanStateOptions } from "types"
 
 const SafeScanResultButton: React.FC<{
@@ -12,36 +13,43 @@ const SafeScanResultButton: React.FC<{
   safe: boolean
 }> = ({ setDelayedLeaving, setPressed, scanState, safe }) => {
   return (
-    <>
+    <View style={{ marginTop: spacing.md }}>
       <Button
-        tx="scannerScreen.proceedButton"
+        text="Proceed"
         onPress={setDelayedLeaving}
         style={{
-          backgroundColor: colors.palette.primary600,
-          borderRadius: 25, // Half of the height
+          backgroundColor: colors.palette.primary500,
+          borderRadius: 32, // Half of the height
           justifyContent: "center",
           alignItems: "center",
-          paddingHorizontal: 30,
+          // paddingHorizontal: 64,
+          height: 64,
+          width: 230,
+          marginTop: -12,
         }}
         onPressIn={() => setPressed(true)}
         onPressOut={() => setPressed(false)}
-        pressedStyle={{
-          backgroundColor: colors.palette.neutral200,
-          borderColor: colors.palette.neutral500,
-        }}
-        pressedTextStyle={{
-          color: colors.palette.neutral100,
+        raisedButtonEdgeStyle={{
+          backgroundColor: "#5D862C",
+          height: 64,
+          width: 230,
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 32, // Half of the height
         }}
         textStyle={{
-          color: colors.palette.neutral200,
-          fontSize: 22,
+          color: "#442b48",
+          fontSize: typography.fontSizes.h3,
           fontFamily: typography.primary.bold,
-          paddingTop: 8,
+
+          // backgroundColor: "#fff",
         }}
-      />
-      <SafeScannedPing />
+        streak
+      >
+        <Proceed style={{ zIndex: 2 }} />
+      </Button>
       <OnScanHaptic scanState={scanState} safe={safe} />
-    </>
+    </View>
   )
 }
 

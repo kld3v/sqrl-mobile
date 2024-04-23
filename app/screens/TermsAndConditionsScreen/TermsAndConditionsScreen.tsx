@@ -12,7 +12,7 @@ import {
   $bodyStyle,
   $toggleAndButtonContainer,
   $toggleContainerStyle,
-} from "./TermsAndConditionsStyles"
+} from "./TermsAndConditions.styles"
 import { useStores } from "app/models"
 
 interface TermsAndConditionsScreenProps extends AppStackScreenProps<"TermsAndConditions"> {}
@@ -45,17 +45,18 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
             />
             <Text
               style={$hyperlink}
+              // I know it's not pretty but im in a rush and needed to satisfy the typechecker.  Feel free to refactor and pr.
               text={
                 (termsAndConditionsStore.terms &&
                   termsAndConditionsStore.terms[0] &&
-                  termsAndConditionsStore.terms[0].term_name) ||
+                  termsAndConditionsStore.terms[0].document_name) ||
                 ""
               }
               onPress={() =>
                 WebBrowser.openBrowserAsync(
                   (termsAndConditionsStore.terms &&
                     termsAndConditionsStore.terms[0] &&
-                    termsAndConditionsStore.terms[0].term_url) ||
+                    termsAndConditionsStore.terms[0].document_url) ||
                     "",
                 )
               }
@@ -65,7 +66,7 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
               text={
                 (termsAndConditionsStore.terms &&
                   termsAndConditionsStore.terms[1] &&
-                  termsAndConditionsStore.terms[1].term_name) ||
+                  termsAndConditionsStore.terms[1].document_name) ||
                 ""
               }
               style={$hyperlink}
@@ -73,7 +74,7 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
                 WebBrowser.openBrowserAsync(
                   (termsAndConditionsStore.terms &&
                     termsAndConditionsStore.terms[1] &&
-                    termsAndConditionsStore.terms[1].term_url) ||
+                    termsAndConditionsStore.terms[1].document_url) ||
                     "",
                 )
               }
@@ -105,12 +106,7 @@ export const TermsAndConditionsScreen: FC<TermsAndConditionsScreenProps> = obser
                 setLoading(false)
               }}
               text={loading ? "Loading..." : "Continue"}
-              style={{ flex: 1 }}
               disabled={!value}
-              disabledStyle={{
-                backgroundColor: colors.palette.neutral200,
-                borderColor: colors.palette.neutral300,
-              }}
               disabledTextStyle={{ color: colors.palette.neutral500 }}
             />
           </View>

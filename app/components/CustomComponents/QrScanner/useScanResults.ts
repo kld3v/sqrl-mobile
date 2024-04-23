@@ -1,9 +1,9 @@
 import { useStores } from "app/models"
+
 import { qrScannerService } from "app/services/QrScanner"
-import { quintonTheCybear } from "app/utils/QuintonTheCybear"
-import { useDebouncedCallback } from "app/utils/useDebouncedCallback"
-import { BarCodeScanningResult } from "expo-camera"
-import { useCallback, useState } from "react"
+
+import { AutoFocus, BarCodeScanningResult } from "expo-camera"
+import { useCallback, useRef, useState } from "react"
 import { ScanStateOptions } from "types"
 
 export default () => {
@@ -11,8 +11,8 @@ export default () => {
   const [safe, setSafe] = useState<boolean>(false)
   const [url, setUrl] = useState<string>("")
   const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
-  const [readyToScan, setReadyToScan] = useState(true)
-  const { locationStore, debugStore } = useStores()
+  const readyToScan = useRef(true)
+  const { locationStore, debugStore, leaderboardStore } = useStores()
 
   const handleTrustScore = useCallback((trustScore: number | null) => {
     if (typeof trustScore !== "number") {
@@ -20,64 +20,52 @@ export default () => {
       return
     }
 
-    const sanitisedTrustScore = Math.round(trustScore / 100)
+    const roundedTrustScore = Math.round(trustScore / 100)
 
-    setSafe(sanitisedTrustScore && sanitisedTrustScore > 5 ? true : false)
+    setSafe(roundedTrustScore && roundedTrustScore > 5 ? true : false)
   }, [])
 
-  const scanAgain = () => {
+  const scanAgain = useCallback(() => {
     setErrorMsg(null)
     setUrl("")
     setSafe(false)
     setScanState("notScanned")
-    setReadyToScan(true)
-  }
+    readyToScan.current = true
+  }, [])
 
   const onScan = useCallback(async (qrCodeScan: BarCodeScanningResult) => {
-    setReadyToScan(false)
+    readyToScan.current = false
+
     setScanState("scanning")
 
-    if (!qrScannerService.isUrl(qrCodeScan.data)) {
-      setErrorMsg("Oops! That doesn't look like a valid URL.")
+    if (!qrScannerService.isValidUrl(qrCodeScan.data)) {
+      setErrorMsg("That doesn't look like a valid URL.")
       setScanState("scanned")
       return
     }
 
     setUrl(qrCodeScan.data)
+
     try {
-      debugStore.addInfoMessage(
-        `sending url and location data to api: ${qrCodeScan.data}, ${locationStore.latitude}, ${locationStore.longitude}`,
-      )
-      const response: any = await qrScannerService.sendUrlAndLocationData(
+      const response = await qrScannerService.sendUrlAndLocationData(
         qrCodeScan.data,
         locationStore.latitude,
         locationStore.longitude,
       )
-      debugStore.addInfoMessage(`response from api: ${JSON.stringify(response)}`)
 
-      __DEV__ &&
-        quintonTheCybear.log(
-          "response from the outback...",
-          `${JSON.stringify(response.data)} \n
-          Trust Score: ${JSON.stringify(response.data.trust_score)}\n
-          Status: ${response.status}\n
-          qrCodeScan: ${qrCodeScan.data}\n
-          latitude: ${locationStore.latitude}\n
-          longitude: ${locationStore.longitude}\n`,
-        )
-
+      // This ensures `handleTrustScore` is called with a number or null without causing a type error.
       const trustScore = response.data?.trust_score ?? null
+
       // Check if response.data is undefined and log an error message.
-      if (!response.data) {
-        debugStore.addErrorMessage("response.data is undefined")
+      if (!response.ok) {
+        debugStore.addErrorMessage(`response.data is undefined: ${response.data}`)
         setErrorMsg("Oops! Didnt get a valid trust score back from the bush. Please try again.")
         return
       }
 
-      // This ensures `handleTrustScore` is called with a number or null without causing a type error.
       handleTrustScore(trustScore)
+      await leaderboardStore.bumpUserScore()
     } catch (error) {
-      console.error(`Error with sendUrlAndLocationDataFunction: ${error}`)
       debugStore.addErrorMessage(
         `Error with sendUrlAndLocationDataFunction in QRScannerService: ${error}`,
       )
@@ -86,22 +74,28 @@ export default () => {
     setScanState("scanned")
   }, [])
 
-  const onScanModified = useDebouncedCallback<BarCodeScanningResult[]>(onScan, 100)
+  const [focus, setFocus] = useState<AutoFocus>(AutoFocus.on)
+
+  const updateCameraFocus = () => {
+    setFocus(focus === AutoFocus.on ? AutoFocus.off : AutoFocus.on)
+  }
+
+  console.log("use scan results called")
 
   return {
     handleTrustScore,
     scanAgain,
-    onScanModified,
     onScan,
     errorMsg,
     setErrorMsg,
     safe,
     setSafe,
-    setReadyToScan,
     readyToScan,
     scanState,
     setScanState,
     url,
     setUrl,
+    focus,
+    updateCameraFocus,
   }
 }

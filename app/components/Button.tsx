@@ -5,10 +5,12 @@ import {
   PressableStateCallbackType,
   StyleProp,
   TextStyle,
+  View,
   ViewStyle,
 } from "react-native"
 import { colors, spacing, typography } from "../theme"
 import { Text, TextProps } from "./Text"
+import * as Haptics from "expo-haptics"
 
 type Presets = keyof typeof $viewPresets
 
@@ -36,6 +38,10 @@ export interface ButtonProps extends PressableProps {
    * An optional style override useful for padding & margin.
    */
   style?: StyleProp<ViewStyle>
+  /**
+   * An optional style override for background container that forms the button "edge" when not pressed. Use with caution, only indended for height and backgroundColor property adjustments.
+   */
+  raisedButtonEdgeStyle?: StyleProp<ViewStyle>
   /**
    * An optional style override for the "pressed" state.
    */
@@ -79,6 +85,12 @@ export interface ButtonProps extends PressableProps {
    * An optional style override for the disabled state
    */
   disabledStyle?: StyleProp<ViewStyle>
+  /**
+   * Do you want a streak?
+   */
+  streak?: boolean
+
+  streakColor?: string
 }
 
 /**
@@ -93,6 +105,7 @@ export function Button(props: ButtonProps) {
     text,
     txOptions,
     style: $viewStyleOverride,
+    raisedButtonEdgeStyle: $viewContainerStyleOverride,
     pressedStyle: $pressedViewStyleOverride,
     textStyle: $textStyleOverride,
     pressedTextStyle: $pressedTextStyleOverride,
@@ -102,6 +115,9 @@ export function Button(props: ButtonProps) {
     LeftAccessory,
     disabled,
     disabledStyle: $disabledViewStyleOverride,
+    streak,
+    streakColor,
+
     ...rest
   } = props
 
@@ -114,6 +130,10 @@ export function Button(props: ButtonProps) {
       !!disabled && $disabledViewStyleOverride,
     ]
   }
+  function $viewContainerStyle() {
+    return [$viewContainerStylePresets[preset], $viewContainerStyleOverride]
+  }
+
   function $textStyle({ pressed }: PressableStateCallbackType) {
     return [
       $textPresets[preset],
@@ -123,67 +143,101 @@ export function Button(props: ButtonProps) {
     ]
   }
 
+  const ButtonText = (state: any) => (
+    <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle(state)} />
+  )
+
+  const streakColorDefault = "#B3F858" as const
+
   return (
-    <Pressable
-      style={$viewStyle}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
-      {...rest}
-      disabled={disabled}
-    >
-      {(state) => (
-        <>
-          {!!LeftAccessory && (
-            <LeftAccessory style={$leftAccessoryStyle} pressableState={state} disabled={disabled} />
-          )}
-
-          <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle(state)}>
-            {children}
-          </Text>
-
-          {!!RightAccessory && (
-            <RightAccessory
-              style={$rightAccessoryStyle}
-              pressableState={state}
-              disabled={disabled}
-            />
-          )}
-        </>
-      )}
-    </Pressable>
+    <View style={$viewContainerStyle()}>
+      <Pressable
+        style={$viewStyle}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !!disabled }}
+        {...rest}
+        disabled={disabled}
+        onPressIn={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+      >
+        {(state) => (
+          <>
+            {!!LeftAccessory && (
+              <LeftAccessory
+                style={$leftAccessoryStyle}
+                pressableState={state}
+                disabled={disabled}
+              />
+            )}
+            {children ? children : ButtonText(state)}
+            {streak && (
+              <>
+                <View
+                  style={{
+                    ...$streak,
+                    backgroundColor: streakColor ? streakColor : streakColorDefault,
+                  }}
+                />
+                <View
+                  style={{
+                    ...$streak2,
+                    backgroundColor: streakColor ? streakColor : streakColorDefault,
+                  }}
+                />
+              </>
+            )}
+            {!!RightAccessory && (
+              <RightAccessory
+                style={$rightAccessoryStyle}
+                pressableState={state}
+                disabled={disabled}
+              />
+            )}
+          </>
+        )}
+      </Pressable>
+    </View>
   )
 }
 
 const $baseViewStyle: ViewStyle = {
-  minHeight: 56,
-  borderRadius: 4,
+  minHeight: 40,
+  borderRadius: 50,
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "row",
-  paddingVertical: spacing.sm,
-  paddingHorizontal: spacing.sm,
   overflow: "hidden",
+  marginTop: -4,
+}
+
+const $baseContainerViewStyle: ViewStyle = {
+  minHeight: 40,
+  borderRadius: 50,
 }
 
 const $baseTextStyle: TextStyle = {
-  fontSize: 16,
+  fontSize: 14,
   lineHeight: 20,
   fontFamily: typography.primary.medium,
   textAlign: "center",
   flexShrink: 1,
   flexGrow: 0,
-  zIndex: 2,
+  zIndex: 5,
 }
 
 const $rightAccessoryStyle: ViewStyle = { marginStart: spacing.xs, zIndex: 1 }
 const $leftAccessoryStyle: ViewStyle = { marginEnd: spacing.xs, zIndex: 1 }
 
 const $viewPresets = {
+  defaultNoLift: [
+    $baseViewStyle,
+    {
+      backgroundColor: colors.palette.neutral300,
+    },
+  ] as StyleProp<ViewStyle>,
+
   default: [
     $baseViewStyle,
     {
-      borderWidth: 3,
-      borderColor: colors.palette.neutral100,
       backgroundColor: colors.palette.neutral300,
     },
   ] as StyleProp<ViewStyle>,
@@ -196,20 +250,63 @@ const $viewPresets = {
   ] as StyleProp<ViewStyle>,
 }
 
+const $viewContainerStylePresets = {
+  defaultNoLift: [] as StyleProp<ViewStyle>,
+
+  default: [
+    $baseContainerViewStyle,
+    {
+      // button raised side face color
+      backgroundColor: "#2D4052",
+    },
+  ] as StyleProp<ViewStyle>,
+
+  filled: [
+    $baseContainerViewStyle,
+    { backgroundColor: colors.palette.neutral300 },
+  ] as StyleProp<ViewStyle>,
+
+  reversed: [
+    $baseContainerViewStyle,
+    { backgroundColor: colors.palette.neutral200 },
+  ] as StyleProp<ViewStyle>,
+}
+
 const $textPresets: Record<Presets, StyleProp<TextStyle>> = {
+  defaultNoLift: $baseTextStyle,
   default: $baseTextStyle,
   filled: $baseTextStyle,
   reversed: [$baseTextStyle, { color: colors.palette.neutral100 }],
 }
 
 const $pressedViewPresets: Record<Presets, StyleProp<ViewStyle>> = {
-  default: { backgroundColor: colors.palette.neutral200 },
+  defaultNoLift: {},
+  default: { marginTop: 0 },
   filled: { backgroundColor: colors.palette.neutral400 },
   reversed: { backgroundColor: colors.palette.secondary500 },
 }
 
 const $pressedTextPresets: Record<Presets, StyleProp<TextStyle>> = {
+  defaultNoLift: { opacity: 0.9 },
   default: { opacity: 0.9 },
   filled: { opacity: 0.9 },
   reversed: { opacity: 0.9 },
+}
+
+const $streak: ViewStyle = {
+  position: "absolute",
+  height: 48,
+  top: "90%",
+  left: 0,
+  right: 0,
+  transform: [{ rotate: "-45deg" }, { scaleX: 4 }],
+}
+
+const $streak2: ViewStyle = {
+  position: "absolute",
+  height: 64,
+  top: -64,
+  left: 10,
+  right: 0,
+  transform: [{ rotate: "-45deg" }, { scaleX: 4 }],
 }

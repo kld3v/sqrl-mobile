@@ -9,8 +9,8 @@ export const TermsModel = types
   .props({
     guid: types.identifier,
     id: 0,
-    term_name: "",
-    term_url: "",
+    document_name: "",
+    document_url: "",
   })
   .actions(withSetPropAction)
   .views((self) => ({})) // eslint-disable-line @typescript-eslint/no-unused-vars

@@ -7,10 +7,24 @@ export const $container: ViewStyle = {
 
 export const $qrlaButton: ViewStyle = {
   margin: spacing.md,
-  zIndex: 99,
+  zIndex: 4,
   position: "absolute",
   top: 0,
   right: 0,
+}
+
+export const $informationIcon: ViewStyle = {
+  margin: spacing.md,
+  zIndex: 4,
+  position: "absolute",
+  top: 8,
+  left: 0,
+  shadowColor: "#000", // Shadow color
+  shadowOffset: { width: 0.8, height: 2 }, // Shadow offset
+  shadowOpacity: 0.6, // Shadow opacity
+  shadowRadius: 3.8, // Shadow blur radius
+  // Elevation property for Android
+  elevation: 5,
 }
 
 export const $camera: ViewStyle = {
@@ -21,24 +35,15 @@ export const $camera: ViewStyle = {
   zIndex: 1,
 }
 
-export const $reticule: ViewStyle = {
+export const $reticle: ViewStyle = {
   position: "absolute",
   left: "50%",
   top: "50%",
   width: 200,
   height: 200,
   marginLeft: -100, // half of width to center
-  marginTop: -100, // half of height to center
+  marginTop: -72,
   zIndex: 3,
-}
-
-export const $subReticuleUrlStyle: TextStyle = {
-  position: "absolute",
-  left: 0,
-  right: 0,
-  top: "68%",
-  zIndex: 3,
-  textAlign: "center",
 }
 
 export const $refresh: ViewStyle = {

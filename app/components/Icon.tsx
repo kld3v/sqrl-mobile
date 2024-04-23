@@ -96,6 +96,7 @@ export const iconRegistry = {
   debug: require("../../assets/icons/demo/debug.png"),
   github: require("../../assets/icons/demo/github.png"),
   heart: require("../../assets/icons/demo/heart.png"),
+  heartFilled: require("../../assets/icons/demo/heartFilled.png"),
   hidden: require("../../assets/icons/hidden.png"),
   ladybug: require("../../assets/icons/ladybug.png"),
   lock: require("../../assets/icons/lock.png"),
@@ -114,7 +115,9 @@ export const iconRegistry = {
   eucalyptus: require("../../assets/icons/eucalyptus.png"),
   shoppingCart: require("../../assets/icons/shopping-cart.png"),
   paperPlane: require("../../assets/icons/paperPlane.png"),
-}
+  information: require("../../assets/icons/information.png"),
+  google: require("../../assets/icons/google.png"),
+} as const
 
 const $imageStyleBase: ImageStyle = {
   resizeMode: "contain",

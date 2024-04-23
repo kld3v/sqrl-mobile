@@ -2,7 +2,6 @@ import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { DocumentResponseObject, termsService } from "../../services/Terms"
 import { TermsModel } from "./Terms"
-import { quintonTheCybear } from "../../utils/QuintonTheCybear"
 
 /**
  * Model description here for TypeScript hints.
@@ -19,7 +18,6 @@ export const TermsAndConditionsStoreModel = types
     // },
 
     get userHasTermsToSign(): boolean {
-      quintonTheCybear.log("Checking if user has terms to sign", self.terms.length > 0)
       return self.terms.length > 0
     },
 
@@ -33,11 +31,14 @@ export const TermsAndConditionsStoreModel = types
     },
 
     async signUserAgreements(): Promise<void> {
-      await termsService.signUserAgreements(store.termsIds)
-      this.clearTerms()
+      let documentsHaveBeenSignedSuccessfully = await termsService.signUserAgreements(
+        store.termsIds,
+      )
+
+      documentsHaveBeenSignedSuccessfully && this.clearTerms()
     },
 
-    async checkIfUserHasSignedUpToDateContract(): Promise<void> {
+    async setUnsignedDocumentsToState(): Promise<void> {
       let documentsToSign: DocumentResponseObject[] | false | Error =
         await termsService.checkUserAgreements()
 
@@ -55,31 +56,32 @@ export const TermsAndConditionsStoreModel = types
         store.setProp(
           "terms",
           documentsToSign.map((doc) => {
-            const { id, term_name, term_url } = doc
+            const { id, document_name, document_url } = doc
             return {
               guid: Math.random().toString(),
               id,
-              term_name,
-              term_url,
+              document_name,
+              document_url,
             }
           }),
         )
         console.log("Docs to sign")
       }
     },
+
     addDummyDocumentsToSign(): void {
       store.setProp("terms", [
         {
           guid: Math.random().toString(),
           id: Math.random() * 1000,
-          term_name: "Dummy Document1",
-          term_url: "https://qrla.io",
+          document_name: "Dummy Document1",
+          document_url: "https://qrla.io",
         },
         {
           guid: Math.random().toString(),
           id: Math.random() * 1000,
-          term_name: "Dummy Document2",
-          term_url: "https://qrla.io/terms-and-conditions",
+          document_name: "Dummy Document2",
+          document_url: "https://qrla.io/terms-and-conditions",
         },
       ])
     },

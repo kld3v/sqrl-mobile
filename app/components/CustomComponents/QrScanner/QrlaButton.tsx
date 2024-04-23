@@ -4,6 +4,7 @@ import { $qrlaButton } from "./QrScannerStyles"
 import * as WebBrowser from "expo-web-browser"
 import { AutoImage } from "../../AutoImage"
 import { useNavigation } from "@react-navigation/native"
+import { assetService } from "app/services/Assets/AssetService"
 
 const QrlaButton = () => {
   const navigation = useNavigation()
@@ -13,13 +14,14 @@ const QrlaButton = () => {
       // @ts-ignore
       onLongPress={() => navigation.navigate("Debug")}
       onPress={async () => await WebBrowser.openBrowserAsync("https://www.qrla.io")}
+      delayLongPress={5000}
     >
       <AutoImage
         style={{
           height: 56,
           width: 56,
         }}
-        source={require("../../../../assets/images/winkface.png")}
+        source={assetService.qrlaLogo}
         resizeMode="contain"
       />
     </Pressable>

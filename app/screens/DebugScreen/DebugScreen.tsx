@@ -1,20 +1,20 @@
 import React, { FC, useCallback } from "react"
 import * as Application from "expo-application"
 import { Linking, Platform, TextStyle, View, ViewStyle } from "react-native"
-import { Button, ListItem, Screen, Text } from "../../components"
-import { TabScreenProps } from "../../navigators/Navigator"
-import { colors, spacing } from "../../theme"
+import { AutoImage, Button, ListItem, Screen, Text } from "../../components"
+import { TabScreenProps } from "../../navigators/MainNavigator"
+import { colors, spacing, typography } from "../../theme"
 import { isRTL } from "../../i18n"
 import { useStores } from "../../models"
-import * as Device from "expo-device"
 import { observer } from "mobx-react-lite"
 import { secureStoreInstance } from "app/services/SecureStore/SecureStorageService"
 import * as Clipboard from "expo-clipboard"
 import { qrScannerService } from "app/services/QrScanner"
-
-function openLinkInBrowser(url: string) {
-  Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
-}
+import { pushNotificationService } from "app/services/PushNotifications"
+import useOnboarding from "app/components/CustomComponents/QrScanner/useOnboarding"
+import { historyService } from "app/services/History/HistoryService"
+import { leaderboardServiceInstance } from "app/services/Leaderboard"
+import { authService } from "app/services/Auth"
 
 const copyToClipboard = async (message: any) => {
   await Clipboard.setStringAsync(message)
@@ -25,7 +25,14 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
   const {
     debugStore,
     locationStore: { longitude, latitude },
+    pushNotificationsStore,
+    onboardingStore,
+    leaderboardStore,
+    authenticationStore,
   } = useStores()
+
+  useOnboarding()
+
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
   // @ts-expect-error
   const usingFabric = global.nativeFabricUIManager != null
@@ -60,20 +67,6 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     } catch (error) {
       debugStore.addErrorMessage(`dummyApiTest_HTTPS_ApiSauce: ${JSON.stringify(error)}`)
     }
-  }, [])
-
-  const renderDeviceProperties = useCallback((properties: string[]) => {
-    return properties.map((property) => (
-      <ListItem
-        key={property}
-        LeftComponent={
-          <View style={$item}>
-            <Text preset="bold">{property}</Text>
-            <Text>{Device[property as keyof typeof Device]}</Text>
-          </View>
-        }
-      />
-    ))
   }, [])
 
   const renderDebugStoreErrorMessages = useCallback(() => {
@@ -118,15 +111,87 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
     ))
   }, [debugStore.infoMessages, copyToClipboard])
 
+  const sendDummyPushNotification = useCallback(async () => {
+    const expoPushToken = pushNotificationsStore.expoPushToken
+    if (!expoPushToken) {
+      debugStore.addErrorMessage(
+        `sendDummyPushNotification: expoPushToken is not available or non-existant: ${expoPushToken}`,
+      )
+      return
+    }
+
+    try {
+      await pushNotificationService.sendPushNotificationToUser(expoPushToken, {
+        title: "Welcome to QRLA!",
+        body: "Click to see the trusted QR Destination!",
+        sound: "default",
+        data: { url: "www.qrla.io" },
+      })
+    } catch (error) {
+      debugStore.addErrorMessage(`failed to sendPushNotificationToUser: ${error}`)
+    }
+  }, [pushNotificationsStore.expoPushToken, debugStore])
+
+  const clearOnboarding = useCallback(() => {
+    onboardingStore.setHasOnboarded(false)
+    secureStoreInstance.clearFromSecureStore("hasOnboarded")
+  }, [])
+
+  const clearDeviceUUID = useCallback(() => {
+    secureStoreInstance.clearFromSecureStore("device_uuid")
+  }, [])
+
+  const getHistory = useCallback(async () => {
+    let history = await historyService.getHistory()
+    debugStore.addInfoMessage(JSON.stringify(history))
+  }, [])
+
+  const bumpUserScore = useCallback(async () => {
+    await leaderboardStore.bumpUserScore()
+    debugStore.addInfoMessage(leaderboardStore.userScore)
+    alert("bumped")
+  }, [])
+
+  const nukeLeaderboardData = useCallback(async () => {
+    await leaderboardServiceInstance.nukeLeaderboardData()
+    alert(
+      "Leaderboard data destroyed. You'll probs need to close/open or reinstall the app to reset. ",
+    )
+  }, [])
+
+  const logout = useCallback(async () => {
+    await authService.logout()
+    authenticationStore.setAuthToken("")
+    authenticationStore.setAuthUsername("")
+  }, [])
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
         style={$reportBugsLink}
         tx="demoDebugScreen.reportBugs"
-        onPress={() => openLinkInBrowser("https://github.com/infinitered/ignite/issues")}
+        onPress={() => Linking.openURL("mailto:info@qrla.io")}
       />
 
       <Text style={$title} preset="heading" tx="demoDebugScreen.title" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          paddingVertical: 16,
+          // backgroundColor: "blue",
+        }}
+      >
+        <Text
+          text="“You all now can imagine a little Dave sitting on your shoulder, and can ask yourselves 'What would Dave do/say in this situation?’” "
+          style={{
+            width: "80%",
+            textAlign: "center",
+            fontFamily: typography.Poppins.mediumItalic,
+          }}
+        />
+      </View>
       <View style={$itemsContainer}>
         {{ __DEV__ } && (
           <View style={$buttonContainer}>
@@ -137,13 +202,38 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
         <View style={$buttonContainer}>
           <Button style={$button} text="Clear Debug Store" onPress={debugStore.clearAllMessages} />
         </View>
-
+        <View style={$buttonContainer}>
+          <Button
+            style={$button}
+            text="Send Dummy Push Notification"
+            onPress={sendDummyPushNotification}
+          />
+        </View>
         <View style={$buttonContainer}>
           <Button
             style={$button}
             text="Make dummy test call using https route "
             onPress={dummyApiTest_HTTPS_ApiSauce}
           />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Clear Onboarding " onPress={clearOnboarding} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Clear Device UUID" onPress={clearDeviceUUID} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="NukeLeaderboardData " onPress={nukeLeaderboardData} />
+        </View>
+
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Get History" onPress={getHistory} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="Bump User Score" onPress={bumpUserScore} />
+        </View>
+        <View style={$buttonContainer}>
+          <Button style={$button} text="logout" onPress={logout} />
         </View>
         <ListItem
           LeftComponent={
@@ -205,27 +295,14 @@ export const DebugScreen: FC<TabScreenProps<"Debug">> = observer(function DebugS
             </View>
           }
         />
-
-        {renderDeviceProperties([
-          "brand",
-          "manufacturer",
-          "modelId",
-          "modelName",
-          "deviceType",
-          "productName",
-          "osName",
-          "osVersion",
-          "osBuildId",
-          "osInternalBuildId",
-          "osBuildFingerprint",
-          "totalMemory",
-          "supportedCpuArchitectures",
-          "deviceName",
-          "deviceYearClass",
-          "platformApiLevel",
-          "platformVersion",
-          "isDevice",
-        ])}
+        <ListItem
+          LeftComponent={
+            <View style={$item}>
+              <Text preset="bold">User Has Onboarded?</Text>
+              <Text>{onboardingStore.hasOnboarded ? "Yes" : "No"}</Text>
+            </View>
+          }
+        />
 
         {renderDebugStoreErrorMessages()}
         {renderDebugStoreInfoMessages()}
@@ -258,9 +335,7 @@ const $itemsContainer: ViewStyle = {
   marginBottom: spacing.xl,
 }
 
-const $button: ViewStyle = {
-  marginBottom: spacing.xs,
-}
+const $button: ViewStyle = {}
 
 const $buttonContainer: ViewStyle = {
   marginBottom: spacing.md,

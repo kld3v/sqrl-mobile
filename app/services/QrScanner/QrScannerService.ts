@@ -9,7 +9,17 @@ export class QrScannerService {
   isUrl(url: string): boolean {
     const regex =
       /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?(\?[=&\w]*)?(#[\/\w]*)?$/i
+    console.log(regex.test(url))
     return regex.test(url)
+  }
+
+  isValidUrl(url: string) {
+    try {
+      new URL(url)
+      return true
+    } catch (e) {
+      return false
+    }
   }
 
   getPrimaryDomainName(url: string): string {
