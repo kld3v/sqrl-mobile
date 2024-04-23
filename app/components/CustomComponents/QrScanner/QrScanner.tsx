@@ -7,6 +7,7 @@ import { Reticle } from "../Reticle"
 import useScanResults from "./useScanResults"
 import { $card, $container, $reticle } from "./QrScannerStyles"
 import RefreshButton from "./RefreshButton"
+import { CameraView } from "expo-camera/next"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -35,7 +36,7 @@ export const QrScanner = observer(function QrScanner() {
         {Platform.OS === "ios" ? (
           <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus} />
         ) : (
-          <>{/* <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} /> */}</>
+          <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} />
         )}
 
         <Reticle
