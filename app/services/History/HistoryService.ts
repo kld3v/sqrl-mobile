@@ -13,6 +13,17 @@ export class HistoryService {
     return false
   }
 
+  async getFavouriteHistory(): Promise<Scan[] | false> {
+    try {
+      let res = await api.apisauce.get("/favorites")
+      if (res.ok) return res.data as Scan[]
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+    return false
+  }
+
   async addToFavorite(url_id: number): Promise<boolean> {
     try {
       let res = await api.apisauce.post("/favorites", {

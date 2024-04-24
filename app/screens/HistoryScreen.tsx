@@ -15,11 +15,12 @@ import { authService } from "app/services/Auth"
 import { PanGestureHandler } from "react-native-gesture-handler"
 import useCustomSwiper from "app/utils/useCustomSwiper"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
-
+import * as Haptics from "expo-haptics"
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
 export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistoryScreen() {
   const [history, setHistory] = useState<Scan[]>([])
+  const [favorites, setFavorites] = useState<Scan[]>([])
   const [favoritesOnly, setFavoritesOnly] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const { authenticationStore } = useStores()
@@ -30,13 +31,29 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     setRefreshing(true)
     console.log(authService.validToken)
     console.log("token exists??", await authService.tokenDoesExist())
-    let res = await historyService.getHistory()
-    console.log(res)
-    if (res) {
-      setHistory(res)
+
+    // Get user history and set
+    let historyResponse = await historyService.getHistory()
+    console.log(historyResponse)
+    if (historyResponse) {
+      setHistory(historyResponse)
     }
+
+    // Get user favorites only and set
+    let favoritesResponse = await historyService.getFavouriteHistory()
+    console.log(favoritesResponse)
+    if (favoritesResponse) {
+      setFavorites(favoritesResponse)
+    }
+
     setRefreshing(false)
   }, [])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchHistory()
+    }, []),
+  )
 
   useFocusEffect(
     React.useCallback(() => {
@@ -66,22 +83,27 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   }
   const sortedHistory = useMemo(() => {
     // Filter the history based on the favoritesOnly flag.
-    let filteredHistory
-    if (favoritesOnly) {
-      // Create a Set to track seen URLs when favoritesOnly is true.
-      const seenUrls = new Set()
+    // let filteredHistory
+    // if (favoritesOnly) {
+    //   // Create a Set to track seen URLs when favoritesOnly is true.
+    //   const seenUrls = new Set()
 
-      // Filter out non-favorite items and check for duplicates.
-      filteredHistory = history.filter((item) => {
-        return item.is_favorite && (!seenUrls.has(item.url) ? seenUrls.add(item.url) : false)
-      })
-    } else {
-      // If favoritesOnly is not true, use the entire history without filtering for duplicates.
-      filteredHistory = history
+    //   // Filter out non-favorite items and check for duplicates.
+    //   filteredHistory = history.filter((item) => {
+    //     return item.is_favorite && (!seenUrls.has(item.url) ? seenUrls.add(item.url) : false)
+    //   })
+    // } else {
+    //   // If favoritesOnly is not true, use the entire history without filtering for duplicates.
+    //   filteredHistory = history
+    // }
+
+    if (favoritesOnly) {
+      return favorites.sort(
+        (a, b) => new Date(b.date_and_time).getTime() - new Date(a.date_and_time).getTime(),
+      )
     }
 
-    // Sort the potentially filtered history by date.
-    return filteredHistory.sort(
+    return history.sort(
       (a, b) => new Date(b.date_and_time).getTime() - new Date(a.date_and_time).getTime(),
     )
   }, [history, favoritesOnly])
@@ -135,7 +157,11 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
       <Text preset="heading" tx="historyScreen.title" style={$title} />
       <Toggle
         value={favoritesOnly}
-        onValueChange={setFavoritesOnly}
+        onValueChange={() => {
+          fetchHistory()
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+          setFavoritesOnly(!favoritesOnly)
+        }}
         variant="switch"
         label="Show Favourites Only"
         labelPosition="left"

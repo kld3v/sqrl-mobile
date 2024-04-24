@@ -9,6 +9,7 @@ const ICON_SIZE = 36
 
 const HeartIcon: React.FC<{
   setHistory: React.Dispatch<React.SetStateAction<Scan[]>>
+
   isFavorite: boolean
   url_id: number
   timestamp: string

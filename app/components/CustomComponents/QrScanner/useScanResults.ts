@@ -17,7 +17,11 @@ export default () => {
   const setCancelMidScan = useRef(false)
 
   const handleTrustScore = useCallback((trustScore: number | null) => {
+    console.log(trustScore)
     if (typeof trustScore !== "number") {
+      debugStore.addErrorMessage(
+        `trustScore passed to handleTrustScore:${trustScore} which is type of: ${typeof trustScore}`,
+      )
       setErrorMsg("Oops! Didn't get a trust score back from the server. Try again I guess.")
       return
     }
@@ -68,7 +72,8 @@ export default () => {
     setUrl(qrCodeScan.data)
 
     try {
-      const response = await timeout(
+      //TODO Fix Type
+      const response: any = await timeout(
         10000,
         qrScannerService.sendUrlAndLocationData(
           qrCodeScan.data,
@@ -77,27 +82,31 @@ export default () => {
         ),
       )
 
-      // This ensures `handleTrustScore` is called with a number or null without causing a type error.
-      const trustScore = response.data?.trust_score ?? null
+      if (setCancelMidScan.current) {
+        console.log("scan cancelled...")
+        return
+      }
 
-      console.log("RESPONSE YOU CUNT", response)
-      // Check if response.data is undefined and log an error message.
+      if (!response.ok) {
+        debugStore.addErrorMessage(`res.data.problem is: ${response.data?.problem}`)
+        setErrorMsg(`Oops! ${response.data?.problem} :(`)
+        setScanState("scanned")
+        return
+      }
+
       if (!response.data) {
         debugStore.addErrorMessage(`response.data is undefined: ${response.data}`)
         setErrorMsg("Oops! Didnt get a valid trust score back from the bush. Please try again.")
         setScanState("scanned")
         return
       }
-      if (setCancelMidScan.current) {
-        console.log("scan cancelled...")
-        return
-      }
 
+      const trustScore = response.data?.trust_score ?? null
       handleTrustScore(trustScore)
       await leaderboardStore.bumpUserScore()
     } catch (error) {
       debugStore.addErrorMessage(
-        `Error with sendUrlAndLocationDataFunction in QRScannerService: ${error}`,
+        `Error with sendUrlAndLocationDataFunction in QRScannerService: ${error}. Troublesome url: ${qrCodeScan.data}`,
       )
       setErrorMsg(`${error}`)
       setUrl("")

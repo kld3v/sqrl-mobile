@@ -248,7 +248,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           scanningContent
         ) : (
           <>
-            <DisplayUrlText url={url} scanState={scanState} />
+            <DisplayUrlText style={{ marginBottom: spacing.md }} url={url} scanState={scanState} />
             {renderCTAState()}
           </>
         )}

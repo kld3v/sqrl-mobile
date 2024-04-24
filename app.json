@@ -6,7 +6,7 @@
     "name": "QRLA",
     "slug": "qrlaApp",
     "scheme": "qrla",
-    "version": "2.3.7",
+    "version": "2.3.8",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
     "extra": {
@@ -29,7 +29,7 @@
     "jsEngine": "hermes",
     "assetBundlePatterns": ["**/*"],
     "android": {
-      "versionCode": 24,
+      "versionCode": 25,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/images/app-icon-android-legacy.png",
       "package": "com.qrlaapp",
@@ -44,7 +44,7 @@
       }
     },
     "ios": {
-      "buildNumber": "9.1.7",
+      "buildNumber": "9.1.8",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
