@@ -24,7 +24,7 @@ import {
 } from "./ScanResponseDisplayStyles"
 import SafeScanResultButton from "./SafeScanResultButton"
 import DisplayUrlText from "../QrScanner/DisplayUrlText"
-import UnSafeScanResultButton from "./UnSafeScanResultButton"
+import CancelButton from "./CancelButton"
 
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
@@ -37,13 +37,23 @@ export interface ScanResponseDisplayProps {
   errorMessage: string | null
   readyToScan: React.MutableRefObject<boolean>
   style?: StyleProp<ViewStyle>
+  setCancelMidScan: React.MutableRefObject<boolean>
 }
 
 export const ScanResponseDisplay = observer(function ScanResponseDisplay(
   props: ScanResponseDisplayProps,
 ) {
-  const { safe, scanState, setScanState, url, errorMessage, setErrorMessage, readyToScan, style } =
-    props
+  const {
+    safe,
+    scanState,
+    setScanState,
+    url,
+    errorMessage,
+    setErrorMessage,
+    readyToScan,
+    style,
+    setCancelMidScan,
+  } = props
 
   const [leaving, setLeaving] = useState(false)
   const [pressed, setpressed] = useState(false)
@@ -65,6 +75,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
     setScanState("notScanned")
     setErrorMessage(null)
     readyToScan.current = true
+    setCancelMidScan.current = true
   }, [])
 
   const scanCompleteContent = (
@@ -77,7 +88,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           safe={safe}
         />
       ) : (
-        <UnSafeScanResultButton resetScanState={resetScanState} />
+        <CancelButton resetScanState={resetScanState} />
       )}
     </>
   )
@@ -101,22 +112,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
         <OnScanHaptic scanState={scanState} />
         <Text>Inspecting your QR code...</Text>
       </View>
-      <Button
-        text="Try Again"
-        style={{
-          backgroundColor: colors.palette.neutral300,
-          borderRadius: 25, // Half of the height
-          justifyContent: "center",
-          alignItems: "center",
-          paddingHorizontal: 30,
-        }}
-        onPress={() => resetScanState()}
-        pressedStyle={{
-          backgroundColor: colors.palette.neutral200,
-          borderColor: colors.palette.neutral500,
-        }}
-        textStyle={{ fontFamily: typography.primary.bold }}
-      />
+      <CancelButton resetScanState={resetScanState} />
     </View>
   )
   const koalaGif = require("../../../../assets/images/koala.gif")
@@ -219,14 +215,14 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
                 <Cancel />
               </TouchableOpacity>
             )}
-            <Text weight="boldItalic" size="xxl" style={safe ? $safeText : $unsafeText}>
+            <Text size="xxl" preset="bold" style={safe ? $safeText : $unsafeText}>
               {errorMessage ? "Oops!" : safe ? "Good To Go!" : "Caution!"}
             </Text>
 
             {!safe && (
-              <Text weight="mediumItalic" size="xs" style={$unsafeText}>
+              <Text size="xs" style={$unsafeText}>
                 {errorMessage
-                  ? `${errorMessage} sdlfsf`
+                  ? `${errorMessage}`
                   : "This QR code looks risky.\nProceed at your own risk."}
               </Text>
             )}

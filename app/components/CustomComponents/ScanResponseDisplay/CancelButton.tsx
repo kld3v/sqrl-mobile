@@ -3,7 +3,7 @@ import { spacing, colors, typography } from "app/theme"
 import React from "react"
 import { View } from "react-native"
 
-const UnSafeScanResultButton: React.FC<{
+const CancelButton: React.FC<{
   resetScanState: () => void
 }> = ({ resetScanState }) => {
   return (
@@ -27,4 +27,4 @@ const UnSafeScanResultButton: React.FC<{
   )
 }
 
-export default UnSafeScanResultButton
+export default CancelButton

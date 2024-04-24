@@ -1,3 +1,4 @@
+import { ApiResponse } from "apisauce"
 import { useStores } from "app/models"
 
 import { qrScannerService } from "app/services/QrScanner"
@@ -13,6 +14,7 @@ export default () => {
   const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
   const readyToScan = useRef(true)
   const { locationStore, debugStore, leaderboardStore } = useStores()
+  const setCancelMidScan = useRef(false)
 
   const handleTrustScore = useCallback((trustScore: number | null) => {
     if (typeof trustScore !== "number") {
@@ -33,9 +35,28 @@ export default () => {
     readyToScan.current = true
   }, [])
 
+  function timeout(ms: number, promise: Promise<ApiResponse<any, any>>) {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error("Took too long to get a response from the bush. Please try again... "))
+      }, ms)
+
+      promise.then(
+        (res) => {
+          clearTimeout(timer)
+          resolve(res)
+        },
+        (err) => {
+          clearTimeout(timer)
+          reject(err)
+        },
+      )
+    })
+  }
+
   const onScan = useCallback(async (qrCodeScan: BarCodeScanningResult) => {
     readyToScan.current = false
-
+    setCancelMidScan.current = false
     setScanState("scanning")
 
     if (!qrScannerService.isValidUrl(qrCodeScan.data)) {
@@ -47,19 +68,28 @@ export default () => {
     setUrl(qrCodeScan.data)
 
     try {
-      const response = await qrScannerService.sendUrlAndLocationData(
-        qrCodeScan.data,
-        locationStore.latitude,
-        locationStore.longitude,
+      const response = await timeout(
+        10000,
+        qrScannerService.sendUrlAndLocationData(
+          qrCodeScan.data,
+          locationStore.latitude,
+          locationStore.longitude,
+        ),
       )
 
       // This ensures `handleTrustScore` is called with a number or null without causing a type error.
       const trustScore = response.data?.trust_score ?? null
 
+      console.log("RESPONSE YOU CUNT", response)
       // Check if response.data is undefined and log an error message.
-      if (!response.ok) {
+      if (!response.data) {
         debugStore.addErrorMessage(`response.data is undefined: ${response.data}`)
         setErrorMsg("Oops! Didnt get a valid trust score back from the bush. Please try again.")
+        setScanState("scanned")
+        return
+      }
+      if (setCancelMidScan.current) {
+        console.log("scan cancelled...")
         return
       }
 
@@ -69,7 +99,8 @@ export default () => {
       debugStore.addErrorMessage(
         `Error with sendUrlAndLocationDataFunction in QRScannerService: ${error}`,
       )
-      setErrorMsg("Oops! Failed to send scan data to the bush. Please try again.")
+      setErrorMsg(`${error}`)
+      setUrl("")
     }
     setScanState("scanned")
   }, [])
@@ -97,5 +128,6 @@ export default () => {
     setUrl,
     focus,
     updateCameraFocus,
+    setCancelMidScan,
   }
 }

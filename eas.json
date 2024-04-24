@@ -53,6 +53,10 @@
     "production": {
       "ios": {
         "companyName": "QRLA LABS LTD"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./qrla-c43ff-9da4c90c7c50.json",
+        "track": "production"
       }
     }
   }

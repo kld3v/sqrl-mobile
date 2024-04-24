@@ -15,7 +15,7 @@ import { authService } from "../Auth"
  */
 export const DEFAULT_API_CONFIG: ApiConfig = {
   url: Config.API_URL,
-  timeout: 5000,
+  timeout: 10000,
   headers: {
     Accept: "application/json",
     "Accept-encoding": "gzip, deflate",

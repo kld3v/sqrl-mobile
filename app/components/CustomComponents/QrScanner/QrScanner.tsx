@@ -22,6 +22,7 @@ export const QrScanner = observer(function QrScanner() {
     url,
     focus,
     updateCameraFocus,
+    setCancelMidScan,
   } = useScanResults()
 
   const handleScan = (barcodeScanResult: BarCodeScanningResult) => {
@@ -57,6 +58,7 @@ export const QrScanner = observer(function QrScanner() {
           setErrorMessage={setErrorMsg}
           errorMessage={errorMsg}
           readyToScan={readyToScan}
+          setCancelMidScan={setCancelMidScan}
         />
       )}
       <RefreshButton safe={safe} scanState={scanState} scanAgain={scanAgain} />

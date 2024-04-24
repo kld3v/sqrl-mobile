@@ -4,8 +4,10 @@ import { Dimensions, ViewStyle, ImageStyle, TextStyle } from "react-native"
 export const $safeText = {
   color: colors.palette.primary500,
 }
-export const $unsafeText = {
+export const $unsafeText: TextStyle = {
   color: colors.palette.angry100,
+  paddingHorizontal: spacing.md,
+  textAlign: "center",
 }
 
 export const screenHeight = Dimensions.get("window").height
