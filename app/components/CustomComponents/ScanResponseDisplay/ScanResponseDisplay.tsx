@@ -3,7 +3,7 @@ import { StyleProp, View, ViewStyle, TouchableOpacity, Platform } from "react-na
 import { observer } from "mobx-react-lite"
 import { colors, spacing, typography } from "app/theme"
 import { Text } from "app/components/Text"
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import OnScanHaptic from "../../Haptics/OnScanHaptic"
 import * as WebBrowser from "expo-web-browser"
 import { Button } from "../../Button"
@@ -25,6 +25,8 @@ import {
 import SafeScanResultButton from "./SafeScanResultButton"
 import DisplayUrlText from "../QrScanner/DisplayUrlText"
 import CancelButton from "./CancelButton"
+import LottieView from "lottie-react-native"
+import { assetService } from "app/services/Assets/AssetService"
 
 export type ScanStateOptions = "scanned" | "notScanned" | "scanning"
 
@@ -92,7 +94,7 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
       )}
     </>
   )
-
+  const animation = useRef(null)
   const scanningContent = (
     <View style={{ marginBottom: spacing.md, justifyContent: "center", alignItems: "center" }}>
       <View
@@ -107,10 +109,22 @@ export const ScanResponseDisplay = observer(function ScanResponseDisplay(
           alignItems: "center",
           borderRadius: 28,
           marginBottom: spacing.md,
+          position: "relative",
         }}
       >
         <OnScanHaptic scanState={scanState} />
         <Text>Inspecting your QR code...</Text>
+        <LottieView
+          autoPlay
+          ref={animation}
+          style={{
+            width: 100,
+            height: 100,
+            position: "absolute",
+            right: -50,
+          }}
+          source={assetService.koalaCheckingAnimation}
+        />
       </View>
       <CancelButton resetScanState={resetScanState} />
     </View>

@@ -64,11 +64,21 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
       { cancelable: false }, // The dialog is not cancelable outside of the buttons
     )
   }
-
   const sortedHistory = useMemo(() => {
     // Filter the history based on the favoritesOnly flag.
-    // If favoritesOnly is true, filter out non-favorite items.
-    const filteredHistory = favoritesOnly ? history.filter((item) => item.is_favorite) : history
+    let filteredHistory
+    if (favoritesOnly) {
+      // Create a Set to track seen URLs when favoritesOnly is true.
+      const seenUrls = new Set()
+
+      // Filter out non-favorite items and check for duplicates.
+      filteredHistory = history.filter((item) => {
+        return item.is_favorite && (!seenUrls.has(item.url) ? seenUrls.add(item.url) : false)
+      })
+    } else {
+      // If favoritesOnly is not true, use the entire history without filtering for duplicates.
+      filteredHistory = history
+    }
 
     // Sort the potentially filtered history by date.
     return filteredHistory.sort(
@@ -77,7 +87,11 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
   }, [history, favoritesOnly])
 
   const renderItem = ({ item }: { item: Scan }) => (
-    <Pressable key={`${item.url_id}`} style={$scanCard} onPress={curried_takeUserToScanUrl(item)}>
+    <Pressable
+      key={`${item.url_id}+${item.date_and_time}`}
+      style={$scanCard}
+      onPress={curried_takeUserToScanUrl(item)}
+    >
       <Card
         style={{ paddingVertical: 16, paddingHorizontal: 16 }}
         heading={item.url.length > 36 ? `${item.url.substring(0, 36)}...` : item.url}

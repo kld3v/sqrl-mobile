@@ -17,7 +17,7 @@ export const PushNotificationStoreModel = types
         if (token) {
           store.setProp("expoPushToken", token)
         } else {
-          store.pushNotificationsError = "Failed to get push token for push notification!"
+          store.setProp("pushNotificationsError", "Failed to get push token for push notification!")
         }
       } catch (error) {
         console.error(error)
