@@ -11,6 +11,7 @@ export default () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [safe, setSafe] = useState<boolean>(false)
   const [url, setUrl] = useState<string>("")
+  const [zoom, setZoom] = useState(0)
   const [scanState, setScanState] = useState<ScanStateOptions>("notScanned")
   const readyToScan = useRef(true)
   const { locationStore, debugStore, leaderboardStore } = useStores()
@@ -37,12 +38,13 @@ export default () => {
     setSafe(false)
     setScanState("notScanned")
     readyToScan.current = true
+    setZoom(0)
   }, [])
 
-  function timeout(ms: number, promise: Promise<ApiResponse<any, any>>) {
+  const timeout = useCallback((ms: number, promise: Promise<ApiResponse<any, any>>) => {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
-        reject(new Error("Took too long to get a response from the bush. Please try again... "))
+        reject(new Error("Took too long to get a response from the server. Please try again..."))
       }, ms)
 
       promise.then(
@@ -56,7 +58,7 @@ export default () => {
         },
       )
     })
-  }
+  }, [])
 
   const onScan = useCallback(async (qrCodeScan: BarCodeScanningResult) => {
     readyToScan.current = false
@@ -138,5 +140,7 @@ export default () => {
     focus,
     updateCameraFocus,
     setCancelMidScan,
+    zoom,
+    setZoom,
   }
 }

@@ -8,6 +8,11 @@ import useScanResults from "./useScanResults"
 import { $card, $container, $reticle } from "./QrScannerStyles"
 import RefreshButton from "./RefreshButton"
 import { CameraView } from "expo-camera/next"
+import React, { useState } from "react"
+import Slider from "@react-native-community/slider"
+import { assetService } from "app/services/Assets/AssetService"
+import * as Haptics from "expo-haptics"
+import { colors } from "app/theme"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -23,6 +28,8 @@ export const QrScanner = observer(function QrScanner() {
     focus,
     updateCameraFocus,
     setCancelMidScan,
+    zoom,
+    setZoom,
   } = useScanResults()
 
   const handleScan = (barcodeScanResult: BarCodeScanningResult) => {
@@ -35,9 +42,9 @@ export const QrScanner = observer(function QrScanner() {
     <View style={$container}>
       <Pressable style={{ flex: 1 }} onPress={updateCameraFocus}>
         {Platform.OS === "ios" ? (
-          <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus} />
+          <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus} zoom={zoom} />
         ) : (
-          <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} />
+          <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} zoom={zoom} />
         )}
 
         <Reticle
@@ -62,6 +69,31 @@ export const QrScanner = observer(function QrScanner() {
         />
       )}
       <RefreshButton safe={safe} scanState={scanState} scanAgain={scanAgain} />
+      {scanState === "notScanned" && (
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute", // Ensure the slider is overlaid on the camera view
+            bottom: 20, // Position at the bottom or as needed
+          }}
+        >
+          <Slider
+            style={{ width: "88%", height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor={colors.palette.primary500}
+            maximumTrackTintColor={colors.palette.neutral200}
+            onValueChange={(value: number) => setZoom(value)}
+            //ios only
+            tapToSeek
+            onSlidingStart={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+            onSlidingComplete={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+          />
+        </View>
+      )}
     </View>
   )
 })
