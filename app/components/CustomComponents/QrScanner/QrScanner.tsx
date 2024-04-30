@@ -44,7 +44,8 @@ export const QrScanner = observer(function QrScanner() {
         {Platform.OS === "ios" ? (
           <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus} zoom={zoom} />
         ) : (
-          <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} zoom={zoom} />
+          // <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} zoom={zoom} />
+          <></>
         )}
 
         <Reticle
@@ -70,29 +71,38 @@ export const QrScanner = observer(function QrScanner() {
       )}
       <RefreshButton safe={safe} scanState={scanState} scanAgain={scanAgain} />
       {scanState === "notScanned" && (
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute", // Ensure the slider is overlaid on the camera view
-            bottom: 20, // Position at the bottom or as needed
+        // <View
+        //   style={{
+        //     width: "100%",
+        //     flexDirection: "row",
+        //     justifyContent: "center",
+        //     alignItems: "center",
+        //     position: "absolute", // Ensure the slider is overlaid on the camera view
+        //     bottom: 20, // Position at the bottom or as needed
+        //   }}
+        // >
+        <Slider
+          style={{ width: "88%", height: 40 }}
+          minimumValue={0}
+          maximumValue={0.4}
+          minimumTrackTintColor={colors.palette.primary500}
+          maximumTrackTintColor={colors.palette.neutral200}
+          onValueChange={(value: number) => {
+            setZoom(value)
+            console.log("on value change")
           }}
-        >
-          <Slider
-            style={{ width: "88%", height: 40 }}
-            minimumValue={0}
-            maximumValue={1}
-            minimumTrackTintColor={colors.palette.primary500}
-            maximumTrackTintColor={colors.palette.neutral200}
-            onValueChange={(value: number) => setZoom(value)}
-            //ios only
-            tapToSeek
-            onSlidingStart={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-            onSlidingComplete={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-          />
-        </View>
+          //ios only
+          tapToSeek
+          onSlidingStart={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+            console.log("sliding starsssst")
+          }}
+          onSlidingComplete={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+            console.log("sliding finish")
+          }}
+        />
+        // </View>
       )}
     </View>
   )

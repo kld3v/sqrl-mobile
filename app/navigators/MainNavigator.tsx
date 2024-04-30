@@ -70,7 +70,7 @@ export function MainNavigator() {
           tabBarLabel: "",
           tabBarAccessibilityLabel: "history tab",
           tabBarIcon: ({ focused }) => (
-            <Icon icon="more" color={focused ? colors.tint : colors.text} size={iconSize} />
+            <Icon icon="history" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
         listeners={{
@@ -98,7 +98,7 @@ export function MainNavigator() {
           tabBarLabel: "",
           tabBarAccessibilityLabel: translate("navigator.scannerTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="community" color={focused ? colors.tint : colors.text} size={iconSize} />
+            <Icon icon="leaderboard" color={focused ? colors.tint : colors.text} size={iconSize} />
           ),
         }}
         listeners={{

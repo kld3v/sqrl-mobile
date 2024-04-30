@@ -117,6 +117,8 @@ export const iconRegistry = {
   paperPlane: require("../../assets/icons/paperPlane.png"),
   information: require("../../assets/icons/information.png"),
   google: require("../../assets/icons/google.png"),
+  history: require("../../assets/icons/history.png"),
+  leaderboard: require("../../assets/icons/leaderboard.png"),
 } as const
 
 const $imageStyleBase: ImageStyle = {
