@@ -8,11 +8,12 @@ import useScanResults from "./useScanResults"
 import { $card, $container, $reticle } from "./QrScannerStyles"
 import RefreshButton from "./RefreshButton"
 import { CameraView } from "expo-camera/next"
-import React, { useState } from "react"
+import React from "react"
 import Slider from "@react-native-community/slider"
 import { assetService } from "app/services/Assets/AssetService"
 import * as Haptics from "expo-haptics"
 import { colors } from "app/theme"
+import MultiSlider from "@ptomasroos/react-native-multi-slider"
 
 export const QrScanner = observer(function QrScanner() {
   const {
@@ -71,38 +72,64 @@ export const QrScanner = observer(function QrScanner() {
       )}
       <RefreshButton safe={safe} scanState={scanState} scanAgain={scanAgain} />
       {scanState === "notScanned" && (
-        // <View
-        //   style={{
-        //     width: "100%",
-        //     flexDirection: "row",
-        //     justifyContent: "center",
-        //     alignItems: "center",
-        //     position: "absolute", // Ensure the slider is overlaid on the camera view
-        //     bottom: 20, // Position at the bottom or as needed
-        //   }}
-        // >
-        <Slider
-          style={{ width: "88%", height: 40 }}
-          minimumValue={0}
-          maximumValue={0.4}
-          minimumTrackTintColor={colors.palette.primary500}
-          maximumTrackTintColor={colors.palette.neutral200}
-          onValueChange={(value: number) => {
-            setZoom(value)
-            console.log("on value change")
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute", // Ensure the slider is overlaid on the camera view
+            bottom: 20, // Position at the bottom or as needed
           }}
-          //ios only
-          tapToSeek
-          onSlidingStart={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-            console.log("sliding starsssst")
-          }}
-          onSlidingComplete={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-            console.log("sliding finish")
-          }}
-        />
-        // </View>
+        >
+          {Platform.OS === "ios" ? (
+            <Slider
+              style={{ width: "88%", height: 40 }}
+              minimumValue={0}
+              maximumValue={0.4}
+              minimumTrackTintColor={colors.palette.primary500}
+              maximumTrackTintColor={colors.palette.neutral200}
+              onValueChange={(value: number) => {
+                setZoom(value)
+                console.log("on value change")
+              }}
+              //ios only
+              tapToSeek
+              onSlidingStart={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+              }}
+              onSlidingComplete={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+              }}
+            />
+          ) : (
+            <MultiSlider
+              min={0}
+              max={0.4}
+              step={0.05}
+              onValuesChange={(values) => {
+                setZoom(values[0])
+              }}
+              onValuesChangeStart={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+              }}
+              onValuesChangeFinish={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+              }}
+              markerStyle={{
+                backgroundColor: "white",
+                height: 24,
+                width: 24,
+              }}
+              trackStyle={{
+                backgroundColor: colors.background,
+              }}
+              selectedStyle={{
+                backgroundColor: colors.textGreen,
+              }}
+            />
+          )}
+        </View>
       )}
     </View>
   )
