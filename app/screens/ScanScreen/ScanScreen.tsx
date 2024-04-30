@@ -27,6 +27,7 @@ import { PanGestureHandler } from "react-native-gesture-handler"
 import { Drawer } from "react-native-drawer-layout"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { assetService } from "app/services/Assets/AssetService"
+import { LinearGradient } from "expo-linear-gradient"
 
 export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScreen(_props) {
   const [permission, requestPermission] = useCameraPermissions()
@@ -88,6 +89,17 @@ export const ScanScreen: FC<TabScreenProps<"Scan">> = observer(function ScanScre
       drawerType={"slide"}
       renderDrawerContent={() => (
         <View style={[$drawer, $drawerInsets]}>
+          <LinearGradient
+            // Background Linear Gradient
+            colors={["transparent", colors.palette.overlay50]}
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 0,
+              height: "110%",
+            }}
+          />
           <View style={$logoContainer}>
             <AutoImage
               style={{

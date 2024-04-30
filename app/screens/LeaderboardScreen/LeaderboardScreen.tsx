@@ -176,7 +176,7 @@ export const LeaderboardScreen: FC<LeaderboardScreenProps> = observer(function L
   return (
     <Screen style={$rootScreen} preset="scroll" safeAreaEdges={["top"]}>
       <PanGestureHandler onHandlerStateChange={onSwipeEvent} activeOffsetX={[-10, 10]}>
-        <View>
+        <View style={{ flex: 1 }}>
           {authenticationStore.authToken === "scannerOnly" ? notSignedIn : leaderboardScreenContent}
           {error && <Text text={error} style={{ textAlign: "center" }} preset="subheading" />}
         </View>

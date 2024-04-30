@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite"
 import { Alert, ImageStyle, Pressable, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { Button, Card, ListView, Screen, Text, Toggle } from "app/components"
-import { $rootScreen, $title } from "app/theme"
+import { $rootScreen, $title, colors } from "app/theme"
 import * as WebBrowser from "expo-web-browser"
 import Tick from "app/components/Svg/Tick"
 import Cancel from "app/components/Svg/Cancel"
@@ -16,6 +16,8 @@ import { PanGestureHandler } from "react-native-gesture-handler"
 import useCustomSwiper from "app/utils/useCustomSwiper"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import * as Haptics from "expo-haptics"
+import { LinearGradient } from "expo-linear-gradient"
+
 interface HistoryScreenProps extends AppStackScreenProps<"History"> {}
 
 export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistoryScreen() {
@@ -194,6 +196,18 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
     <Screen style={$rootScreen} preset="fixed" safeAreaEdges={["top", "bottom"]}>
       <PanGestureHandler onHandlerStateChange={onSwipeEvent} activeOffsetX={[-10, 10]}>
         <View style={{ height: "100%" }}>
+          <LinearGradient
+            // Background Linear Gradient
+            colors={["transparent", colors.palette.overlay50]}
+            style={{
+              position: "absolute",
+              left: -24,
+              right: 0,
+              top: 0,
+              width: "200%",
+              height: "150%",
+            }}
+          />
           {authenticationStore.authToken === "scannerOnly" ? notSignedIn : renderHistory}
         </View>
       </PanGestureHandler>

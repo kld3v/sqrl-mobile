@@ -39,7 +39,7 @@ const palette = {
   angry500Pressed: "#931F1F",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
-  overlay50: "rgba(25, 16, 21, 0.5)",
+  overlay50: "rgba(25, 16, 21, 0.7)",
 
   tableBorder: "rgba(215, 242, 194, 0.5)",
 

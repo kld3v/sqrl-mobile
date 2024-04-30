@@ -14,6 +14,7 @@ import {
 } from "react-native"
 import { colors } from "../theme"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
+import { LinearGradient } from "expo-linear-gradient"
 
 interface BaseScreenProps {
   /**
@@ -201,6 +202,18 @@ export function Screen(props: ScreenProps) {
 
   return (
     <View style={[$containerStyle, { backgroundColor }, $containerInsets]}>
+      <LinearGradient
+        // Background Linear Gradient
+        colors={["transparent", colors.palette.overlay50]}
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          width: "200%",
+          height: "150%",
+        }}
+      />
       <StatusBar style={statusBarStyle} {...StatusBarProps} />
 
       <KeyboardAvoidingView
