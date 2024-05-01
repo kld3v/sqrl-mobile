@@ -45,8 +45,7 @@ export const QrScanner = observer(function QrScanner() {
         {Platform.OS === "ios" ? (
           <Camera style={{ flex: 1 }} onBarCodeScanned={handleScan} autoFocus={focus} zoom={zoom} />
         ) : (
-          // <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} zoom={zoom} />
-          <></>
+          <CameraView style={{ flex: 1 }} onBarcodeScanned={handleScan} zoom={zoom} />
         )}
 
         <Reticle
@@ -86,7 +85,7 @@ export const QrScanner = observer(function QrScanner() {
             <Slider
               style={{ width: "88%", height: 40 }}
               minimumValue={0}
-              maximumValue={0.4}
+              maximumValue={0.25}
               minimumTrackTintColor={colors.palette.primary500}
               maximumTrackTintColor={colors.palette.neutral200}
               onValueChange={(value: number) => {
@@ -104,7 +103,7 @@ export const QrScanner = observer(function QrScanner() {
             />
           ) : (
             <MultiSlider
-              min={0}
+              min={0.1}
               max={0.4}
               step={0.05}
               onValuesChange={(values) => {

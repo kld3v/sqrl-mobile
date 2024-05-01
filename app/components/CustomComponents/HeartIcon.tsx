@@ -48,7 +48,7 @@ const HeartIcon: React.FC<{
       <Animated.View style={[styles.heartContainer, heartAnimatedStyle]}>
         <Icon
           onPress={handlePress}
-          icon={isFavorite ? "heart" : "heart"}
+          icon={isFavorite ? "heartFilled" : "heart"}
           size={ICON_SIZE}
           color={isFavorite ? colors.palette.heartRed : colors.palette.neutral800}
         />
