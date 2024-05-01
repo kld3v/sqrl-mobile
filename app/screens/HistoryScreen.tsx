@@ -31,19 +31,15 @@ export const HistoryScreen: FC<HistoryScreenProps> = observer(function HistorySc
 
   const fetchHistory = useCallback(async () => {
     setRefreshing(true)
-    console.log(authService.validToken)
-    console.log("token exists??", await authService.tokenDoesExist())
 
     // Get user history and set
     let historyResponse = await historyService.getHistory()
-    console.log(historyResponse)
     if (historyResponse) {
       setHistory(historyResponse)
     }
 
     // Get user favorites only and set
     let favoritesResponse = await historyService.getFavouriteHistory()
-    console.log(favoritesResponse)
     if (favoritesResponse) {
       setFavorites(favoritesResponse)
     }
