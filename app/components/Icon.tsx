@@ -119,6 +119,7 @@ export const iconRegistry = {
   google: require("../../assets/icons/google.png"),
   history: require("../../assets/icons/history.png"),
   leaderboard: require("../../assets/icons/leaderboard.png"),
+  signOut: require("../../assets/icons/signout.png"),
 } as const
 
 const $imageStyleBase: ImageStyle = {

@@ -72,7 +72,14 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileSc
           </View>
         </ListItem>
       </View>
-
+      <Button
+        style={{}}
+        text="Sign Out"
+        onPress={logout}
+        RightAccessory={(props) => (
+          <Icon size={14} icon="signOut" color="white" style={{ marginLeft: 8 }} />
+        )}
+      />
       <View style={$buttonContainer}>
         <Text
           preset="formLabel"
