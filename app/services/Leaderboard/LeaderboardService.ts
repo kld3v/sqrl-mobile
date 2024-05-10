@@ -6,6 +6,7 @@ import { authService } from "../Auth"
 
 export class LeaderboardService {
   public initialised: Promise<boolean> | null = null
+  public username: string | null = null
   constructor() {
     this.initialised = this.init()
   }
@@ -15,6 +16,7 @@ export class LeaderboardService {
       if (!(await this.userHasScoreInStorage())) {
         await this.initUserScoreInStorage()
         let username = await authService.getUsername()
+        this.username = username
         if (username) {
           await this.initUserNameInStorage(username)
         } else {
