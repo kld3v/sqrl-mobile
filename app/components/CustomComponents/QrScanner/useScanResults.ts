@@ -91,7 +91,8 @@ export default () => {
 
       if (!response.ok) {
         debugStore.addErrorMessage(`res.data.problem is: ${response.data?.problem}`)
-        setErrorMsg(`Oops! ${response.data?.problem} :(`)
+        console.log(response)
+        setErrorMsg(`Oops! We weren't able to verify that url. :(`)
         setScanState("scanned")
         return
       }

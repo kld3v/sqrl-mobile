@@ -33,6 +33,7 @@ export const QrScanner = observer(function QrScanner() {
   } = useScanResults()
 
   const handleScan = (barcodeScanResult: BarCodeScanningResult) => {
+    console.log(barcodeScanResult.data)
     if (readyToScan.current) {
       onScan(barcodeScanResult)
     }
