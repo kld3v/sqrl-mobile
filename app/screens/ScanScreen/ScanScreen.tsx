@@ -14,7 +14,7 @@ import { QrScanner, Screen } from "../../components"
 
 import { TabScreenProps } from "../../navigators/MainNavigator"
 import CameraPermissionDenied from "./CameraPermissionDenied"
-import { useCameraPermissions } from "expo-camera/next"
+import { useCameraPermissions } from "expo-camera"
 import CameraPermissionUndetermined from "./CamerPermissionUndetermined"
 import { $informationIcon } from "app/components/CustomComponents/QrScanner/QrScannerStyles"
 import { colors, spacing } from "app/theme"

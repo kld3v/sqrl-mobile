@@ -124,7 +124,10 @@
             "newArchEnabled": false
           }
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font",
+      "expo-secure-store"
     ],
     "experiments": {
       "tsconfigPaths": true

@@ -3,7 +3,7 @@ import { useStores } from "app/models"
 
 import { qrScannerService } from "app/services/QrScanner"
 
-import { AutoFocus, BarCodeScanningResult } from "expo-camera"
+import { AutoFocus, BarCodeScanningResult } from "expo-camera/legacy"
 import { useCallback, useRef, useState } from "react"
 import { ScanStateOptions } from "types"
 
