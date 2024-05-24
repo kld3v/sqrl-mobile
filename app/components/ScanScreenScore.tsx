@@ -14,7 +14,7 @@ export interface ScanScreenScoreProps {
   style?: StyleProp<ViewStyle>
 }
 const marginTop = Device.brand === "Apple" ? -8 : 0
-console.log(Device.brand)
+
 /**
  * Describe your component here
  */

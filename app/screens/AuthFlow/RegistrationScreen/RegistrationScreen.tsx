@@ -1,15 +1,6 @@
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
-import {
-  Dimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TextInput,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native"
+import { Dimensions, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import {
   Icon,
@@ -21,18 +12,17 @@ import {
   AutoImage,
 } from "app/components"
 import { useStores } from "app/models"
-import { $ScreenStyle, $hint, colors, spacing, typography } from "app/theme"
+import { $hint, colors, spacing, typography } from "app/theme"
 import { assetService } from "app/services/Assets/AssetService"
 import { api } from "app/services/api"
 import { AuthAPIResponse } from "../Auth.types"
 import { authService } from "app/services/Auth"
 import LoadingOverlay from "app/components/LoadingOverlay"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
 
 interface RegistrationProps extends AppStackScreenProps<"Registration"> {}
 
 export const Registration: FC<RegistrationProps> = observer(function Registration() {
+  const authUsernameInput = useRef<TextInput>(null)
   const authPasswordInput = useRef<TextInput>(null)
   const authPasswordConfirmInput = useRef<TextInput>(null)
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
@@ -163,89 +153,83 @@ export const Registration: FC<RegistrationProps> = observer(function Registratio
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]}>
       {isLoading && <LoadingOverlay />}
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
-      >
-        <ScrollView>
-          <View style={$screenContentContainer}>
-            <View style={$headerContainer}>
-              <AutoImage source={qrlaLogo} style={{ width: imageSize, height: imageSize }} />
+      <View style={$screenContentContainer}>
+        <View style={$headerContainer}>
+          <AutoImage source={qrlaLogo} style={{ width: imageSize, height: imageSize }} />
 
-              <View style={{ width: "100%" }}>
-                <Text
-                  testID="SignIn-heading"
-                  text="Free from nasty QR scammers."
-                  preset="heading"
-                  style={$signInHeading}
-                />
-              </View>
-            </View>
-            {authError && <Text text={authError} size="sm" weight="light" style={$hint} />}
-            <TextField
-              value={authEmail}
-              onChangeText={setAuthEmail}
-              containerStyle={$textField}
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect={false}
-              keyboardType="email-address"
-              placeholder="Email"
-              helper={emailError}
-              status={emailError ? "error" : undefined}
-              onChange={() => setAuthError("")}
-            />
-            <TextField
-              value={authUsername}
-              onChangeText={setAuthUsername}
-              containerStyle={$textField}
-              autoCorrect={false}
-              placeholder="Username"
-              helper={usernameError}
-              status={usernameError ? "error" : undefined}
-              onSubmitEditing={() => authPasswordInput.current?.focus()}
-              onChange={() => setAuthError("")}
-            />
-            <TextField
-              ref={authPasswordInput}
-              value={password}
-              onChangeText={setPassword}
-              containerStyle={$textField}
-              autoCapitalize="none"
-              autoComplete="password"
-              autoCorrect={false}
-              secureTextEntry={isAuthPasswordHidden}
-              placeholder="Password"
-              RightAccessory={PasswordRightAccessory}
-              onChange={() => setAuthError("")}
-            />
-            <TextField
-              ref={authPasswordConfirmInput}
-              value={passwordConfirm}
-              onChangeText={setPasswordConfirm}
-              containerStyle={$textField}
-              autoCapitalize="none"
-              autoComplete="password"
-              autoCorrect={false}
-              secureTextEntry={isAuthPasswordHidden}
-              placeholder="Confirm Password"
-              RightAccessory={PasswordRightAccessory}
-              onChange={() => setAuthError("")}
-            />
-            <Button
-              text="Create Account"
-              disabledStyle={{
-                borderColor: colors.palette.neutral500,
-              }}
-              disabledTextStyle={{
-                color: colors.palette.neutral500,
-              }}
-              onPress={Register}
+          <View style={{ width: "100%" }}>
+            <Text
+              testID="SignIn-heading"
+              text="Free from nasty QR scammers."
+              preset="heading"
+              style={$signInHeading}
             />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+        {authError && <Text text={authError} size="sm" weight="light" style={$hint} />}
+        <TextField
+          value={authEmail}
+          onChangeText={setAuthEmail}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          placeholder="Email"
+          helper={emailError}
+          status={emailError ? "error" : undefined}
+          onChange={() => setAuthError("")}
+          onSubmitEditing={() => authUsernameInput.current?.focus()}
+        />
+        <TextField
+          ref={authUsernameInput}
+          value={authUsername}
+          onChangeText={setAuthUsername}
+          containerStyle={$textField}
+          autoCorrect={false}
+          placeholder="Username"
+          helper={usernameError}
+          status={usernameError ? "error" : undefined}
+          onSubmitEditing={() => authPasswordInput.current?.focus()}
+          onChange={() => setAuthError("")}
+        />
+        <TextField
+          ref={authPasswordInput}
+          value={password}
+          onChangeText={setPassword}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          placeholder="Password"
+          RightAccessory={PasswordRightAccessory}
+          onChange={() => setAuthError("")}
+        />
+        <TextField
+          ref={authPasswordConfirmInput}
+          value={passwordConfirm}
+          onChangeText={setPasswordConfirm}
+          containerStyle={$textField}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          placeholder="Confirm Password"
+          RightAccessory={PasswordRightAccessory}
+          onChange={() => setAuthError("")}
+        />
+        <Button
+          text="Create Account"
+          disabledStyle={{
+            borderColor: colors.palette.neutral500,
+          }}
+          disabledTextStyle={{
+            color: colors.palette.neutral500,
+          }}
+          onPress={Register}
+        />
+      </View>
     </Screen>
   )
 })

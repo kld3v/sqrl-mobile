@@ -64,7 +64,7 @@
           }
         ]
       },
-      "buildNumber": "9.2.12",
+      "buildNumber": "9.2.13",
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.qrlaapp",
